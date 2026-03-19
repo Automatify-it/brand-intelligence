@@ -296,52 +296,76 @@ async function fetchT(id){
   const cfg=getTC(id);if(!cfg)return;
   tS[id]='loading';rTS();
   return new Promise((resolve)=>{
-    const cbName='cb_'+id.replace(/[^a-z0-9]/gi,'_');
-    const url='https://docs.google.com/spreadsheets/d/'+SID+'/gviz/tq?tqx=out:json&callback='+cbName+'&sheet='+encodeURIComponent(cfg.st);
-    
-    // gviz calls: google.visualization.Query.setResponse({...})
-    // We intercept by defining that path AND our callback name
-    if(!window.google) window.google={};
-    if(!window.google.visualization) window.google.visualization={};
-    if(!window.google.visualization.Query) window.google.visualization.Query={};
-    
-    // Our named callback (some gviz responses use this directly)
+    // Each tab gets its own unique response handler name
+    const ts=Date.now();
+    const cbName='gvizCb_'+ts+'_'+id.replace(/[^a-z0-9]/gi,'_');
+
+    // Set up google.visualization intercept BEFORE script loads
+    if(!window.google)window.google={};
+    if(!window.google.visualization)window.google.visualization={};
+    if(!window.google.visualization.Query)window.google.visualization.Query={};
+
+    // Store pending callbacks - use the timestamp key so parallel loads don't collide
+    if(!window._gvizPending)window._gvizPending={};
+    window._gvizPending[cbName]={id,resolve};
+
+    // Named callback (gviz might call this directly)
     window[cbName]=function(data){
-      handleGVIZ(id, data, cbName, resolve);
+      _gvizDone(cbName, data);
     };
-    // gviz setResponse interception
+
+    // setResponse is called when no callback name matches
+    // We track which request is "current" via the script element
     window.google.visualization.Query.setResponse=function(data){
-      handleGVIZ(id, data, cbName, resolve);
+      // Find the most recently added pending callback
+      const keys=Object.keys(window._gvizPending||{});
+      if(keys.length>0){
+        const key=keys[keys.length-1];
+        _gvizDone(key, data);
+      }
     };
-    
+
     const s=document.createElement('script');
     s.id='sc_'+cbName;
-    s.onerror=()=>{console.error('Script load failed for',id);tS[id]='error';tD[id]=[];rTS();resolve();};
+    s.onerror=()=>{
+      console.error('Script load failed for',id);
+      _gvizDone(cbName, null);
+    };
+    // Use the named callback in URL
+    const url='https://docs.google.com/spreadsheets/d/'+SID+
+      '/gviz/tq?tqx=out:json;responseHandler:'+cbName+'&sheet='+encodeURIComponent(cfg.st);
     s.src=url;
     document.head.appendChild(s);
+
     setTimeout(()=>{
-      if(tS[id]==='loading'){
-        console.warn('Timeout for',id);tS[id]='error';tD[id]=[];rTS();resolve();
+      if(window._gvizPending&&window._gvizPending[cbName]){
+        console.warn('Timeout for',id);
+        _gvizDone(cbName, null);
       }
-    },12000);
+    },15000);
   });
 }
 
-function handleGVIZ(id, data, cbName, resolve){
+function _gvizDone(cbName, data){
+  if(!window._gvizPending||!window._gvizPending[cbName])return;
+  const {id, resolve}=window._gvizPending[cbName];
+  delete window._gvizPending[cbName];
+  delete window[cbName];
+  const sc=document.getElementById('sc_'+cbName);if(sc)sc.remove();
+
+  if(!data){tS[id]='error';tD[id]=[];rTS();resolve();return;}
   try{
-    // data might be wrapped: {status:'ok', table:{...}} or just {table:{...}}
-    const tableData = data.table ? data : (data.response || data);
-    const rows = parseGVIZ(tableData);
+    const rows=parseGVIZ(data);
+    console.log('Loaded',id,':',rows.length,'rows');
     if(!rows.length){tS[id]='empty';tD[id]=[];}
     else{tD[id]=rows;tS[id]='ok';if(!aKW[id])aKW[id]=new Set(rows.map(r=>r.keyword));}
   }catch(e){
-    console.error('handleGVIZ error for',id,e.message);
+    console.error('Parse error for',id,e.message);
     tS[id]='error';tD[id]=[];
   }
-  delete window[cbName];
-  const sc=document.getElementById('sc_'+cbName);if(sc)sc.remove();
   rTS();resolve();
 }
+
 
 function parseGVIZ(data){
   const table=data.table;
@@ -403,20 +427,16 @@ function parseGVIZ(data){
 async function loadAll(){
   setL(5,'Connecting to Google Sheets...');
   const n=TC.length;
-  try {
-    await Promise.all(TC.map(async(cfg,i)=>{
-      await fetchT(cfg.id);
-      setL(Math.round(((i+1)/n)*85)+10,'Loading '+cfg.flag+' '+cfg.name+'...');
-    }));
-    setL(100,'Ready!');
-    setTimeout(hideL,400);
-    rAll();
-    updLU();
-  } catch(err) {
-    document.getElementById('lt').textContent = 'ERROR: ' + err.message;
-    document.getElementById('lt').style.color = '#ff6b6b';
-    console.error('loadAll failed:', err);
+  // Load SEQUENTIALLY to avoid google.visualization.Query.setResponse collisions
+  for(let i=0;i<TC.length;i++){
+    const cfg=TC[i];
+    setL(Math.round((i/n)*85)+10,'Loading '+cfg.flag+' '+cfg.name+'...');
+    await fetchT(cfg.id);
   }
+  setL(100,'Ready!');
+  setTimeout(hideL,400);
+  rAll();
+  updLU();
 }
 function setL(p,t){document.getElementById('lb').style.width=p+'%';document.getElementById('lt').textContent=t;}
 function hideL(){const e=document.getElementById('ls');e.style.transition='opacity 0.4s';e.style.opacity='0';setTimeout(()=>e.style.display='none',400);}
