@@ -298,23 +298,49 @@ async function fetchT(id){
   return new Promise((resolve)=>{
     const cbName='cb_'+id.replace(/[^a-z0-9]/gi,'_');
     const url='https://docs.google.com/spreadsheets/d/'+SID+'/gviz/tq?tqx=out:json&callback='+cbName+'&sheet='+encodeURIComponent(cfg.st);
+    
+    // gviz calls: google.visualization.Query.setResponse({...})
+    // We intercept by defining that path AND our callback name
+    if(!window.google) window.google={};
+    if(!window.google.visualization) window.google.visualization={};
+    if(!window.google.visualization.Query) window.google.visualization.Query={};
+    
+    // Our named callback (some gviz responses use this directly)
     window[cbName]=function(data){
-      try{
-        const rows=parseGVIZ(data);
-        if(!rows.length){tS[id]='empty';tD[id]=[];}
-        else{tD[id]=rows;tS[id]='ok';if(!aKW[id])aKW[id]=new Set(rows.map(r=>r.keyword));}
-      }catch(e){console.error('parse error',id,e.message);tS[id]='error';tD[id]=[];}
-      delete window[cbName];
-      const sc=document.getElementById('sc_'+cbName);if(sc)sc.remove();
-      rTS();resolve();
+      handleGVIZ(id, data, cbName, resolve);
     };
+    // gviz setResponse interception
+    window.google.visualization.Query.setResponse=function(data){
+      handleGVIZ(id, data, cbName, resolve);
+    };
+    
     const s=document.createElement('script');
     s.id='sc_'+cbName;
-    s.onerror=()=>{tS[id]='error';tD[id]=[];delete window[cbName];s.remove();rTS();resolve();};
+    s.onerror=()=>{console.error('Script load failed for',id);tS[id]='error';tD[id]=[];rTS();resolve();};
     s.src=url;
     document.head.appendChild(s);
-    setTimeout(()=>{if(window[cbName]){tS[id]='error';tD[id]=[];delete window[cbName];s.remove();rTS();resolve();}},12000);
+    setTimeout(()=>{
+      if(tS[id]==='loading'){
+        console.warn('Timeout for',id);tS[id]='error';tD[id]=[];rTS();resolve();
+      }
+    },12000);
   });
+}
+
+function handleGVIZ(id, data, cbName, resolve){
+  try{
+    // data might be wrapped: {status:'ok', table:{...}} or just {table:{...}}
+    const tableData = data.table ? data : (data.response || data);
+    const rows = parseGVIZ(tableData);
+    if(!rows.length){tS[id]='empty';tD[id]=[];}
+    else{tD[id]=rows;tS[id]='ok';if(!aKW[id])aKW[id]=new Set(rows.map(r=>r.keyword));}
+  }catch(e){
+    console.error('handleGVIZ error for',id,e.message);
+    tS[id]='error';tD[id]=[];
+  }
+  delete window[cbName];
+  const sc=document.getElementById('sc_'+cbName);if(sc)sc.remove();
+  rTS();resolve();
 }
 
 function parseGVIZ(data){
