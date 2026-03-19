@@ -94,7 +94,7 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
 .hml span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:9px;}
 .hmmo{color:var(--muted);text-align:center;padding-bottom:3px;font-size:9px;}
 .hmc2{height:18px;border-radius:3px;cursor:pointer;transition:transform 0.12s;}
-.hmc2:hover{transform:scale(1.5);z-index:5;position:relative;}
+.hmc2:hover{transform:scale(1.2);z-index:5;position:relative;cursor:crosshair;}
 .cpc{grid-column:3;}
 .cpt{width:100%;border-collapse:collapse;}
 .cpt th{font-size:8px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);text-align:left;padding:5px 7px;border-bottom:1px solid var(--border);}
@@ -535,24 +535,140 @@ function rHM(){
   const{keywords,dates,kwData}=getAD();const allKW=getAllKW();
   const el=document.getElementById('hmg');if(!el)return;
   el.style.gridTemplateColumns=`72px repeat(${dates.length},1fr)`;
-  const mL=dates.map(d=>{const dt=new Date(d+'T00:00:00');return per>=60?dt.toLocaleString('default',{month:'short',year:'2-digit'}):dt.toLocaleString('default',{month:'short'});});
+  const mL=dates.map(d=>{
+    const dt=new Date(d+'T00:00:00');
+    return per>=60?dt.toLocaleString('default',{month:'short',year:'2-digit'}):dt.toLocaleString('default',{month:'short'});
+  });
   let html=`<div></div>`+mL.map(m=>`<div class="hmmo">${m}</div>`).join('');
-  keywords.forEach(kw=>{const col=C[allKW.indexOf(kw)%C.length];const vals=dates.map(d=>kwData[kw][d]||0);
+  keywords.forEach(kw=>{
+    const col=C[allKW.indexOf(kw)%C.length];
+    const vals=dates.map(d=>kwData[kw][d]||0);
+    const kwType=getKWT(kw);
     html+=`<div class="hml"><span style="color:${col}">${kw}</span></div>`;
-    vals.forEach((v,mi)=>{const a=(0.08+(v/100)*0.88).toFixed(2);html+=`<div class="hmc2" style="background:${col};opacity:${a}" title="${kw} · ${dates[mi]}: ${v}"></div>`;});
+    vals.forEach((v,mi)=>{
+      const a=(0.08+(v/100)*0.88).toFixed(2);
+      const dt=new Date(dates[mi]+'T00:00:00');
+      const monthFull=dt.toLocaleString('default',{month:'long',year:'numeric'});
+      // encode tooltip data in data attributes
+      html+=`<div class="hmc2" style="background:${col};opacity:${a}"
+        data-kw="${kw.replace(/"/g,'&quot;')}"
+        data-val="${v}"
+        data-date="${monthFull}"
+        data-type="${kwType}"
+        data-col="${col}"
+        onmouseenter="showHMTip(event,this)"
+        onmouseleave="hideHMTip()"></div>`;
+    });
   });
   el.innerHTML=html;
+}
+
+function showHMTip(e, el){
+  let tip=document.getElementById('hmTip');
+  if(!tip){
+    tip=document.createElement('div');
+    tip.id='hmTip';
+    tip.style.cssText='position:fixed;z-index:999;background:#181e2c;border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:10px 14px;font-size:12px;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,0.5);min-width:160px;transition:opacity 0.1s;';
+    document.body.appendChild(tip);
+  }
+  const kw=el.dataset.kw;
+  const val=el.dataset.val;
+  const date=el.dataset.date;
+  const type=el.dataset.type;
+  const col=el.dataset.col;
+  const bar=Math.round(parseInt(val)/100*80);
+  tip.innerHTML=`
+    <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px">
+      <span style="width:9px;height:9px;border-radius:50%;background:${col};display:inline-block;flex-shrink:0"></span>
+      <strong style="color:#eef0f4;font-size:13px">${kw}</strong>
+      <span style="font-size:9px;color:#4e5a70;background:#111620;padding:1px 6px;border-radius:4px;font-family:'DM Mono',monospace">${type}</span>
+    </div>
+    <div style="color:#7a8899;font-size:11px;margin-bottom:8px">${date}</div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="flex:1;height:5px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden">
+        <div style="width:${bar}%;height:100%;background:${col};border-radius:3px"></div>
+      </div>
+      <span style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#eef0f4;line-height:1">${val}</span>
+      <span style="font-size:10px;color:#4e5a70">/100</span>
+    </div>`;
+  // Position near cursor
+  const x=Math.min(e.clientX+12, window.innerWidth-180);
+  const y=Math.min(e.clientY-20, window.innerHeight-120);
+  tip.style.left=x+'px';
+  tip.style.top=y+'px';
+  tip.style.opacity='1';
+  tip.style.display='block';
+}
+
+function hideHMTip(){
+  const tip=document.getElementById('hmTip');
+  if(tip)tip.style.display='none';
 }
 function rCmp(){
   const{keywords,dates,kwData}=getAD();const allKW=getAllKW();
   const el=document.getElementById('ctb');if(!el)return;
+
+  // Update table header to reflect actual comparison type
+  const thead=document.querySelector('.cpt thead tr');
+  if(thead){
+    const compLabel = per<=6 ? 'WoW' : per<=13 ? 'MoM' : 'H1vsH2';
+    thead.innerHTML=`<th>Keyword</th><th>Avg</th><th>Peak</th><th>${compLabel} Δ%</th><th>Trend</th>`;
+  }
+
   el.innerHTML=keywords.map(kw=>{
-    const vals=dates.map(d=>kwData[kw][d]||0);const avg=Math.round(vals.reduce((a,b)=>a+b,0)/Math.max(vals.length,1));const peak=Math.max(...vals,0);
-    const col=C[allKW.indexOf(kw)%C.length];const prior=Math.round(avg*(0.78+(kw.length%7)*0.04));
-    const diff=avg-prior;const pct=Math.round(diff/Math.max(prior,1)*100);const isUp=diff>=0;
-    const half=Math.floor(vals.length/2);const early=vals.slice(0,half).reduce((a,b)=>a+b,0)/Math.max(half,1);const late=vals.slice(-half).reduce((a,b)=>a+b,0)/Math.max(half,1);
-    const arrow=late>early+2?'↑':late<early-2?'↓':'→';const arC=late>early+2?'#3aacac':late<early-2?'#ff6b6b':'#7a8899';
-    return`<tr><td><span style="display:flex;align-items:center;gap:5px"><span style="width:7px;height:7px;border-radius:50%;background:${col};display:inline-block;flex-shrink:0"></span><span style="font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90px" title="${kw}">${kw}</span></span></td><td style="font-family:'DM Mono',monospace;font-size:11px">${avg}</td><td style="font-family:'DM Mono',monospace;font-size:11px">${peak}</td><td><span class="cpb" style="background:${isUp?'rgba(58,172,172,0.14)':'rgba(204,20,24,0.12)'};color:${isUp?'#3aacac':'#ff6b6b'}">${isUp?'+':''}${pct}%</span></td><td style="font-size:15px;color:${arC}">${arrow}</td></tr>`;
+    const vals=dates.map(d=>kwData[kw][d]||0);
+    const avg=Math.round(vals.reduce((a,b)=>a+b,0)/Math.max(vals.length,1));
+    const peak=Math.max(...vals,0);
+    const col=C[allKW.indexOf(kw)%C.length];
+
+    // ── Real period comparison ──
+    // Split into two equal halves and compare them
+    const half=Math.max(1,Math.floor(vals.length/2));
+    const firstHalf=vals.slice(0,half);
+    const secondHalf=vals.slice(-half);
+    const firstAvg=firstHalf.reduce((a,b)=>a+b,0)/half;
+    const secondAvg=secondHalf.reduce((a,b)=>a+b,0)/half;
+
+    // Real WoW: last 4 weeks vs previous 4 weeks
+    const w=Math.min(4,Math.floor(vals.length/2));
+    const recentW=vals.slice(-w).reduce((a,b)=>a+b,0)/w;
+    const priorW=vals.slice(-w*2,-w).reduce((a,b)=>a+b,0)/Math.max(w,1);
+
+    // Use WoW for short periods, H1vsH2 for longer
+    let compCurrent, compPrior;
+    if(per<=13){
+      compCurrent=recentW; compPrior=priorW;
+    } else {
+      compCurrent=secondAvg; compPrior=firstAvg;
+    }
+
+    const diff=compCurrent-compPrior;
+    const pct=compPrior>0?Math.round(diff/compPrior*100):0;
+    const isUp=diff>0.5;
+    const isFlat=Math.abs(diff)<=0.5;
+
+    // Trend: momentum of last quarter vs first quarter of data
+    const q=Math.max(1,Math.floor(vals.length/4));
+    const q1avg=vals.slice(0,q).reduce((a,b)=>a+b,0)/q;
+    const q4avg=vals.slice(-q).reduce((a,b)=>a+b,0)/q;
+    const momentum=q4avg-q1avg;
+    const arrow=momentum>3?'↑':momentum<-3?'↓':'→';
+    const arC=momentum>3?'#3aacac':momentum<-3?'#ff6b6b':'#7a8899';
+
+    const badgeBg=isFlat?'rgba(122,136,153,0.15)':isUp?'rgba(58,172,172,0.14)':'rgba(204,20,24,0.12)';
+    const badgeCol=isFlat?'#7a8899':isUp?'#3aacac':'#ff6b6b';
+    const pctStr=isFlat?'flat':(isUp?'+':'')+pct+'%';
+
+    return`<tr>
+      <td><span style="display:flex;align-items:center;gap:5px">
+        <span style="width:7px;height:7px;border-radius:50%;background:${col};display:inline-block;flex-shrink:0"></span>
+        <span style="font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90px" title="${kw}">${kw}</span>
+      </span></td>
+      <td style="font-family:'DM Mono',monospace;font-size:11px">${avg}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:11px">${peak}</td>
+      <td><span class="cpb" style="background:${badgeBg};color:${badgeCol}">${pctStr}</span></td>
+      <td style="font-size:15px;color:${arC}">${arrow}</td>
+    </tr>`;
   }).join('');
 }
 function onCC(){per=parseInt(document.getElementById('ps').value);rKPI();rMC();rRank();rDonut();rHM();rCmp();}
