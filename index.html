@@ -139,6 +139,32 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
 .pd{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5;}
 .fi{animation:fi 0.4s ease both;}
 @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ── BREAKOUT ALERT ── */
+.breakout-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(232,160,32,0.15);border:1px solid rgba(232,160,32,0.4);color:#e8a020;padding:1px 7px;border-radius:10px;font-size:9px;font-weight:700;font-family:'DM Mono',monospace;animation:bpulse 2s infinite;}
+@keyframes bpulse{0%,100%{box-shadow:0 0 0 0 rgba(232,160,32,0.4)}50%{box-shadow:0 0 0 4px rgba(232,160,32,0)}}
+.tab-fire{position:absolute;top:6px;left:6px;font-size:11px;animation:bpulse 1.5s infinite;}
+.alert-row{display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(232,160,32,0.06);border:1px solid rgba(232,160,32,0.2);border-radius:8px;margin-bottom:10px;font-size:11px;}
+.alert-row .abrand{font-weight:600;color:#e8a020;}
+.alert-row .aval{font-family:'DM Mono',monospace;color:#eef0f4;}
+
+/* ── REFRESH INDICATOR ── */
+.tab-refresh{position:absolute;bottom:5px;font-size:8px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:0;white-space:nowrap;}
+
+/* ── NOTES ── */
+.notes-area{width:100%;min-height:60px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;padding:10px 12px;resize:vertical;outline:none;transition:border-color 0.2s;line-height:1.6;}
+.notes-area:focus{border-color:var(--teal);}
+.notes-saved{font-size:10px;color:var(--teal);opacity:0;transition:opacity 0.3s;}
+.notes-saved.show{opacity:1;}
+
+/* ── PDF EXPORT ── */
+@media print{
+  #ls,header .hr,#tb .tab-add,.cb,.hmTip,.toast{display:none!important;}
+  body{background:#fff!important;color:#000!important;}
+  .card{border:1px solid #ddd!important;background:#fff!important;break-inside:avoid;}
+  main{grid-template-columns:1fr 1fr 1fr!important;}
+  .sidebar{grid-column:auto!important;grid-row:auto!important;}
+}
 ::-webkit-scrollbar{width:5px;height:5px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:3px;}
@@ -173,9 +199,13 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
       <div class="kwl" id="egl"></div>
       <button class="akb" onclick="addKwRow('generic')">&#65291; Add Trend</button>
     </div>
+    <div class="msec" style="margin-bottom:0">
+      <div class="mst">&#128221; Notes <div class="ml"></div> <span class="notes-saved" id="notesSaved">saved</span></div>
+      <textarea class="notes-area" id="tabNotes" placeholder="Add context notes for this market tab... e.g. 'Romania spike in Dec = Black Friday campaign launch'"></textarea>
+    </div>
     <div class="mf">
       <button class="btn bg" onclick="closeEM()">Cancel</button>
-      <button class="btn bt" onclick="saveKW()">&#10003; Save Keywords</button>
+      <button class="btn bt" onclick="saveKW()">&#10003; Save & Close</button>
     </div>
   </div>
 </div>
@@ -226,6 +256,7 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
   <div class="hr">
     <div class="lp"><span class="ld" id="ld"></span><span id="lu">Loading...</span></div>
     <button class="btn bg" onclick="expCSV()">&#8595; CSV</button>
+    <button class="btn bg" onclick="expPDF()">&#128438; PDF</button>
     <button class="btn bg" onclick="openEM()">&#10000; Edit Keywords</button>
     <button class="btn bg" onclick="refData()">&#8635; Refresh</button>
   </div>
@@ -358,7 +389,7 @@ function _gvizDone(cbName, data){
     const rows=parseGVIZ(data);
     console.log('Loaded',id,':',rows.length,'rows');
     if(!rows.length){tS[id]='empty';tD[id]=[];}
-    else{tD[id]=rows;tS[id]='ok';if(!aKW[id])aKW[id]=new Set(rows.map(r=>r.keyword));}
+    else{tD[id]=rows;tS[id]='ok';if(!aKW[id])aKW[id]=new Set(rows.map(r=>r.keyword));recordRefreshTime(id);}
   }catch(e){
     console.error('Parse error for',id,e.message);
     tS[id]='error';tD[id]=[];
@@ -458,6 +489,7 @@ function rAll(){
   const{keywords}=getAD();
   if(!keywords.length){const st=tS[aid];showND(st==='error'?'Could Not Load Data':'No Data Yet',st==='error'?'Make sure your Sheet is public (Share → Anyone with link → Viewer).':'Run fetcher_to_sheets.py for this tab, then click Refresh.');return;}
   buildG();rKPI();rMC();rRank();rDonut();rHM();rCmp();
+  detectBreakouts();
 }
 function buildG(){
   const cfg=TC.find(t=>t.id===aid);const pl=per>=60?'5 Years':per+'mo';
@@ -465,6 +497,7 @@ function buildG(){
     <div class="kr fi" id="kr"></div>
     <div class="card mcc fi" style="animation-delay:0.06s"><div class="ch"><span class="ct">Search Interest Over Time — Index 0–100</span><span style="font-size:10px;color:var(--teal);font-family:'DM Mono',monospace">${cfg?.name||''} · Last ${pl}</span></div><div class="cw"><canvas id="mc"></canvas></div></div>
     <div class="sb fi" style="animation-delay:0.1s">
+      <div class="card" id="alertsCard" style="display:none"><div class="ch"><span class="ct">&#128293; Breakout Alerts</span><span style="font-size:9px;color:#e8a020">vs prior period</span></div><div class="cb2" style="padding:12px"><div id="alertsList"></div></div></div>
       <div class="card"><div class="ch"><span class="ct">Ranking</span><span style="font-size:9px;color:var(--muted)">avg interest</span></div><div class="cb2" style="padding:12px"><div class="rl" id="rl"></div></div></div>
       <div class="card"><div class="ch"><span class="ct">Share of Voice</span><span style="font-size:9px;color:var(--muted)">% total</span></div><div class="cb2" style="padding:12px"><canvas id="donutChart"></canvas><div class="dl" id="dl"></div></div></div>
     </div>
@@ -681,6 +714,7 @@ function openEM(){
   document.getElementById('ebl').innerHTML=(cfg.brands||[]).map((kw,i)=>kRH(kw,C[i%C.length])).join('');
   document.getElementById('egl').innerHTML=(cfg.generics||[]).map(kw=>kRH(kw,'#e8a020')).join('');
   document.getElementById('editModal').classList.add('open');
+  setTimeout(loadNotes, 50);
 }
 function kRH(val,col){return`<div class="kwr"><span class="kwd" style="background:${col}"></span><input class="kwi" value="${val.replace(/"/g,'&quot;')}" placeholder="Keyword"><button class="kwr2" onclick="removeKW(this)">&#215;</button></div>`;}
 function addKwRow(type){const lId=type==='brand'?'ebl':'egl';const list=document.getElementById(lId);const max=type==='brand'?12:5;if(list.children.length>=max){toast('Max '+max+' keywords');return;}const col=type==='brand'?C[list.children.length%C.length]:'#e8a020';const d=document.createElement('div');d.innerHTML=kRH('',col);list.appendChild(d.firstElementChild);list.lastElementChild.querySelector('input').focus();}
@@ -710,6 +744,108 @@ function createTab(){
   ['nN','nF','nG','nS'].forEach(x=>document.getElementById(x).value='');
   document.getElementById('nbl').innerHTML='';
 }
+// ── BREAKOUT DETECTION ──
+function detectBreakouts(){
+  const{keywords,dates,kwData}=getAD();
+  const THRESHOLD=20; // points jump to qualify as breakout
+  const breakouts=[];
+  keywords.forEach(kw=>{
+    if(dates.length<8)return;
+    const vals=dates.map(d=>kwData[kw][d]||0);
+    const recent=vals.slice(-4).reduce((a,b)=>a+b,0)/4;
+    const prior=vals.slice(-8,-4).reduce((a,b)=>a+b,0)/4;
+    const jump=recent-prior;
+    if(jump>=THRESHOLD){
+      breakouts.push({kw,jump:Math.round(jump),recent:Math.round(recent),prior:Math.round(prior)});
+    }
+  });
+  breakouts.sort((a,b)=>b.jump-a.jump);
+
+  // Update alerts card
+  const card=document.getElementById('alertsCard');
+  const list=document.getElementById('alertsList');
+  if(!card||!list)return breakouts;
+
+  if(breakouts.length===0){
+    card.style.display='none';
+  } else {
+    card.style.display='block';
+    const allKW=getAllKW();
+    list.innerHTML=breakouts.map(b=>{
+      const col=C[allKW.indexOf(b.kw)%C.length];
+      return`<div class="alert-row">
+        <span style="font-size:16px">🔥</span>
+        <span class="abrand" style="color:${col}">${b.kw}</span>
+        <span class="aval">+${b.jump} pts</span>
+        <span style="font-size:10px;color:var(--muted)">${b.prior}→${b.recent}</span>
+      </div>`;
+    }).join('');
+  }
+
+  // Update tab fire badges
+  renderTabFireBadges(breakouts);
+  return breakouts;
+}
+
+function renderTabFireBadges(breakouts){
+  // Store breakouts per tab
+  if(!window._tabBreakouts)window._tabBreakouts={};
+  window._tabBreakouts[activeTabId]=breakouts.length;
+  // Re-render tabs to show fire badges
+  document.getElementById('tb').innerHTML=TC.map(t=>{
+    const st=tS[t.id]||'empty';
+    const stL=st==='ok'?'✓':st==='error'?'✗':st==='loading'?'…':'–';
+    const stC=st==='ok'?'ok':st==='error'?'err':'';
+    const fires=window._tabBreakouts?.[t.id]||0;
+    const fireBadge=fires>0?`<span class="tab-fire">🔥</span>`:'';
+    const refreshTime=window._tabRefreshTime?.[t.id]||'';
+    const refreshLabel=refreshTime?`<span class="tab-refresh">${refreshTime}</span>`:'';
+    return`<div class="ti ${t.id===activeTabId?'active':''}" onclick="swT('${t.id}')">
+      ${fireBadge}
+      <span class="ts ${stC}">${stL}</span>
+      <span class="tf">${t.flag}</span>
+      <span class="tn">${t.name}</span>
+      ${refreshLabel}
+    </div>`;
+  }).join('')+`<div class="tab-add" onclick="openATM()" title="Add new country tab">&#65291;</div>`;
+}
+
+// ── PDF EXPORT ──
+function expPDF(){
+  // Update document title to include tab name for PDF filename
+  const cfg=TC.find(t=>t.id===activeTabId);
+  const origTitle=document.title;
+  document.title='Brand Intelligence - '+cfg?.name+' - '+new Date().toISOString().slice(0,10);
+  window.print();
+  setTimeout(()=>document.title=origTitle, 1000);
+  toast('📄 Print dialog opened — save as PDF');
+}
+
+// ── NOTES ──
+function loadNotes(){
+  const cfg=getTC(activeTabId);if(!cfg)return;
+  const el=document.getElementById('tabNotes');if(!el)return;
+  const saved=localStorage.getItem('bi_notes_'+activeTabId)||'';
+  el.value=saved;
+  // Auto-save on input
+  el.oninput=function(){
+    clearTimeout(el._saveTimer);
+    el._saveTimer=setTimeout(()=>{
+      localStorage.setItem('bi_notes_'+activeTabId, el.value);
+      const indicator=document.getElementById('notesSaved');
+      if(indicator){indicator.classList.add('show');setTimeout(()=>indicator.classList.remove('show'),1500);}
+    },600);
+  };
+}
+
+// ── PER-TAB REFRESH TIME ──
+function recordRefreshTime(tabId){
+  if(!window._tabRefreshTime)window._tabRefreshTime={};
+  const now=new Date();
+  const label=now.toLocaleTimeString('default',{hour:'2-digit',minute:'2-digit'});
+  window._tabRefreshTime[tabId]=label;
+}
+
 let tT=null;
 function toast(msg){const ex=document.querySelector('.toast');if(ex)ex.remove();const el=document.createElement('div');el.className='toast';el.textContent=msg;document.body.appendChild(el);if(tT)clearTimeout(tT);tT=setTimeout(()=>{el.classList.add('hide');setTimeout(()=>el.remove(),300);},3500);}
 document.getElementById('editModal').addEventListener('click',e=>{if(e.target.id==='editModal')closeEM();});
