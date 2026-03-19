@@ -156,6 +156,7 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
   <svg width="130" height="24" viewBox="0 0 171 32" fill="none" xmlns="http://www.w3.org/2000/svg"><mask id="ml" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="171" height="32"><path d="M170.473 0H0V32H170.473V0Z" fill="white"/></mask><g mask="url(#ml)"><path d="M50.7815 17.0816L37.7157 4.10472V27.8951H45.3924V22.5419L50.7815 27.8951L56.1705 22.5419V27.8951H63.847V4.10472L50.7815 17.0825V17.0816ZM67.6847 27.8942H85.5267V21.3833H75.3606V19.2544H84.3898V12.7435H75.3606V10.6146H85.5267V4.10376H67.6847V27.8942ZM127.684 27.8942H145.526V21.3833H135.36V19.2544H144.389V12.7435H135.36V10.6146H145.526V4.10376H127.684V27.8942ZM116.17 27.8942H123.846V4.10376H116.17V27.8942ZM166.296 20.6425L170.474 27.8942H162.797L159.421 22.0333H157.041V27.8942H149.364V4.10376H161.497C166.455 4.10376 170.474 8.11772 170.474 13.0685C170.474 16.2556 168.806 19.0527 166.296 20.6425ZM162.27 13.0685C162.27 11.6232 161.097 10.4512 159.65 10.4512H157.04V12.8391C157.034 12.9146 157.029 12.9911 157.029 13.0685C157.029 13.146 157.034 13.2225 157.04 13.298V15.6859H159.65C161.097 15.6859 162.27 14.5139 162.27 13.0685ZM113.187 15.9994C113.187 22.5686 107.855 27.8942 101.277 27.8942H89.3661V4.10472H101.277C107.855 4.10472 113.187 9.43024 113.187 15.9994ZM104.972 15.9994C104.972 13.0255 102.895 10.6156 100.334 10.6156H97.0409V21.3842H100.334C102.896 21.3842 104.972 18.9733 104.972 16.0004V15.9994Z" fill="white"/><path d="M0.00012207 9.66064V22.3373L11.1572 15.9985L0.00012207 9.66064Z" fill="#D80B1A"/><path d="M32.7422 16.0005L21.0137 22.6634L4.58044 32V23.1796L17.2174 16.0005L4.58044 8.82042V0L21.0137 9.33661L32.7422 16.0005Z" fill="white"/></g></svg>
   <div class="lbw"><div class="lb" id="lb"></div></div>
   <div class="lt" id="lt">LOADING DATA...</div>
+  <div id="ldebug" style="font-size:10px;color:#4e5a70;font-family:monospace;margin-top:8px;max-width:400px;text-align:center"></div>
 </div>
 
 <div class="mo" id="editModal">
@@ -292,18 +293,32 @@ function sCSV(l){const r=[];let c='',q=false;for(let i=0;i<l.length;i++){const c
 async function fetchT(id){
   const cfg=getTC(id);if(!cfg)return;
   tS[id]='loading';rTS();
-  try{const rsp=await fetch(csvURL(cfg.st));if(!rsp.ok)throw new Error('HTTP '+rsp.status);
+  const dbg=document.getElementById('ldebug');
+  if(dbg)dbg.textContent='Fetching: '+cfg.st+'...';
+  try{const rsp=await fetch(csvURL(cfg.st));if(!rsp.ok)throw new Error('HTTP '+rsp.status+' for '+cfg.st);
     const rows=parseCSV(await rsp.text());
     if(!rows.length){tS[id]='empty';tD[id]=[];}
     else{tD[id]=rows;tS[id]='ok';if(!aKW[id])aKW[id]=new Set(rows.map(r=>r.keyword));}
-  }catch(e){console.warn('fail',id,e);tS[id]='error';tD[id]=[];}
+  }catch(e){console.error('fetchT failed for '+id+':',e.message);tS[id]='error';tD[id]=[];}
   rTS();
 }
 async function loadAll(){
   setL(5,'Connecting to Google Sheets...');
   const n=TC.length;
-  await Promise.all(TC.map(async(cfg,i)=>{await fetchT(cfg.id);setL(Math.round(((i+1)/n)*85)+10,'Loading '+cfg.flag+' '+cfg.name+'...');}));
-  setL(100,'Ready!');setTimeout(hideL,400);rAll();updLU();
+  try {
+    await Promise.all(TC.map(async(cfg,i)=>{
+      await fetchT(cfg.id);
+      setL(Math.round(((i+1)/n)*85)+10,'Loading '+cfg.flag+' '+cfg.name+'...');
+    }));
+    setL(100,'Ready!');
+    setTimeout(hideL,400);
+    rAll();
+    updLU();
+  } catch(err) {
+    document.getElementById('lt').textContent = 'ERROR: ' + err.message;
+    document.getElementById('lt').style.color = '#ff6b6b';
+    console.error('loadAll failed:', err);
+  }
 }
 function setL(p,t){document.getElementById('lb').style.width=p+'%';document.getElementById('lt').textContent=t;}
 function hideL(){const e=document.getElementById('ls');e.style.transition='opacity 0.4s';e.style.opacity='0';setTimeout(()=>e.style.display='none',400);}
