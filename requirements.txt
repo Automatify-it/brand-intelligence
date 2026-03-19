@@ -1,0 +1,5 @@
+pytrends==4.9.2
+pandas>=2.0.0
+gspread>=6.0.0
+google-auth>=2.20.0
+requests>=2.31.0
