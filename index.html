@@ -443,8 +443,7 @@ function rCmp(){
 function onCC(){per=parseInt(document.getElementById('ps').value);rKPI();rMC();rRank();rDonut();rHM();rCmp();}
 async function refData(){toast('Refreshing...');tD={};aKW={};await loadAll();toast('Refreshed!');}
 function updLU(){const rows=tD[aid]||[];const dot=document.getElementById('ld');const lbl=document.getElementById('lu');if(dot)dot.classList.toggle('red',!rows.length);if(lbl)lbl.textContent=rows[0]?.fetchedat?'Updated '+rows[0].fetchedat:rows.length?'Live':'No data';}
-function expCSV(){const{keywords,dates,kwData}=getAD();const cfg=TC.find(t=>t.id===aid);const rows=[['Month',...keywords]];dates.forEach(d=>rows.push([d,...keywords.map(kw=>kwData[kw][d]||0)]));const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([rows.map(r=>r.join(',')).join('
-')],{type:'text/csv'}));a.download=`trends_${cfg?.id||aid}_${new Date().toISOString().slice(0,10)}.csv`;a.click();toast('CSV exported!');}
+function expCSV(){const{keywords,dates,kwData}=getAD();const cfg=TC.find(t=>t.id===aid);const rows=[['Month',...keywords]];dates.forEach(d=>rows.push([d,...keywords.map(kw=>kwData[kw][d]||0)]));const csvStr=rows.map(r=>r.join(',')).join(String.fromCharCode(10));const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csvStr],{type:'text/csv'}));a.download='trends_'+(cfg?.id||aid)+'_'+new Date().toISOString().slice(0,10)+'.csv';a.click();toast('CSV exported!');}
 function openEM(){
   const cfg=getTC(aid);if(!cfg)return;
   document.getElementById('etl').textContent=cfg.flag+' '+cfg.name;
