@@ -31,7 +31,7 @@ header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify
 .bgr{background:#1a3a1a;color:#50c878;border:1px solid rgba(80,200,120,0.3);}.bgr:hover{background:#1f4a1f;transform:translateY(-1px);}
 .tabs-bar{position:sticky;top:62px;z-index:99;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:stretch;overflow-x:auto;scrollbar-width:none;}
 .tabs-bar::-webkit-scrollbar{display:none;}
-.ti{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 18px;min-height:52px;min-width:100px;cursor:pointer;border-bottom:3px solid transparent;transition:all 0.18s;position:relative;white-space:nowrap;user-select:none;gap:2px;}
+.ti{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 18px;min-height:58px;min-width:100px;cursor:pointer;border-bottom:3px solid transparent;transition:all 0.18s;position:relative;white-space:nowrap;user-select:none;gap:2px;}
 .ti:hover{background:rgba(255,255,255,0.03);}
 .ti.active{border-bottom-color:var(--accent);background:rgba(204,20,24,0.05);}
 .tf{font-size:17px;line-height:1;}
@@ -294,6 +294,7 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
 </main>
 
 <script>
+
 const SID = "1CkCZeWpfzaFAhVDxqqK7qqrWj28ZXP3IhqKkX6Udefg";
 const C = ['#cc1418','#3aacac','#e8a020','#7b8cde','#e05c8a','#50c878','#f0a060','#a0c8f0','#ff8c42','#c9e265','#9b5de5','#00bbf9'];
 const DT = [
@@ -307,14 +308,15 @@ const DT = [
   {id:'Romania',flag:'🇷🇴',name:'Romania',st:'Romania',brands:["eMAG","Dedeman","Kaufland","Lidl","BCR","BRD","Dacia","Vodafone Romania","Orange Romania","Banca Transilvania","Altex","Flanco"],generics:["cumpărături online România","banking online România","streaming România","mașini electrice România","livrare mâncare"]},
   {id:'Italy',flag:'🇮🇹',name:'Italy',st:'Italy',brands:["Ferrari","Gucci","Eni","Enel","UniCredit","Fiat","Prada","Telecom Italia","Intesa Sanpaolo","Luxottica","Pirelli","Leonardo"],generics:["acquisti online Italia","banca digitale Italia","streaming Italia","auto elettrica Italia","fintech Italia"]},
 ];
+
 let TC=loadTC(),aid=TC[0]?.id||'CA-Ontario',per=12,tD={},tS={},aKW={},cM=null,cD=null,sT='brand';
 Chart.defaults.color='#4e5a70';Chart.defaults.font.family='DM Sans';
+
 function loadTC(){try{const s=localStorage.getItem('bi_v4');if(s){const p=JSON.parse(s);if(Array.isArray(p)&&p.length)return p;}}catch(e){}return JSON.parse(JSON.stringify(DT));}
 function saveTC(){localStorage.setItem('bi_v4',JSON.stringify(TC));}
 function getTC(id){return TC.find(t=>t.id===id);}
-function csvURL(tab){
-  return `https://docs.google.com/spreadsheets/d/${SID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tab)}`;
-}
+
+function csvURL(tab){return 'https://docs.google.com/spreadsheets/d/'+SID+'/gviz/tq?tqx=out:csv&sheet='+encodeURIComponent(tab);}
 function parseCSV(txt){
   const L=txt.trim().split('\n');if(L.length<2)return[];
   const H=L[0].split(',').map(h=>h.replace(/^"|"$/g,'').trim().toLowerCase());
@@ -323,154 +325,69 @@ function parseCSV(txt){
   return R;
 }
 function sCSV(l){const r=[];let c='',q=false;for(let i=0;i<l.length;i++){const ch=l[i];if(ch==='"')q=!q;else if(ch===','&&!q){r.push(c);c='';}else c+=ch;}r.push(c);return r;}
+
 async function fetchT(id){
   const cfg=getTC(id);if(!cfg)return;
   tS[id]='loading';rTS();
   return new Promise((resolve)=>{
-    // Each tab gets its own unique response handler name
     const ts=Date.now();
     const cbName='gvizCb_'+ts+'_'+id.replace(/[^a-z0-9]/gi,'_');
-
-    // Set up google.visualization intercept BEFORE script loads
     if(!window.google)window.google={};
     if(!window.google.visualization)window.google.visualization={};
     if(!window.google.visualization.Query)window.google.visualization.Query={};
-
-    // Store pending callbacks - use the timestamp key so parallel loads don't collide
     if(!window._gvizPending)window._gvizPending={};
     window._gvizPending[cbName]={id,resolve};
-
-    // Named callback (gviz might call this directly)
-    window[cbName]=function(data){
-      _gvizDone(cbName, data);
-    };
-
-    // setResponse is called when no callback name matches
-    // We track which request is "current" via the script element
+    window[cbName]=function(data){_gvizDone(cbName,data);};
     window.google.visualization.Query.setResponse=function(data){
-      // Find the most recently added pending callback
       const keys=Object.keys(window._gvizPending||{});
-      if(keys.length>0){
-        const key=keys[keys.length-1];
-        _gvizDone(key, data);
-      }
+      if(keys.length>0)_gvizDone(keys[keys.length-1],data);
     };
-
     const s=document.createElement('script');
     s.id='sc_'+cbName;
-    s.onerror=()=>{
-      console.error('Script load failed for',id);
-      _gvizDone(cbName, null);
-    };
-    // Use the named callback in URL
-    const url='https://docs.google.com/spreadsheets/d/'+SID+
-      '/gviz/tq?tqx=out:json;responseHandler:'+cbName+'&sheet='+encodeURIComponent(cfg.st);
-    s.src=url;
+    s.onerror=()=>{tS[id]='error';tD[id]=[];delete window[cbName];s.remove();rTS();resolve();};
+    s.src='https://docs.google.com/spreadsheets/d/'+SID+'/gviz/tq?tqx=out:json;responseHandler:'+cbName+'&sheet='+encodeURIComponent(cfg.st);
     document.head.appendChild(s);
-
-    setTimeout(()=>{
-      if(window._gvizPending&&window._gvizPending[cbName]){
-        console.warn('Timeout for',id);
-        _gvizDone(cbName, null);
-      }
-    },15000);
+    setTimeout(()=>{if(window._gvizPending&&window._gvizPending[cbName]){tS[id]='error';tD[id]=[];delete window._gvizPending[cbName];delete window[cbName];s.remove();rTS();resolve();}},15000);
   });
 }
 
-function _gvizDone(cbName, data){
+function _gvizDone(cbName,data){
   if(!window._gvizPending||!window._gvizPending[cbName])return;
-  const {id, resolve}=window._gvizPending[cbName];
-  delete window._gvizPending[cbName];
-  delete window[cbName];
+  const{id,resolve}=window._gvizPending[cbName];
+  delete window._gvizPending[cbName];delete window[cbName];
   const sc=document.getElementById('sc_'+cbName);if(sc)sc.remove();
-
   if(!data){tS[id]='error';tD[id]=[];rTS();resolve();return;}
   try{
     const rows=parseGVIZ(data);
     console.log('Loaded',id,':',rows.length,'rows');
     if(!rows.length){tS[id]='empty';tD[id]=[];}
     else{tD[id]=rows;tS[id]='ok';if(!aKW[id])aKW[id]=new Set(rows.map(r=>r.keyword));recordRefreshTime(id);}
-  }catch(e){
-    console.error('Parse error for',id,e.message);
-    tS[id]='error';tD[id]=[];
-  }
+  }catch(e){console.error('Parse error',id,e.message);tS[id]='error';tD[id]=[];}
   rTS();resolve();
 }
 
-
 function parseGVIZ(data){
-  const table=data.table;
-  if(!table||!table.cols||!table.rows){
-    console.error('GVIZ: no table/cols/rows', JSON.stringify(data).slice(0,300));
-    return[];
-  }
-  
-  // Log headers to console so we can see what gviz returns
+  const table=data.table;if(!table||!table.cols||!table.rows)return[];
   const headers=table.cols.map(c=>(c.label||c.id||'').toLowerCase().trim());
-  console.log('GVIZ headers:', headers);
-  console.log('GVIZ first row:', JSON.stringify(table.rows[0]));
-  
-  const ci={
-    date:     headers.indexOf('date'),
-    keyword:  headers.indexOf('keyword'),
-    interest: headers.indexOf('interest'),
-    type:     headers.indexOf('type'),
-    country:  headers.indexOf('country'),
-    region:   headers.indexOf('region'),
-    monthyear:headers.indexOf('monthyear'),
-    year:     headers.indexOf('year'),
-    fetchedat:headers.indexOf('fetchedat'),
-  };
-  console.log('GVIZ col indices:', ci);
-  
+  const ci={date:headers.indexOf('date'),keyword:headers.indexOf('keyword'),interest:headers.indexOf('interest'),type:headers.indexOf('type'),country:headers.indexOf('country'),region:headers.indexOf('region'),monthyear:headers.indexOf('monthyear'),year:headers.indexOf('year'),fetchedat:headers.indexOf('fetchedat')};
   const rows=[];
   for(const row of table.rows){
     if(!row.c)continue;
-    const g=(i)=>{
-      if(i<0||!row.c[i])return'';
-      const cell=row.c[i];
-      // Handle gviz Date objects: {v: "Date(2024,2,1)"}
-      if(cell.v&&typeof cell.v==='string'&&cell.v.startsWith('Date(')){
-        const m=cell.v.match(/Date\((\d+),(\d+),(\d+)\)/);
-        if(m){
-          const y=m[1];const mo=String(parseInt(m[2])+1).padStart(2,'0');const d=String(m[3]).padStart(2,'0');
-          return y+'-'+mo+'-'+d;
-        }
-      }
-      return String(cell.v||cell.f||'').trim();
-    };
-    const o={
-      date:     g(ci.date),
-      keyword:  g(ci.keyword),
-      interest: g(ci.interest),
-      type:     g(ci.type)||'brand',
-      country:  g(ci.country),
-      region:   g(ci.region),
-      monthyear:g(ci.monthyear),
-      year:     g(ci.year),
-      fetchedat:g(ci.fetchedat),
-    };
+    const g=(i)=>{if(i<0||!row.c[i])return'';const cell=row.c[i];if(cell.v&&typeof cell.v==='string'&&cell.v.startsWith('Date(')){const m=cell.v.match(/Date\((\d+),(\d+),(\d+)\)/);if(m)return m[1]+'-'+String(parseInt(m[2])+1).padStart(2,'0')+'-'+String(m[3]).padStart(2,'0');}return String(cell.v||cell.f||'').trim();};
+    const o={date:g(ci.date),keyword:g(ci.keyword),interest:g(ci.interest),type:g(ci.type)||'brand',country:g(ci.country),region:g(ci.region),monthyear:g(ci.monthyear),year:g(ci.year),fetchedat:g(ci.fetchedat)};
     if(o.date&&o.keyword)rows.push(o);
   }
-  console.log('GVIZ parsed rows:', rows.length, rows[0]);
   return rows;
 }
+
 async function loadAll(){
   setL(5,'Connecting to Google Sheets...');
-  const n=TC.length;
-  // Load SEQUENTIALLY to avoid google.visualization.Query.setResponse collisions
-  for(let i=0;i<TC.length;i++){
-    const cfg=TC[i];
-    setL(Math.round((i/n)*85)+10,'Loading '+cfg.flag+' '+cfg.name+'...');
-    await fetchT(cfg.id);
-  }
-  setL(100,'Ready!');
-  setTimeout(hideL,400);
-  rAll();
-  updLU();
+  for(let i=0;i<TC.length;i++){const cfg=TC[i];setL(Math.round((i/TC.length)*85)+10,'Loading '+cfg.flag+' '+cfg.name+'...');await fetchT(cfg.id);}
+  setL(100,'Ready!');setTimeout(hideL,400);rAll();updLU();
 }
 function setL(p,t){document.getElementById('lb').style.width=p+'%';document.getElementById('lt').textContent=t;}
-function hideL(){const e=document.getElementById('ls');e.style.transition='opacity 0.4s';e.style.opacity='0';setTimeout(()=>e.style.display='none',400);}
+function hideL(){const el=document.getElementById('ls');el.style.transition='opacity 0.4s';el.style.opacity='0';setTimeout(()=>el.style.display='none',400);}
+
 function getAD(){
   const rows=tD[aid]||[];const aq=aKW[aid]||new Set();
   const tf=rows.filter(r=>sT==='all'?true:r.type===sT);
@@ -484,57 +401,73 @@ function getAD(){
 function getAllKW(){return[...new Set((tD[aid]||[]).map(r=>r.keyword))];}
 function getKWT(kw){const r=(tD[aid]||[]).find(x=>x.keyword===kw);return r?r.type:'brand';}
 function smooth(arr,w=3){return arr.map((v,i)=>{const s=arr.slice(Math.max(0,i-w+1),i+1);return Math.round(s.reduce((a,b)=>a+b,0)/s.length);});}
+
 function rAll(){
   rTabs();rQT();
   const{keywords}=getAD();
-  if(!keywords.length){const st=tS[aid];showND(st==='error'?'Could Not Load Data':'No Data Yet',st==='error'?'Make sure your Sheet is public (Share → Anyone with link → Viewer).':'Run fetcher_to_sheets.py for this tab, then click Refresh.');return;}
-  buildG();rKPI();rMC();rRank();rDonut();rHM();rCmp();
-  detectBreakouts();
+  if(!keywords.length){const st=tS[aid];showND(st==='error'?'Could Not Load Data':'No Data Yet',st==='error'?'Could not read Sheet. Check browser console (F12).':'Run fetcher_to_sheets.py for this tab, then click Refresh.');return;}
+  buildG();rKPI();rMC();rRank();rDonut();rHM();rCmp();detectBreakouts();
 }
+
 function buildG(){
   const cfg=TC.find(t=>t.id===aid);const pl=per>=60?'5 Years':per+'mo';
-  document.getElementById('mg').innerHTML=`
-    <div class="kr fi" id="kr"></div>
-    <div class="card mcc fi" style="animation-delay:0.06s"><div class="ch"><span class="ct">Search Interest Over Time — Index 0–100</span><span style="font-size:10px;color:var(--teal);font-family:'DM Mono',monospace">${cfg?.name||''} · Last ${pl}</span></div><div class="cw"><canvas id="mc"></canvas></div></div>
-    <div class="sb fi" style="animation-delay:0.1s">
-      <div class="card" id="alertsCard" style="display:none"><div class="ch"><span class="ct">&#128293; Breakout Alerts</span><span style="font-size:9px;color:#e8a020">vs prior period</span></div><div class="cb2" style="padding:12px"><div id="alertsList"></div></div></div>
-      <div class="card"><div class="ch"><span class="ct">Ranking</span><span style="font-size:9px;color:var(--muted)">avg interest</span></div><div class="cb2" style="padding:12px"><div class="rl" id="rl"></div></div></div>
-      <div class="card"><div class="ch"><span class="ct">Share of Voice</span><span style="font-size:9px;color:var(--muted)">% total</span></div><div class="cb2" style="padding:12px"><canvas id="donutChart"></canvas><div class="dl" id="dl"></div></div></div>
-    </div>
-    <div class="card hmc fi" style="animation-delay:0.14s"><div class="ch"><span class="ct">Monthly Heatmap</span><span style="font-size:9px;color:var(--muted)">darker = higher</span></div><div class="cb2"><div class="hmg" id="hmg"></div></div></div>
-    <div class="card cpc fi" style="animation-delay:0.18s"><div class="ch"><span class="ct">Period vs Prior</span><span style="font-size:9px;color:var(--muted)">estimated</span></div><div class="cb2" style="padding:0"><table class="cpt"><thead><tr><th>Keyword</th><th>Avg</th><th>Peak</th><th>Δ%</th><th>↗</th></tr></thead><tbody id="ctb"></tbody></table></div></div>`;
+  document.getElementById('mg').innerHTML=
+    '<div class="kr fi" id="kr"></div>'+
+    '<div class="card mcc fi" style="animation-delay:0.06s"><div class="ch"><span class="ct">Search Interest Over Time — Index 0–100</span><span style="font-size:10px;color:var(--teal);font-family:\'DM Mono\',monospace">'+(cfg?cfg.name:'')+' · Last '+pl+'</span></div><div class="cw"><canvas id="mc"></canvas></div></div>'+
+    '<div class="sb fi" style="animation-delay:0.1s">'+
+      '<div class="card" id="alertsCard" style="display:none"><div class="ch"><span class="ct">🔥 Breakout Alerts</span><span style="font-size:9px;color:#e8a020">vs prior 4 weeks</span></div><div class="cb2" style="padding:12px"><div id="alertsList"></div></div></div>'+
+      '<div class="card"><div class="ch"><span class="ct">Ranking</span><span style="font-size:9px;color:var(--muted)">avg interest</span></div><div class="cb2" style="padding:12px"><div class="rl" id="rl"></div></div></div>'+
+      '<div class="card"><div class="ch"><span class="ct">Share of Voice</span><span style="font-size:9px;color:var(--muted)">% total</span></div><div class="cb2" style="padding:12px"><canvas id="donutChart"></canvas><div class="dl" id="dl"></div></div></div>'+
+    '</div>'+
+    '<div class="card hmc fi" style="animation-delay:0.14s"><div class="ch"><span class="ct">Monthly Heatmap</span><span style="font-size:9px;color:var(--muted)">hover for details</span></div><div class="cb2"><div class="hmg" id="hmg"></div></div></div>'+
+    '<div class="card cpc fi" style="animation-delay:0.18s"><div class="ch"><span class="ct">Period vs Prior</span><span id="cmpPeriodLabel" style="font-size:9px;color:var(--muted)"></span></div><div class="cb2" style="padding:0"><table class="cpt"><thead><tr id="cmpHead"><th>Keyword</th><th>Avg</th><th>Peak</th><th>Δ%</th><th>Trend</th></tr></thead><tbody id="ctb"></tbody></table></div></div>';
 }
-function showND(t,d){document.getElementById('mg').innerHTML=`<div class="nds"><div class="ndi">&#128205;</div><div class="ndt">${t}</div><div class="ndd">${d}</div></div>`;}
+function showND(t,d){document.getElementById('mg').innerHTML='<div class="nds"><div class="ndi">📭</div><div class="ndt">'+t+'</div><div class="ndd">'+d+'</div></div>';}
+
 function rTabs(){
   document.getElementById('tb').innerHTML=TC.map(t=>{
-    const st=tS[t.id]||'empty';const stL=st==='ok'?'✓':st==='error'?'✗':st==='loading'?'…':'–';
+    const st=tS[t.id]||'empty';
+    const stL=st==='ok'?'✓':st==='error'?'✗':st==='loading'?'…':'–';
     const stC=st==='ok'?'ok':st==='error'?'err':'';
-    return`<div class="ti ${t.id===aid?'active':''}" onclick="swT('${t.id}')"><span class="ts ${stC}">${stL}</span><span class="tf">${t.flag}</span><span class="tn">${t.name}</span></div>`;
-  }).join('')+`<div class="tab-add" onclick="openATM()" title="Add new country tab">&#65291;</div>`;
+    const fires=(window._tabBreakouts||{})[t.id]||0;
+    const fireBadge=fires>0?'<span class="tab-fire">🔥</span>':'';
+    const rt=(window._tabRefreshTime||{})[t.id]||'';
+    const rtLabel=rt?'<span class="tab-refresh">'+rt+'</span>':'';
+    return '<div class="ti '+(t.id===aid?'active':'')+'" onclick="swT(\''+t.id+'\')">'
+      +fireBadge
+      +'<span class="ts '+stC+'">'+stL+'</span>'
+      +'<span class="tf">'+t.flag+'</span>'
+      +'<span class="tn">'+t.name+'</span>'
+      +rtLabel
+      +'</div>';
+  }).join('')+'<div class="tab-add" onclick="openATM()" title="Add new country tab">＋</div>';
 }
 function rTS(){rTabs();}
 function swT(id){aid=id;sT='brand';rAll();const tabs=document.querySelectorAll('.ti');const idx=TC.findIndex(t=>t.id===id);if(tabs[idx])tabs[idx].scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});}
+
 function rQT(){
   const allKW=getAllKW();const aq=aKW[aid]||new Set();
   const vis=sT==='all'?allKW:allKW.filter(k=>getKWT(k)===sT);
   document.getElementById('qt').innerHTML=
-    `<div class="ttog ${sT==='brand'?'ab':''}" onclick="setST('brand')">&#127991; Brands</div>
-     <div class="ttog ${sT==='generic'?'ag':''}" onclick="setST('generic')">&#128200; Trends</div>
-     <div class="ttog ${sT==='all'?'aa':''}" onclick="setST('all')">All</div>`+
-    vis.map(kw=>{const col=C[allKW.indexOf(kw)%C.length];const s=kw.replace(/'/g,"\'");
-      return`<div class="qtag ${aq.has(kw)?'':'inactive'}" style="border-color:${col}22;color:${col};background:${col}10" onclick="togKW('${s}')"><span class="dot" style="background:${col}"></span>${kw}<span class="rm">×</span></div>`;
+    '<div class="ttog '+(sT==='brand'?'ab':'')+'" onclick="setST(\'brand\')">🏷 Brands</div>'+
+    '<div class="ttog '+(sT==='generic'?'ag':'')+'" onclick="setST(\'generic\')">📈 Trends</div>'+
+    '<div class="ttog '+(sT==='all'?'aa':'')+'" onclick="setST(\'all\')">All</div>'+
+    vis.map(kw=>{const col=C[allKW.indexOf(kw)%C.length];const s=kw.replace(/'/g,"\\'");
+      return '<div class="qtag '+(aq.has(kw)?'':'inactive')+'" style="border-color:'+col+'22;color:'+col+';background:'+col+'10" onclick="togKW(\''+s+'\')"><span class="dot" style="background:'+col+'"></span>'+kw+'<span class="rm">×</span></div>';
     }).join('');
 }
 function setST(t){sT=t;rQT();rMC();rRank();rDonut();rHM();rCmp();}
 function togKW(kw){const aq=aKW[aid];if(!aq)return;if(aq.has(kw)){if(aq.size>1)aq.delete(kw);}else aq.add(kw);rQT();rKPI();rMC();rRank();rDonut();rHM();rCmp();}
+
 function rKPI(){
   const{keywords,dates,kwData}=getAD();const allKW=getAllKW();
   const avgs=keywords.map(kw=>{const v=dates.map(d=>kwData[kw][d]||0);return{kw,avg:Math.round(v.reduce((a,b)=>a+b,0)/Math.max(v.length,1)),peak:Math.max(...v,0)};}).sort((a,b)=>b.avg-a.avg).slice(0,4);
   const el=document.getElementById('kr');if(!el)return;
   el.innerHTML=avgs.map((item,i)=>{const col=C[allKW.indexOf(item.kw)%C.length];const isUp=(item.kw.length*17+i*31)%3!==0;const pct=(item.kw.length*7+i*13)%28+3;
-    return`<div class="kpi" style="--kc:${col}"><div class="kl">${i===0?'&#129351; Leader':'Rank #'+(i+1)}</div><div class="kv">${item.avg}</div><div class="kb" style="color:${col}">${item.kw}</div><span class="kch ${isUp?'up':'dn'}">${isUp?'+':'-'}${pct}%</span></div>`;
+    return '<div class="kpi" style="--kc:'+col+'"><div class="kl">'+(i===0?'🥇 Leader':'Rank #'+(i+1))+'</div><div class="kv">'+item.avg+'</div><div class="kb" style="color:'+col+'">'+item.kw+'</div><span class="kch '+(isUp?'up':'dn')+'">'+(isUp?'+':'-')+pct+'%</span></div>';
   }).join('');
 }
+
 function rMC(){
   const{keywords,dates,kwData}=getAD();const allKW=getAllKW();
   const doS=document.getElementById('ss')?.value==='1';const type=document.getElementById('cts')?.value||'line';
@@ -544,179 +477,189 @@ function rMC(){
   if(cM)cM.destroy();
   const cv=document.getElementById('mc');if(!cv)return;
   cM=new Chart(cv.getContext('2d'),{type:type==='bar'?'bar':'line',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
-    plugins:{legend:{display:false},tooltip:{backgroundColor:'#181e2c',borderColor:'rgba(255,255,255,0.08)',borderWidth:1,titleColor:'#7a8899',bodyColor:'#eef0f4',padding:12,callbacks:{label:item=>` ${item.dataset.label}: ${item.parsed.y}`}}},
+    plugins:{legend:{display:false},tooltip:{backgroundColor:'#181e2c',borderColor:'rgba(255,255,255,0.08)',borderWidth:1,titleColor:'#7a8899',bodyColor:'#eef0f4',padding:12,callbacks:{label:item=>' '+item.dataset.label+': '+item.parsed.y}}},
     scales:{x:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#4e5a70',font:{size:10,family:'DM Mono'},maxTicksLimit:per>=60?24:13}},y:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#4e5a70',font:{size:10,family:'DM Mono'}},min:0,max:100}}}});
 }
+
 function rRank(){
   const{keywords,dates,kwData}=getAD();const allKW=getAllKW();
   const el=document.getElementById('rl');if(!el)return;
   const sorted=keywords.map(kw=>{const v=dates.map(d=>kwData[kw][d]||0);return{kw,avg:Math.round(v.reduce((a,b)=>a+b,0)/Math.max(v.length,1)),type:getKWT(kw)};}).sort((a,b)=>b.avg-a.avg);
   const mx=sorted[0]?.avg||1;
-  el.innerHTML=sorted.map((item,i)=>{const col=C[allKW.indexOf(item.kw)%C.length];const pct=Math.round(item.avg/mx*100);const s=item.kw.replace(/'/g,"\'");
-    return`<div class="ri" onclick="togKW('${s}')"><span class="rn">${i+1}</span><span class="rd" style="background:${col}"></span><span class="rname" title="${item.kw}">${item.kw}</span><div class="rbw"><div class="rb" style="width:${pct}%;background:${col}"></div></div><span class="rs">${item.avg}</span><span class="rt">${item.type}</span></div>`;
+  el.innerHTML=sorted.map((item,i)=>{const col=C[allKW.indexOf(item.kw)%C.length];const pct=Math.round(item.avg/mx*100);const s=item.kw.replace(/'/g,"\\'");
+    return '<div class="ri" onclick="togKW(\''+s+'\')"><span class="rn">'+(i+1)+'</span><span class="rd" style="background:'+col+'"></span><span class="rname" title="'+item.kw+'">'+item.kw+'</span><div class="rbw"><div class="rb" style="width:'+pct+'%;background:'+col+'"></div></div><span class="rs">'+item.avg+'</span><span class="rt">'+item.type+'</span></div>';
   }).join('');
 }
+
 function rDonut(){
   const{keywords,dates,kwData}=getAD();const allKW=getAllKW();
   const tot=keywords.map(kw=>dates.reduce((s,d)=>s+(kwData[kw][d]||0),0));const sum=tot.reduce((a,b)=>a+b,1);
   const cols=keywords.map(kw=>C[allKW.indexOf(kw)%C.length]);
   if(cD)cD.destroy();const cv=document.getElementById('donutChart');if(!cv)return;
-  cD=new Chart(cv.getContext('2d'),{type:'doughnut',data:{labels:keywords,datasets:[{data:tot,backgroundColor:cols,borderColor:'#111620',borderWidth:3}]},options:{responsive:true,maintainAspectRatio:true,cutout:'68%',plugins:{legend:{display:false},tooltip:{callbacks:{label:item=>` ${item.label}: ${Math.round(item.parsed/sum*100)}%`}}}}});
-  const leg=document.getElementById('dl');if(leg)leg.innerHTML=keywords.map((kw,i)=>{const col=cols[i];const pct=Math.round(tot[i]/sum*100);return`<div class="dli"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${col}"></span>${kw} <strong style="color:${col}">${pct}%</strong></div>`;}).join('');
+  cD=new Chart(cv.getContext('2d'),{type:'doughnut',data:{labels:keywords,datasets:[{data:tot,backgroundColor:cols,borderColor:'#111620',borderWidth:3}]},options:{responsive:true,maintainAspectRatio:true,cutout:'68%',plugins:{legend:{display:false},tooltip:{callbacks:{label:item=>' '+item.label+': '+Math.round(item.parsed/sum*100)+'%'}}}}});
+  const leg=document.getElementById('dl');if(leg)leg.innerHTML=keywords.map((kw,i)=>{const col=cols[i];const pct=Math.round(tot[i]/sum*100);return '<div class="dli"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+col+'"></span>'+kw+' <strong style="color:'+col+'">'+pct+'%</strong></div>';}).join('');
 }
+
 function rHM(){
   const{keywords,dates,kwData}=getAD();const allKW=getAllKW();
   const el=document.getElementById('hmg');if(!el)return;
-  el.style.gridTemplateColumns=`72px repeat(${dates.length},1fr)`;
-  const mL=dates.map(d=>{
-    const dt=new Date(d+'T00:00:00');
-    return per>=60?dt.toLocaleString('default',{month:'short',year:'2-digit'}):dt.toLocaleString('default',{month:'short'});
-  });
-  let html=`<div></div>`+mL.map(m=>`<div class="hmmo">${m}</div>`).join('');
+  el.style.gridTemplateColumns='72px repeat('+dates.length+',1fr)';
+  const mL=dates.map(d=>{const dt=new Date(d+'T00:00:00');return per>=60?dt.toLocaleString('default',{month:'short',year:'2-digit'}):dt.toLocaleString('default',{month:'short'});});
+  let html='<div></div>'+mL.map(m=>'<div class="hmmo">'+m+'</div>').join('');
   keywords.forEach(kw=>{
-    const col=C[allKW.indexOf(kw)%C.length];
-    const vals=dates.map(d=>kwData[kw][d]||0);
-    const kwType=getKWT(kw);
-    html+=`<div class="hml"><span style="color:${col}">${kw}</span></div>`;
+    const col=C[allKW.indexOf(kw)%C.length];const vals=dates.map(d=>kwData[kw][d]||0);const kwType=getKWT(kw);
+    html+='<div class="hml"><span style="color:'+col+'">'+kw+'</span></div>';
     vals.forEach((v,mi)=>{
       const a=(0.08+(v/100)*0.88).toFixed(2);
       const dt=new Date(dates[mi]+'T00:00:00');
       const monthFull=dt.toLocaleString('default',{month:'long',year:'numeric'});
-      // encode tooltip data in data attributes
-      html+=`<div class="hmc2" style="background:${col};opacity:${a}"
-        data-kw="${kw.replace(/"/g,'&quot;')}"
-        data-val="${v}"
-        data-date="${monthFull}"
-        data-type="${kwType}"
-        data-col="${col}"
-        onmouseenter="showHMTip(event,this)"
-        onmouseleave="hideHMTip()"></div>`;
+      html+='<div class="hmc2" style="background:'+col+';opacity:'+a+'" data-kw="'+kw.replace(/"/g,'&quot;')+'" data-val="'+v+'" data-date="'+monthFull+'" data-type="'+kwType+'" data-col="'+col+'" onmouseenter="showHMTip(event,this)" onmouseleave="hideHMTip()"></div>';
     });
   });
   el.innerHTML=html;
 }
 
-function showHMTip(e, el){
+function showHMTip(e,el){
   let tip=document.getElementById('hmTip');
-  if(!tip){
-    tip=document.createElement('div');
-    tip.id='hmTip';
-    tip.style.cssText='position:fixed;z-index:999;background:#181e2c;border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:10px 14px;font-size:12px;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,0.5);min-width:160px;transition:opacity 0.1s;';
-    document.body.appendChild(tip);
-  }
-  const kw=el.dataset.kw;
-  const val=el.dataset.val;
-  const date=el.dataset.date;
-  const type=el.dataset.type;
-  const col=el.dataset.col;
+  if(!tip){tip=document.createElement('div');tip.id='hmTip';tip.style.cssText='position:fixed;z-index:9999;background:#181e2c;border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:10px 14px;font-size:12px;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,0.5);min-width:160px;';document.body.appendChild(tip);}
+  const kw=el.dataset.kw,val=el.dataset.val,date=el.dataset.date,type=el.dataset.type,col=el.dataset.col;
   const bar=Math.round(parseInt(val)/100*80);
-  tip.innerHTML=`
-    <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px">
-      <span style="width:9px;height:9px;border-radius:50%;background:${col};display:inline-block;flex-shrink:0"></span>
-      <strong style="color:#eef0f4;font-size:13px">${kw}</strong>
-      <span style="font-size:9px;color:#4e5a70;background:#111620;padding:1px 6px;border-radius:4px;font-family:'DM Mono',monospace">${type}</span>
-    </div>
-    <div style="color:#7a8899;font-size:11px;margin-bottom:8px">${date}</div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <div style="flex:1;height:5px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden">
-        <div style="width:${bar}%;height:100%;background:${col};border-radius:3px"></div>
-      </div>
-      <span style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#eef0f4;line-height:1">${val}</span>
-      <span style="font-size:10px;color:#4e5a70">/100</span>
-    </div>`;
-  // Position near cursor
-  const x=Math.min(e.clientX+12, window.innerWidth-180);
-  const y=Math.min(e.clientY-20, window.innerHeight-120);
-  tip.style.left=x+'px';
-  tip.style.top=y+'px';
-  tip.style.opacity='1';
+  tip.innerHTML='<div style="display:flex;align-items:center;gap:7px;margin-bottom:8px"><span style="width:9px;height:9px;border-radius:50%;background:'+col+';display:inline-block"></span><strong style="color:#eef0f4;font-size:13px">'+kw+'</strong><span style="font-size:9px;color:#4e5a70;background:#111620;padding:1px 6px;border-radius:4px;font-family:\'DM Mono\',monospace">'+type+'</span></div>'
+    +'<div style="color:#7a8899;font-size:11px;margin-bottom:8px">'+date+'</div>'
+    +'<div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:5px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden"><div style="width:'+bar+'%;height:100%;background:'+col+';border-radius:3px"></div></div><span style="font-family:\'Bebas Neue\',sans-serif;font-size:22px;color:#eef0f4;line-height:1">'+val+'</span><span style="font-size:10px;color:#4e5a70">/100</span></div>';
+  tip.style.left=Math.min(e.clientX+12,window.innerWidth-180)+'px';
+  tip.style.top=Math.min(e.clientY-20,window.innerHeight-120)+'px';
   tip.style.display='block';
 }
+function hideHMTip(){const t=document.getElementById('hmTip');if(t)t.style.display='none';}
 
-function hideHMTip(){
-  const tip=document.getElementById('hmTip');
-  if(tip)tip.style.display='none';
-}
 function rCmp(){
   const{keywords,dates,kwData}=getAD();const allKW=getAllKW();
   const el=document.getElementById('ctb');if(!el)return;
-
-  // Update table header to reflect actual comparison type
-  const thead=document.querySelector('.cpt thead tr');
-  if(thead){
-    const compLabel = per<=6 ? 'WoW' : per<=13 ? 'MoM' : 'H1vsH2';
-    thead.innerHTML=`<th>Keyword</th><th>Avg</th><th>Peak</th><th>${compLabel} Δ%</th><th>Trend</th>`;
-  }
-
+  const compLabel=per<=6?'WoW':per<=13?'MoM':'H1vsH2';
+  const headEl=document.getElementById('cmpHead');
+  if(headEl)headEl.innerHTML='<th>Keyword</th><th>Avg</th><th>Peak</th><th>'+compLabel+' Δ%</th><th>Trend</th>';
+  const lbl=document.getElementById('cmpPeriodLabel');
+  if(lbl)lbl.textContent=per<=6?'last 4wk vs prior 4wk':per<=13?'recent vs prior half':'first half vs second half';
   el.innerHTML=keywords.map(kw=>{
     const vals=dates.map(d=>kwData[kw][d]||0);
     const avg=Math.round(vals.reduce((a,b)=>a+b,0)/Math.max(vals.length,1));
     const peak=Math.max(...vals,0);
     const col=C[allKW.indexOf(kw)%C.length];
-
-    // ── Real period comparison ──
-    // Split into two equal halves and compare them
-    const half=Math.max(1,Math.floor(vals.length/2));
-    const firstHalf=vals.slice(0,half);
-    const secondHalf=vals.slice(-half);
-    const firstAvg=firstHalf.reduce((a,b)=>a+b,0)/half;
-    const secondAvg=secondHalf.reduce((a,b)=>a+b,0)/half;
-
-    // Real WoW: last 4 weeks vs previous 4 weeks
     const w=Math.min(4,Math.floor(vals.length/2));
-    const recentW=vals.slice(-w).reduce((a,b)=>a+b,0)/w;
-    const priorW=vals.slice(-w*2,-w).reduce((a,b)=>a+b,0)/Math.max(w,1);
-
-    // Use WoW for short periods, H1vsH2 for longer
-    let compCurrent, compPrior;
-    if(per<=13){
-      compCurrent=recentW; compPrior=priorW;
-    } else {
-      compCurrent=secondAvg; compPrior=firstAvg;
-    }
-
-    const diff=compCurrent-compPrior;
-    const pct=compPrior>0?Math.round(diff/compPrior*100):0;
-    const isUp=diff>0.5;
-    const isFlat=Math.abs(diff)<=0.5;
-
-    // Trend: momentum of last quarter vs first quarter of data
+    const recentW=vals.slice(-w).reduce((a,b)=>a+b,0)/Math.max(w,1);
+    const priorW=vals.slice(-(w*2),-w).reduce((a,b)=>a+b,0)/Math.max(w,1);
+    const half=Math.max(1,Math.floor(vals.length/2));
+    const h1avg=vals.slice(0,half).reduce((a,b)=>a+b,0)/half;
+    const h2avg=vals.slice(-half).reduce((a,b)=>a+b,0)/half;
+    const compC=per<=13?recentW:h2avg;const compP=per<=13?priorW:h1avg;
+    const diff=compC-compP;const pct=compP>0?Math.round(diff/compP*100):0;
+    const isUp=diff>0.5;const isFlat=Math.abs(diff)<=0.5;
     const q=Math.max(1,Math.floor(vals.length/4));
-    const q1avg=vals.slice(0,q).reduce((a,b)=>a+b,0)/q;
-    const q4avg=vals.slice(-q).reduce((a,b)=>a+b,0)/q;
-    const momentum=q4avg-q1avg;
-    const arrow=momentum>3?'↑':momentum<-3?'↓':'→';
-    const arC=momentum>3?'#3aacac':momentum<-3?'#ff6b6b':'#7a8899';
-
-    const badgeBg=isFlat?'rgba(122,136,153,0.15)':isUp?'rgba(58,172,172,0.14)':'rgba(204,20,24,0.12)';
-    const badgeCol=isFlat?'#7a8899':isUp?'#3aacac':'#ff6b6b';
+    const q1=vals.slice(0,q).reduce((a,b)=>a+b,0)/q;
+    const q4=vals.slice(-q).reduce((a,b)=>a+b,0)/q;
+    const mom=q4-q1;
+    const arrow=mom>3?'↑':mom<-3?'↓':'→';
+    const arC=mom>3?'#3aacac':mom<-3?'#ff6b6b':'#7a8899';
+    const bg=isFlat?'rgba(122,136,153,0.15)':isUp?'rgba(58,172,172,0.14)':'rgba(204,20,24,0.12)';
+    const fc=isFlat?'#7a8899':isUp?'#3aacac':'#ff6b6b';
     const pctStr=isFlat?'flat':(isUp?'+':'')+pct+'%';
-
-    return`<tr>
-      <td><span style="display:flex;align-items:center;gap:5px">
-        <span style="width:7px;height:7px;border-radius:50%;background:${col};display:inline-block;flex-shrink:0"></span>
-        <span style="font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90px" title="${kw}">${kw}</span>
-      </span></td>
-      <td style="font-family:'DM Mono',monospace;font-size:11px">${avg}</td>
-      <td style="font-family:'DM Mono',monospace;font-size:11px">${peak}</td>
-      <td><span class="cpb" style="background:${badgeBg};color:${badgeCol}">${pctStr}</span></td>
-      <td style="font-size:15px;color:${arC}">${arrow}</td>
-    </tr>`;
+    return '<tr><td><span style="display:flex;align-items:center;gap:5px"><span style="width:7px;height:7px;border-radius:50%;background:'+col+';display:inline-block;flex-shrink:0"></span><span style="font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90px" title="'+kw+'">'+kw+'</span></span></td>'
+      +'<td style="font-family:\'DM Mono\',monospace;font-size:11px">'+avg+'</td>'
+      +'<td style="font-family:\'DM Mono\',monospace;font-size:11px">'+peak+'</td>'
+      +'<td><span class="cpb" style="background:'+bg+';color:'+fc+'">'+pctStr+'</span></td>'
+      +'<td style="font-size:15px;color:'+arC+'">'+arrow+'</td></tr>';
   }).join('');
 }
+
 function onCC(){per=parseInt(document.getElementById('ps').value);rKPI();rMC();rRank();rDonut();rHM();rCmp();}
 async function refData(){toast('Refreshing...');tD={};aKW={};await loadAll();toast('Refreshed!');}
 function updLU(){const rows=tD[aid]||[];const dot=document.getElementById('ld');const lbl=document.getElementById('lu');if(dot)dot.classList.toggle('red',!rows.length);if(lbl)lbl.textContent=rows[0]?.fetchedat?'Updated '+rows[0].fetchedat:rows.length?'Live':'No data';}
-function expCSV(){const{keywords,dates,kwData}=getAD();const cfg=TC.find(t=>t.id===aid);const rows=[['Month',...keywords]];dates.forEach(d=>rows.push([d,...keywords.map(kw=>kwData[kw][d]||0)]));const csvStr=rows.map(r=>r.join(',')).join(String.fromCharCode(10));const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csvStr],{type:'text/csv'}));a.download='trends_'+(cfg?.id||aid)+'_'+new Date().toISOString().slice(0,10)+'.csv';a.click();toast('CSV exported!');}
+function expCSV(){const{keywords,dates,kwData}=getAD();const cfg=TC.find(t=>t.id===aid);const rows=[['Month',...keywords]];dates.forEach(d=>rows.push([d,...keywords.map(kw=>kwData[kw][d]||0)]));const csv=rows.map(r=>r.join(',')).join(String.fromCharCode(10));const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='trends_'+(cfg?cfg.id:aid)+'_'+new Date().toISOString().slice(0,10)+'.csv';a.click();toast('CSV exported!');}
+
+// ── BREAKOUT ALERTS ──
+function detectBreakouts(){
+  const{keywords,dates,kwData}=getAD();
+  const THRESH=20;const breakouts=[];
+  keywords.forEach(kw=>{
+    if(dates.length<8)return;
+    const vals=dates.map(d=>kwData[kw][d]||0);
+    const recent=vals.slice(-4).reduce((a,b)=>a+b,0)/4;
+    const prior=vals.slice(-8,-4).reduce((a,b)=>a+b,0)/4;
+    const jump=recent-prior;
+    if(jump>=THRESH)breakouts.push({kw,jump:Math.round(jump),recent:Math.round(recent),prior:Math.round(prior)});
+  });
+  breakouts.sort((a,b)=>b.jump-a.jump);
+  const card=document.getElementById('alertsCard');
+  const list=document.getElementById('alertsList');
+  if(card&&list){
+    if(!breakouts.length){card.style.display='none';}
+    else{
+      card.style.display='block';
+      const allKW=getAllKW();
+      list.innerHTML=breakouts.map(b=>{const col=C[allKW.indexOf(b.kw)%C.length];return '<div class="alert-row"><span style="font-size:16px">🔥</span><span class="abrand" style="color:'+col+'">'+b.kw+'</span><span class="aval">+'+b.jump+' pts</span><span style="font-size:10px;color:var(--muted)">'+b.prior+'→'+b.recent+'</span></div>';}).join('');
+    }
+  }
+  if(!window._tabBreakouts)window._tabBreakouts={};
+  window._tabBreakouts[aid]=breakouts.length;
+  return breakouts;
+}
+
+// ── PDF EXPORT ──
+function expPDF(){
+  const cfg=TC.find(t=>t.id===aid);
+  const date=new Date().toISOString().slice(0,10);
+  const title='Brand Intelligence — '+(cfg?cfg.name:'')+' — '+date;
+  const{keywords,dates,kwData}=getAD();const allKW=getAllKW();
+  const avgs=keywords.map(kw=>{const v=dates.map(d=>kwData[kw][d]||0);return{kw,avg:Math.round(v.reduce((a,b)=>a+b,0)/Math.max(v.length,1)),peak:Math.max(...v,0)};}).sort((a,b)=>b.avg-a.avg);
+  const kpiHTML=avgs.slice(0,4).map((item,i)=>{const col=C[allKW.indexOf(item.kw)%C.length];return '<div class="kpi" style="border-top:3px solid '+col+'"><div class="kl">'+(i===0?'🥇 Leader':'Rank #'+(i+1))+'</div><div class="kv" style="color:'+col+'">'+item.avg+'</div><div class="kb" style="color:'+col+'">'+item.kw+'</div></div>';}).join('');
+  const rankHTML=avgs.map(item=>{const col=C[allKW.indexOf(item.kw)%C.length];const half=Math.max(1,Math.floor(dates.length/2));const h1=dates.slice(0,half).map(d=>kwData[item.kw][d]||0).reduce((a,b)=>a+b,0)/half;const h2=dates.slice(-half).map(d=>kwData[item.kw][d]||0).reduce((a,b)=>a+b,0)/half;const diff=h2-h1;const pct=h1>0?Math.round(diff/h1*100):0;const isUp=diff>0;return '<tr><td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+col+';margin-right:6px"></span>'+item.kw+'</td><td>'+item.avg+'</td><td>'+item.peak+'</td><td><span style="padding:2px 6px;border-radius:4px;font-size:10px;background:'+(isUp?'rgba(58,172,172,0.15)':'rgba(204,20,24,0.12)')+';color:'+(isUp?'#3aacac':'#ff6b6b')+'">'+(isUp?'+':'')+pct+'%</span></td></tr>';}).join('');
+  const bkts=detectBreakouts();
+  const alertsHTML=bkts.length>0?bkts.map(b=>'<tr><td>🔥 '+b.kw+'</td><td style="color:#e8a020">+'+b.jump+' pts</td><td>'+b.prior+'→'+b.recent+'</td></tr>').join(''):'<tr><td colspan="3" style="color:#888">No breakouts this period</td></tr>';
+  const notes=localStorage.getItem('bi_notes_'+aid)||'';
+  const notesBr=notes.split(String.fromCharCode(10)).join('<br>');
+  const notesSection=notes?'<div style="background:#111620;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:16px;margin-bottom:16px"><h3 style="font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#7a8899;margin-bottom:8px">Notes</h3><p style="font-size:12px;line-height:1.7;color:#c8d0dc">'+notesBr+'</p></div>':'';
+  const html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+title+'</title>'
+    +'<style>body{margin:0;padding:24px;background:#0b0e15;color:#eef0f4;font-family:Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+    +'h1{font-size:20px;margin-bottom:4px}h2{font-size:12px;color:#3aacac;font-weight:normal;margin-bottom:20px}'
+    +'.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}'
+    +'.kpi{background:#111620;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:14px}'
+    +'.kl{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:#4e5a70;margin-bottom:6px}'
+    +'.kv{font-size:30px;font-weight:bold;line-height:1}.kb{font-size:11px;margin-top:4px}'
+    +'.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}'
+    +'.card{background:#111620;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:16px}'
+    +'.card h3{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#7a8899;margin-bottom:10px}'
+    +'table{width:100%;border-collapse:collapse;font-size:12px}'
+    +'th{font-size:9px;text-transform:uppercase;color:#4e5a70;text-align:left;padding:5px 7px;border-bottom:1px solid rgba(255,255,255,0.07)}'
+    +'td{padding:5px 7px;border-bottom:1px solid rgba(255,255,255,0.03)}'
+    +'.footer{margin-top:16px;font-size:10px;color:#4e5a70;text-align:center}'
+    +'</style></head><body>'
+    +'<h1>Brand Intelligence — '+(cfg?cfg.name:'')+'</h1>'
+    +'<h2>SEO Maxim\'s Dashboard &nbsp;·&nbsp; '+date+' &nbsp;·&nbsp; Last '+(per>=60?'5 Years':per+' Months')+'</h2>'
+    +'<div class="kpi-grid">'+kpiHTML+'</div>'
+    +'<div class="grid">'
+      +'<div class="card"><h3>Brand Ranking & Comparison</h3><table><thead><tr><th>Brand</th><th>Avg</th><th>Peak</th><th>H1→H2</th></tr></thead><tbody>'+rankHTML+'</tbody></table></div>'
+      +'<div class="card"><h3>🔥 Breakout Alerts</h3><table><thead><tr><th>Brand</th><th>Jump</th><th>Score</th></tr></thead><tbody>'+alertsHTML+'</tbody></table></div>'
+    +'</div>'
+    +notesSection
+    +'<div class="footer">Generated by Brand Intelligence &nbsp;·&nbsp; '+new Date().toLocaleString()+'</div>'
+    +'<script>window.onload=function(){window.print()}<\/script>'
+    +'</body></html>';
+  const w=window.open('','_blank');
+  if(w){w.document.write(html);w.document.close();toast('PDF ready — save from print dialog');}
+  else toast('Allow pop-ups to use PDF export');
+}
+
+// ── EDIT KEYWORDS ──
 function openEM(){
   const cfg=getTC(aid);if(!cfg)return;
   document.getElementById('etl').innerHTML=cfg.flag+' '+cfg.name;
   document.getElementById('ebl').innerHTML=(cfg.brands||[]).map((kw,i)=>kRH(kw,C[i%C.length])).join('');
   document.getElementById('egl').innerHTML=(cfg.generics||[]).map(kw=>kRH(kw,'#e8a020')).join('');
   document.getElementById('editModal').classList.add('open');
-  setTimeout(loadNotes, 50);
+  setTimeout(loadNotes,50);
 }
-function kRH(val,col){return`<div class="kwr"><span class="kwd" style="background:${col}"></span><input class="kwi" value="${val.replace(/"/g,'&quot;')}" placeholder="Keyword"><button class="kwr2" onclick="removeKW(this)">&#215;</button></div>`;}
+function kRH(val,col){return '<div class="kwr"><span class="kwd" style="background:'+col+'"></span><input class="kwi" value="'+val.replace(/"/g,'&quot;')+'" placeholder="Keyword"><button class="kwr2" onclick="removeKW(this)">×</button></div>';}
 function addKwRow(type){const lId=type==='brand'?'ebl':'egl';const list=document.getElementById(lId);const max=type==='brand'?12:5;if(list.children.length>=max){toast('Max '+max+' keywords');return;}const col=type==='brand'?C[list.children.length%C.length]:'#e8a020';const d=document.createElement('div');d.innerHTML=kRH('',col);list.appendChild(d.firstElementChild);list.lastElementChild.querySelector('input').focus();}
 function removeKW(btn){btn.closest('.kwr').remove();}
 function closeEM(){document.getElementById('editModal').classList.remove('open');}
@@ -725,132 +668,55 @@ function saveKW(){
   cfg.brands=[...document.querySelectorAll('#ebl .kwi')].map(i=>i.value.trim()).filter(Boolean);
   cfg.generics=[...document.querySelectorAll('#egl .kwi')].map(i=>i.value.trim()).filter(Boolean);
   saveTC();closeEM();aKW[aid]=null;rAll();
-  toast('Keywords saved! Run fetcher_to_sheets.py for new keywords to load data.');
-}
-function openATM(){document.getElementById('addTabModal').classList.add('open');}
-function closeATM(){document.getElementById('addTabModal').classList.remove('open');}
-function addNTR(){const list=document.getElementById('nbl');if(list.children.length>=12){toast('Max 12 brands');return;}const d=document.createElement('div');d.innerHTML=`<div class="kwr"><span class="kwd" style="background:${C[list.children.length%C.length]}"></span><input class="kwi" placeholder="Brand name"><button class="kwr2" onclick="removeKW(this)">&#215;</button></div>`;list.appendChild(d.firstElementChild);}
-function createTab(){
-  const name=document.getElementById('nN').value.trim();const flag=document.getElementById('nF').value.trim()||'🌍';
-  const geo=document.getElementById('nG').value.trim().toUpperCase();const sheet=document.getElementById('nS').value.trim()||name;
-  if(!name){toast('Enter a country name');return;}
-  const brands=[...document.querySelectorAll('#nbl .kwi')].map(i=>i.value.trim()).filter(Boolean);
-  if(!brands.length){toast('Add at least one brand');return;}
-  const id='custom-'+name.toLowerCase().replace(/\s+/g,'-')+'-'+Date.now();
-  TC.push({id,flag,name,st:sheet,brands,generics:[],isCustom:true,geo});
-  saveTC();tS[id]='empty';tD[id]=[];aKW[id]=new Set(brands);
-  closeATM();swT(id);
-  toast(name+' tab created! Add to fetcher_to_sheets.py for real data.');
-  ['nN','nF','nG','nS'].forEach(x=>document.getElementById(x).value='');
-  document.getElementById('nbl').innerHTML='';
-}
-// ── BREAKOUT DETECTION ──
-function detectBreakouts(){
-  const{keywords,dates,kwData}=getAD();
-  const THRESHOLD=20; // points jump to qualify as breakout
-  const breakouts=[];
-  keywords.forEach(kw=>{
-    if(dates.length<8)return;
-    const vals=dates.map(d=>kwData[kw][d]||0);
-    const recent=vals.slice(-4).reduce((a,b)=>a+b,0)/4;
-    const prior=vals.slice(-8,-4).reduce((a,b)=>a+b,0)/4;
-    const jump=recent-prior;
-    if(jump>=THRESHOLD){
-      breakouts.push({kw,jump:Math.round(jump),recent:Math.round(recent),prior:Math.round(prior)});
-    }
-  });
-  breakouts.sort((a,b)=>b.jump-a.jump);
-
-  // Update alerts card
-  const card=document.getElementById('alertsCard');
-  const list=document.getElementById('alertsList');
-  if(!card||!list)return breakouts;
-
-  if(breakouts.length===0){
-    card.style.display='none';
-  } else {
-    card.style.display='block';
-    const allKW=getAllKW();
-    list.innerHTML=breakouts.map(b=>{
-      const col=C[allKW.indexOf(b.kw)%C.length];
-      return`<div class="alert-row">
-        <span style="font-size:16px">🔥</span>
-        <span class="abrand" style="color:${col}">${b.kw}</span>
-        <span class="aval">+${b.jump} pts</span>
-        <span style="font-size:10px;color:var(--muted)">${b.prior}→${b.recent}</span>
-      </div>`;
-    }).join('');
-  }
-
-  // Update tab fire badges
-  renderTabFireBadges(breakouts);
-  return breakouts;
-}
-
-function renderTabFireBadges(breakouts){
-  // Store breakouts per tab
-  if(!window._tabBreakouts)window._tabBreakouts={};
-  window._tabBreakouts[activeTabId]=breakouts.length;
-  // Re-render tabs to show fire badges
-  document.getElementById('tb').innerHTML=TC.map(t=>{
-    const st=tS[t.id]||'empty';
-    const stL=st==='ok'?'✓':st==='error'?'✗':st==='loading'?'…':'–';
-    const stC=st==='ok'?'ok':st==='error'?'err':'';
-    const fires=window._tabBreakouts?.[t.id]||0;
-    const fireBadge=fires>0?`<span class="tab-fire">🔥</span>`:'';
-    const refreshTime=window._tabRefreshTime?.[t.id]||'';
-    const refreshLabel=refreshTime?`<span class="tab-refresh">${refreshTime}</span>`:'';
-    return`<div class="ti ${t.id===activeTabId?'active':''}" onclick="swT('${t.id}')">
-      ${fireBadge}
-      <span class="ts ${stC}">${stL}</span>
-      <span class="tf">${t.flag}</span>
-      <span class="tn">${t.name}</span>
-      ${refreshLabel}
-    </div>`;
-  }).join('')+`<div class="tab-add" onclick="openATM()" title="Add new country tab">&#65291;</div>`;
-}
-
-// ── PDF EXPORT ──
-function expPDF(){
-  // Update document title to include tab name for PDF filename
-  const cfg=TC.find(t=>t.id===activeTabId);
-  const origTitle=document.title;
-  document.title='Brand Intelligence - '+cfg?.name+' - '+new Date().toISOString().slice(0,10);
-  window.print();
-  setTimeout(()=>document.title=origTitle, 1000);
-  toast('📄 Print dialog opened — save as PDF');
+  toast('Keywords saved! Run fetcher_to_sheets.py to get data for new keywords.');
 }
 
 // ── NOTES ──
 function loadNotes(){
-  const cfg=getTC(activeTabId);if(!cfg)return;
   const el=document.getElementById('tabNotes');if(!el)return;
-  const saved=localStorage.getItem('bi_notes_'+activeTabId)||'';
-  el.value=saved;
-  // Auto-save on input
+  el.value=localStorage.getItem('bi_notes_'+aid)||'';
   el.oninput=function(){
-    clearTimeout(el._saveTimer);
-    el._saveTimer=setTimeout(()=>{
-      localStorage.setItem('bi_notes_'+activeTabId, el.value);
-      const indicator=document.getElementById('notesSaved');
-      if(indicator){indicator.classList.add('show');setTimeout(()=>indicator.classList.remove('show'),1500);}
+    clearTimeout(el._st);
+    el._st=setTimeout(()=>{
+      localStorage.setItem('bi_notes_'+aid,el.value);
+      const ind=document.getElementById('notesSaved');
+      if(ind){ind.classList.add('show');setTimeout(()=>ind.classList.remove('show'),1500);}
     },600);
   };
 }
 
-// ── PER-TAB REFRESH TIME ──
-function recordRefreshTime(tabId){
+// ── ADD TAB ──
+function openATM(){document.getElementById('addTabModal').classList.add('open');}
+function closeATM(){document.getElementById('addTabModal').classList.remove('open');}
+function addNTR(){const list=document.getElementById('nbl');if(list.children.length>=12){toast('Max 12 brands');return;}const d=document.createElement('div');d.innerHTML='<div class="kwr"><span class="kwd" style="background:'+C[list.children.length%C.length]+'"></span><input class="kwi" placeholder="Brand name"><button class="kwr2" onclick="removeKW(this)">×</button></div>';list.appendChild(d.firstElementChild);}
+function createTab(){
+  const name=document.getElementById('nN').value.trim();const flag=document.getElementById('nF').value.trim()||'🌍';
+  const sheet=document.getElementById('nS').value.trim()||name;
+  if(!name){toast('Enter a country name');return;}
+  const brands=[...document.querySelectorAll('#nbl .kwi')].map(i=>i.value.trim()).filter(Boolean);
+  if(!brands.length){toast('Add at least one brand');return;}
+  const id='custom-'+name.toLowerCase().replace(/\s+/g,'-')+'-'+Date.now();
+  TC.push({id,flag,name,st:sheet,brands,generics:[],isCustom:true});
+  saveTC();tS[id]='empty';tD[id]=[];aKW[id]=new Set(brands);
+  closeATM();swT(id);toast(name+' tab created!');
+  ['nN','nF','nG','nS'].forEach(x=>{const el=document.getElementById(x);if(el)el.value='';});
+  document.getElementById('nbl').innerHTML='';
+}
+
+// ── REFRESH TIME ──
+function recordRefreshTime(id){
   if(!window._tabRefreshTime)window._tabRefreshTime={};
-  const now=new Date();
-  const label=now.toLocaleTimeString('default',{hour:'2-digit',minute:'2-digit'});
-  window._tabRefreshTime[tabId]=label;
+  window._tabRefreshTime[id]=new Date().toLocaleTimeString('default',{hour:'2-digit',minute:'2-digit'});
 }
 
 let tT=null;
 function toast(msg){const ex=document.querySelector('.toast');if(ex)ex.remove();const el=document.createElement('div');el.className='toast';el.textContent=msg;document.body.appendChild(el);if(tT)clearTimeout(tT);tT=setTimeout(()=>{el.classList.add('hide');setTimeout(()=>el.remove(),300);},3500);}
+
 document.getElementById('editModal').addEventListener('click',e=>{if(e.target.id==='editModal')closeEM();});
 document.getElementById('addTabModal').addEventListener('click',e=>{if(e.target.id==='addTabModal')closeATM();});
+
 loadAll();
+
 </script>
 </body>
 </html>
