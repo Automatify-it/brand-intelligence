@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Brand Intelligence - SEO Maxim's Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"><\/script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
 :root{--bg:#0b0e15;--surface:#111620;--surface2:#181e2c;--border:rgba(255,255,255,0.07);--accent:#cc1418;--teal:#3aacac;--text:#eef0f4;--muted:#4e5a70;--muted2:#7a8899;--danger:#ff4d6d;--navy:#0d1520;}
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -425,7 +425,8 @@ function rCmp(){
 function onCC(){per=parseInt(document.getElementById('ps').value);rKPI();rMC();rRank();rDonut();rHM();rCmp();}
 async function refData(){toast('Refreshing...');tD={};aKW={};await loadAll();toast('Refreshed!');}
 function updLU(){const rows=tD[aid]||[];const dot=document.getElementById('ld');const lbl=document.getElementById('lu');if(dot)dot.classList.toggle('red',!rows.length);if(lbl)lbl.textContent=rows[0]?.fetchedat?'Updated '+rows[0].fetchedat:rows.length?'Live':'No data';}
-function expCSV(){const{keywords,dates,kwData}=getAD();const cfg=TC.find(t=>t.id===aid);const rows=[['Month',...keywords]];dates.forEach(d=>rows.push([d,...keywords.map(kw=>kwData[kw][d]||0)]));const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([rows.map(r=>r.join(',')).join('\n')],{type:'text/csv'}));a.download=`trends_${cfg?.id||aid}_${new Date().toISOString().slice(0,10)}.csv`;a.click();toast('CSV exported!');}
+function expCSV(){const{keywords,dates,kwData}=getAD();const cfg=TC.find(t=>t.id===aid);const rows=[['Month',...keywords]];dates.forEach(d=>rows.push([d,...keywords.map(kw=>kwData[kw][d]||0)]));const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([rows.map(r=>r.join(',')).join('
+')],{type:'text/csv'}));a.download=`trends_${cfg?.id||aid}_${new Date().toISOString().slice(0,10)}.csv`;a.click();toast('CSV exported!');}
 function openEM(){
   const cfg=getTC(aid);if(!cfg)return;
   document.getElementById('etl').textContent=cfg.flag+' '+cfg.name;
@@ -466,6 +467,6 @@ function toast(msg){const ex=document.querySelector('.toast');if(ex)ex.remove();
 document.getElementById('editModal').addEventListener('click',e=>{if(e.target.id==='editModal')closeEM();});
 document.getElementById('addTabModal').addEventListener('click',e=>{if(e.target.id==='addTabModal')closeATM();});
 loadAll();
-<\/script>
+</script>
 </body>
 </html>
