@@ -187,7 +187,7 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
     <p class="msub">Tab appears instantly with sample data. Add to fetcher_to_sheets.py and run for real data, or upgrade SerpAPI for full automation.</p>
     <div class="mg">
       <div class="cg" style="display:flex;flex-direction:column;gap:5px"><div class="cl">Country Name</div><input class="kwi" id="nN" placeholder="e.g. Portugal" style="width:100%"></div>
-      <div class="cg" style="display:flex;flex-direction:column;gap:5px"><div class="cl">Flag Emoji</div><input class="kwi" id="nF" placeholder="e.g. &#127477;&#127481;" style="width:100%"></div>
+      <div class="cg" style="display:flex;flex-direction:column;gap:5px"><div class="cl">Flag Emoji</div><input class="kwi" id="nF" placeholder="e.g. 🇵🇹" style="width:100%"></div>
       <div class="cg" style="display:flex;flex-direction:column;gap:5px"><div class="cl">Geo Code</div><input class="kwi" id="nG" placeholder="e.g. PT" style="width:100%"></div>
       <div class="cg" style="display:flex;flex-direction:column;gap:5px"><div class="cl">Sheet Tab Name</div><input class="kwi" id="nS" placeholder="e.g. Portugal" style="width:100%"></div>
     </div>
@@ -266,15 +266,15 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
 const SID = "1CkCZeWpfzaFAhVDxqqK7qqrWj28ZXP3IhqKkX6Udefg";
 const C = ['#cc1418','#3aacac','#e8a020','#7b8cde','#e05c8a','#50c878','#f0a060','#a0c8f0','#ff8c42','#c9e265','#9b5de5','#00bbf9'];
 const DT = [
-  {id:'CA-Ontario',flag:'&#127464;&#127462;',name:'Ontario',st:'CA-Ontario',brands:["TD Bank","RBC","Tim Hortons","Loblaw","Rogers","Bell","Shopify","Air Canada","CIBC","Scotiabank","Telus","Metro Inc"],generics:["online banking","grocery delivery","mobile plans","cloud computing","electric vehicles"]},
-  {id:'CA-All',flag:'&#127464;&#127462;',name:'Canada',st:'CA-All',brands:["Tim Hortons","Loblaw","Rogers","Bell","Shopify","Air Canada","Bombardier","Manulife","Lululemon","Couche-Tard","Power Corporation","BCE"],generics:["online shopping Canada","digital banking Canada","streaming Canada","EV Canada","fintech Canada"]},
-  {id:'Greece',flag:'&#127468;&#127479;',name:'Greece',st:'Greece',brands:["Alpha Bank","Sklavenitis","Cosmote","OPAP","Jumbo","Fourlis","Autohellas","Hellenic Petroleum","Piraeus Bank","Eurobank","Public Greece","Kotsovolos"],generics:["online banking Greece","streaming Greece","delivery food Greece","digital banking","electric vehicles Greece"]},
-  {id:'Mexico',flag:'&#127474;&#127485;',name:'Mexico',st:'Mexico',brands:["OXXO","Bimbo","BBVA Mexico","Cemex","América Móvil","Liverpool","Coppel","Soriana","Telcel","Elektra","Femsa","Mercado Libre Mexico"],generics:["compras online México","banca digital México","streaming México","delivery comida","fintech México"]},
-  {id:'Sweden',flag:'&#127480;&#127466;',name:'Sweden',st:'Sweden',brands:["IKEA","Spotify","H&M","Volvo","Ericsson","Klarna","SEB Bank","Skanska","Swedbank","ICA Gruppen","Hexagon","Atlas Copco"],generics:["näthandel Sverige","digital bank Sverige","streaming Sverige","elbil Sverige","fintech Sverige"]},
-  {id:'Denmark',flag:'&#127465;&#127472;',name:'Denmark',st:'Denmark',brands:["Maersk","Lego","Novo Nordisk","Carlsberg","Vestas","Coloplast","Danske Bank","TDC","Ørsted","DSV","Pandora","Rockwool"],generics:["online shopping Danmark","digital bank Danmark","streaming Danmark","elbil Danmark","bæredygtighed"]},
-  {id:'Spain',flag:'&#127466;&#127480;',name:'Spain',st:'Spain',brands:["Zara","BBVA","Santander","Telefónica","Iberdrola","Mango","CaixaBank","El Corte Inglés","Inditex","Repsol","Amadeus","Ferrovial"],generics:["compras online España","banca digital España","streaming España","coche eléctrico","fintech España"]},
-  {id:'Romania',flag:'&#127479;&#127476;',name:'Romania',st:'Romania',brands:["eMAG","Dedeman","Kaufland","Lidl","BCR","BRD","Dacia","Vodafone Romania","Orange Romania","Banca Transilvania","Altex","Flanco"],generics:["cumpărături online România","banking online România","streaming România","mașini electrice România","livrare mâncare"]},
-  {id:'Italy',flag:'&#127470;&#127481;',name:'Italy',st:'Italy',brands:["Ferrari","Gucci","Eni","Enel","UniCredit","Fiat","Prada","Telecom Italia","Intesa Sanpaolo","Luxottica","Pirelli","Leonardo"],generics:["acquisti online Italia","banca digitale Italia","streaming Italia","auto elettrica Italia","fintech Italia"]},
+  {id:'CA-Ontario',flag:'🇨🇦',name:'Ontario',st:'CA-Ontario',brands:["TD Bank","RBC","Tim Hortons","Loblaw","Rogers","Bell","Shopify","Air Canada","CIBC","Scotiabank","Telus","Metro Inc"],generics:["online banking","grocery delivery","mobile plans","cloud computing","electric vehicles"]},
+  {id:'CA-All',flag:'🇨🇦',name:'Canada',st:'CA-All',brands:["Tim Hortons","Loblaw","Rogers","Bell","Shopify","Air Canada","Bombardier","Manulife","Lululemon","Couche-Tard","Power Corporation","BCE"],generics:["online shopping Canada","digital banking Canada","streaming Canada","EV Canada","fintech Canada"]},
+  {id:'Greece',flag:'🇬🇷',name:'Greece',st:'Greece',brands:["Alpha Bank","Sklavenitis","Cosmote","OPAP","Jumbo","Fourlis","Autohellas","Hellenic Petroleum","Piraeus Bank","Eurobank","Public Greece","Kotsovolos"],generics:["online banking Greece","streaming Greece","delivery food Greece","digital banking","electric vehicles Greece"]},
+  {id:'Mexico',flag:'🇲🇽',name:'Mexico',st:'Mexico',brands:["OXXO","Bimbo","BBVA Mexico","Cemex","América Móvil","Liverpool","Coppel","Soriana","Telcel","Elektra","Femsa","Mercado Libre Mexico"],generics:["compras online México","banca digital México","streaming México","delivery comida","fintech México"]},
+  {id:'Sweden',flag:'🇸🇪',name:'Sweden',st:'Sweden',brands:["IKEA","Spotify","H&M","Volvo","Ericsson","Klarna","SEB Bank","Skanska","Swedbank","ICA Gruppen","Hexagon","Atlas Copco"],generics:["näthandel Sverige","digital bank Sverige","streaming Sverige","elbil Sverige","fintech Sverige"]},
+  {id:'Denmark',flag:'🇩🇰',name:'Denmark',st:'Denmark',brands:["Maersk","Lego","Novo Nordisk","Carlsberg","Vestas","Coloplast","Danske Bank","TDC","Ørsted","DSV","Pandora","Rockwool"],generics:["online shopping Danmark","digital bank Danmark","streaming Danmark","elbil Danmark","bæredygtighed"]},
+  {id:'Spain',flag:'🇪🇸',name:'Spain',st:'Spain',brands:["Zara","BBVA","Santander","Telefónica","Iberdrola","Mango","CaixaBank","El Corte Inglés","Inditex","Repsol","Amadeus","Ferrovial"],generics:["compras online España","banca digital España","streaming España","coche eléctrico","fintech España"]},
+  {id:'Romania',flag:'🇷🇴',name:'Romania',st:'Romania',brands:["eMAG","Dedeman","Kaufland","Lidl","BCR","BRD","Dacia","Vodafone Romania","Orange Romania","Banca Transilvania","Altex","Flanco"],generics:["cumpărături online România","banking online România","streaming România","mașini electrice România","livrare mâncare"]},
+  {id:'Italy',flag:'🇮🇹',name:'Italy',st:'Italy',brands:["Ferrari","Gucci","Eni","Enel","UniCredit","Fiat","Prada","Telecom Italia","Intesa Sanpaolo","Luxottica","Pirelli","Leonardo"],generics:["acquisti online Italia","banca digitale Italia","streaming Italia","auto elettrica Italia","fintech Italia"]},
 ];
 let TC=loadTC(),aid=TC[0]?.id||'CA-Ontario',per=12,tD={},tS={},aKW={},cM=null,cD=null,sT='brand';
 Chart.defaults.color='#4e5a70';Chart.defaults.font.family='DM Sans';
@@ -677,7 +677,7 @@ function updLU(){const rows=tD[aid]||[];const dot=document.getElementById('ld');
 function expCSV(){const{keywords,dates,kwData}=getAD();const cfg=TC.find(t=>t.id===aid);const rows=[['Month',...keywords]];dates.forEach(d=>rows.push([d,...keywords.map(kw=>kwData[kw][d]||0)]));const csvStr=rows.map(r=>r.join(',')).join(String.fromCharCode(10));const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csvStr],{type:'text/csv'}));a.download='trends_'+(cfg?.id||aid)+'_'+new Date().toISOString().slice(0,10)+'.csv';a.click();toast('CSV exported!');}
 function openEM(){
   const cfg=getTC(aid);if(!cfg)return;
-  document.getElementById('etl').textContent=cfg.flag+' '+cfg.name;
+  document.getElementById('etl').innerHTML=cfg.flag+' '+cfg.name;
   document.getElementById('ebl').innerHTML=(cfg.brands||[]).map((kw,i)=>kRH(kw,C[i%C.length])).join('');
   document.getElementById('egl').innerHTML=(cfg.generics||[]).map(kw=>kRH(kw,'#e8a020')).join('');
   document.getElementById('editModal').classList.add('open');
@@ -697,7 +697,7 @@ function openATM(){document.getElementById('addTabModal').classList.add('open');
 function closeATM(){document.getElementById('addTabModal').classList.remove('open');}
 function addNTR(){const list=document.getElementById('nbl');if(list.children.length>=12){toast('Max 12 brands');return;}const d=document.createElement('div');d.innerHTML=`<div class="kwr"><span class="kwd" style="background:${C[list.children.length%C.length]}"></span><input class="kwi" placeholder="Brand name"><button class="kwr2" onclick="removeKW(this)">&#215;</button></div>`;list.appendChild(d.firstElementChild);}
 function createTab(){
-  const name=document.getElementById('nN').value.trim();const flag=document.getElementById('nF').value.trim()||'&#127758;';
+  const name=document.getElementById('nN').value.trim();const flag=document.getElementById('nF').value.trim()||'🌍';
   const geo=document.getElementById('nG').value.trim().toUpperCase();const sheet=document.getElementById('nS').value.trim()||name;
   if(!name){toast('Enter a country name');return;}
   const brands=[...document.querySelectorAll('#nbl .kwi')].map(i=>i.value.trim()).filter(Boolean);
