@@ -667,8 +667,27 @@ function saveKW(){
   const cfg=getTC(aid);if(!cfg)return;
   cfg.brands=[...document.querySelectorAll('#ebl .kwi')].map(i=>i.value.trim()).filter(Boolean);
   cfg.generics=[...document.querySelectorAll('#egl .kwi')].map(i=>i.value.trim()).filter(Boolean);
-  saveTC();closeEM();aKW[aid]=null;rAll();
-  toast('Keywords saved! Run fetcher_to_sheets.py to get data for new keywords.');
+  saveTC();
+  closeEM();
+  // Rebuild active keywords from existing sheet data — don't wipe it
+  // Only activate keywords that exist in the sheet data already
+  const existingKWs=new Set((tD[aid]||[]).map(r=>r.keyword));
+  const allNewKWs=[...cfg.brands,...cfg.generics];
+  const activeOnes=allNewKWs.filter(kw=>existingKWs.has(kw));
+  // If some new keywords exist in sheet, use those; otherwise keep all existing
+  if(activeOnes.length>0){
+    aKW[aid]=new Set(activeOnes);
+  } else if(existingKWs.size>0){
+    // Keywords were edited but none match sheet yet — keep showing existing data
+    aKW[aid]=existingKWs;
+  }
+  rAll();
+  const newKWs=allNewKWs.filter(kw=>!existingKWs.has(kw));
+  if(newKWs.length>0){
+    toast('Saved! New keywords ('+newKWs.join(', ')+') need fetcher_to_sheets.py to load data.');
+  } else {
+    toast('Keywords saved!');
+  }
 }
 
 // ── NOTES ──
