@@ -282,8 +282,7 @@ function loadTC(){try{const s=localStorage.getItem('bi_v4');if(s){const p=JSON.p
 function saveTC(){localStorage.setItem('bi_v4',JSON.stringify(TC));}
 function getTC(id){return TC.find(t=>t.id===id);}
 function csvURL(tab){
-  // Use export format with CORS-friendly URL
-  return `https://docs.google.com/spreadsheets/d/${SID}/export?format=csv&sheet=${encodeURIComponent(tab)}`;
+  return `https://docs.google.com/spreadsheets/d/${SID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tab)}`;
 }
 function parseCSV(txt){
   const L=txt.trim().split('\n');if(L.length<2)return[];
@@ -296,14 +295,41 @@ function sCSV(l){const r=[];let c='',q=false;for(let i=0;i<l.length;i++){const c
 async function fetchT(id){
   const cfg=getTC(id);if(!cfg)return;
   tS[id]='loading';rTS();
-  const dbg=document.getElementById('ldebug');
-  if(dbg)dbg.textContent='Fetching: '+cfg.st+'...';
-  try{const rsp=await fetch(csvURL(cfg.st));if(!rsp.ok)throw new Error('HTTP '+rsp.status+' for '+cfg.st);
-    const rows=parseCSV(await rsp.text());
-    if(!rows.length){tS[id]='empty';tD[id]=[];}
-    else{tD[id]=rows;tS[id]='ok';if(!aKW[id])aKW[id]=new Set(rows.map(r=>r.keyword));}
-  }catch(e){console.error('fetchT failed for '+id+':',e.message);tS[id]='error';tD[id]=[];}
-  rTS();
+  return new Promise((resolve)=>{
+    const cbName='cb_'+id.replace(/[^a-z0-9]/gi,'_');
+    const url='https://docs.google.com/spreadsheets/d/'+SID+'/gviz/tq?tqx=out:json&callback='+cbName+'&sheet='+encodeURIComponent(cfg.st);
+    window[cbName]=function(data){
+      try{
+        const rows=parseGVIZ(data);
+        if(!rows.length){tS[id]='empty';tD[id]=[];}
+        else{tD[id]=rows;tS[id]='ok';if(!aKW[id])aKW[id]=new Set(rows.map(r=>r.keyword));}
+      }catch(e){console.error('parse error',id,e.message);tS[id]='error';tD[id]=[];}
+      delete window[cbName];
+      const sc=document.getElementById('sc_'+cbName);if(sc)sc.remove();
+      rTS();resolve();
+    };
+    const s=document.createElement('script');
+    s.id='sc_'+cbName;
+    s.onerror=()=>{tS[id]='error';tD[id]=[];delete window[cbName];s.remove();rTS();resolve();};
+    s.src=url;
+    document.head.appendChild(s);
+    setTimeout(()=>{if(window[cbName]){tS[id]='error';tD[id]=[];delete window[cbName];s.remove();rTS();resolve();}},12000);
+  });
+}
+
+function parseGVIZ(data){
+  const table=data.table;
+  if(!table||!table.cols||!table.rows)return[];
+  const headers=table.cols.map(c=>(c.label||c.id||'').toLowerCase().trim());
+  const ci={date:headers.indexOf('date'),keyword:headers.indexOf('keyword'),interest:headers.indexOf('interest'),type:headers.indexOf('type'),country:headers.indexOf('country'),region:headers.indexOf('region'),monthyear:headers.indexOf('monthyear'),year:headers.indexOf('year'),fetchedat:headers.indexOf('fetchedat')};
+  const rows=[];
+  for(const row of table.rows){
+    if(!row.c)continue;
+    const g=(i)=>i>=0&&row.c[i]?String(row.c[i].v||row.c[i].f||'').trim():'';
+    const o={date:g(ci.date),keyword:g(ci.keyword),interest:g(ci.interest),type:g(ci.type)||'brand',country:g(ci.country),region:g(ci.region),monthyear:g(ci.monthyear),year:g(ci.year),fetchedat:g(ci.fetchedat)};
+    if(o.date&&o.keyword)rows.push(o);
+  }
+  return rows;
 }
 async function loadAll(){
   setL(5,'Connecting to Google Sheets...');
