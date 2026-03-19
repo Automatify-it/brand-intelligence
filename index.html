@@ -281,7 +281,10 @@ Chart.defaults.color='#4e5a70';Chart.defaults.font.family='DM Sans';
 function loadTC(){try{const s=localStorage.getItem('bi_v4');if(s){const p=JSON.parse(s);if(Array.isArray(p)&&p.length)return p;}}catch(e){}return JSON.parse(JSON.stringify(DT));}
 function saveTC(){localStorage.setItem('bi_v4',JSON.stringify(TC));}
 function getTC(id){return TC.find(t=>t.id===id);}
-function csvURL(tab){return`https://docs.google.com/spreadsheets/d/${SID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tab)}`;}
+function csvURL(tab){
+  // Use export format with CORS-friendly URL
+  return `https://docs.google.com/spreadsheets/d/${SID}/export?format=csv&sheet=${encodeURIComponent(tab)}`;
+}
 function parseCSV(txt){
   const L=txt.trim().split('\n');if(L.length<2)return[];
   const H=L[0].split(',').map(h=>h.replace(/^"|"$/g,'').trim().toLowerCase());
