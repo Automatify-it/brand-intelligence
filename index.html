@@ -60,13 +60,13 @@ select option{background:#181e2c;}
 .ttog.ab{border-color:rgba(58,172,172,0.4);color:var(--teal);}
 .ttog.ag{border-color:rgba(232,160,32,0.4);color:#e8a020;}
 .ttog.aa{border-color:rgba(255,255,255,0.2);color:var(--text);}
-main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-columns:1fr 1fr 1fr 290px;gap:14px;}
+main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr 280px;gap:14px;}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color 0.2s;}
 .card:hover{border-color:rgba(255,255,255,0.11);}
 .ch{padding:13px 18px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .ct{font-size:10px;text-transform:uppercase;letter-spacing:1.8px;color:var(--muted2);}
 .cb2{padding:16px;}
-.kr{grid-column:1/4;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.kr{grid-column:1/5;grid-row:1;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
 .kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:15px 17px;position:relative;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;}
 .kpi:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3);}
 .kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--kc,var(--teal));}
@@ -76,9 +76,9 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
 .kch{position:absolute;top:13px;right:13px;font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;}
 .kch.up{background:rgba(58,172,172,0.15);color:var(--teal);}
 .kch.dn{background:rgba(204,20,24,0.12);color:#ff6b6b;}
-.mcc{grid-column:1/4;}
+.mcc{grid-column:1/5;grid-row:2;}
 .cw{padding:16px;height:270px;position:relative;}
-.sb{grid-column:4;grid-row:2/6;display:flex;flex-direction:column;gap:14px;}
+.sb{grid-column:5;grid-row:1/4;display:flex;flex-direction:column;gap:14px;}
 .rl{display:flex;flex-direction:column;gap:5px;}
 .ri{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:var(--surface2);border:1px solid transparent;transition:all 0.15s;cursor:pointer;}
 .ri:hover{border-color:var(--border);transform:translateX(2px);}
@@ -89,14 +89,14 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
 .rb{height:100%;border-radius:2px;transition:width 0.6s cubic-bezier(0.4,0,0.2,1);}
 .rs{font-family:'Bebas Neue',sans-serif;font-size:18px;}
 .rt{font-size:8px;color:var(--muted);font-family:'DM Mono',monospace;width:40px;text-align:right;}
-.hmc{grid-column:1/3;}
+.hmc{grid-column:1/3;grid-row:3;}
 .hmg{display:grid;gap:3px;font-family:'DM Mono',monospace;font-size:9px;}
 .hml{color:var(--muted2);display:flex;align-items:center;padding-right:3px;overflow:hidden;}
 .hml span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:9px;}
 .hmmo{color:var(--muted);text-align:center;padding-bottom:3px;font-size:9px;}
 .hmc2{height:18px;border-radius:3px;cursor:pointer;transition:transform 0.12s;}
 .hmc2:hover{transform:scale(1.2);z-index:5;position:relative;cursor:crosshair;}
-.cpc{grid-column:3;}
+.cpc{grid-column:3/5;grid-row:3;}
 .cpt{width:100%;border-collapse:collapse;}
 .cpt th{font-size:8px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);text-align:left;padding:5px 7px;border-bottom:1px solid var(--border);}
 .cpt td{padding:6px 7px;font-size:11px;border-bottom:1px solid rgba(255,255,255,0.02);}
@@ -411,21 +411,88 @@ function rAll(){
   rTabs();rQT();
   const{keywords}=getAD();
   if(!keywords.length){const st=tS[aid];showND(st==='error'?'Could Not Load Data':'No Data Yet',st==='error'?'Could not read Sheet. Check browser console (F12).':'Run fetcher_to_sheets.py for this tab, then click Refresh.');return;}
-  buildG();rKPI();rMC();rRank();rDonut();rHM();rCmp();detectBreakouts();
+  buildG();
+  sovType=sovType||'brand';
+  // Use requestAnimationFrame to ensure DOM is painted before rendering charts
+  // Double rAF ensures browser has fully painted the new DOM before Chart.js runs
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    const tabs=document.querySelectorAll('.sov-tab');
+    if(tabs.length){
+      tabs.forEach(t=>t.classList.remove('active'));
+      tabs.forEach((t,i)=>{if((sovType==='generic'&&i===1)||(sovType!=='generic'&&i===0))t.classList.add('active');});
+    }
+    [rKPI,rMC,rRank,rDonut,rHM,rCmp,detectBreakouts].forEach(fn=>{
+      try{fn();}catch(e){console.error(fn.name+' failed:',e.message);}
+    });
+  }));
 }
 
 function buildG(){
-  const cfg=TC.find(t=>t.id===aid);const pl=per>=60?'5 Years':per+'mo';
+  const cfg=TC.find(t=>t.id===aid);
+  const pl=per>=60?'5 Years':per+'mo';
+  const geoLabel=(cfg?cfg.name:'')+' - Last '+pl;
+
   document.getElementById('mg').innerHTML=
+
+    // ── Row 1: 4 KPI cards (cols 1-4) ──
     '<div class="kr fi" id="kr"></div>'+
-    '<div class="card mcc fi" style="animation-delay:0.06s"><div class="ch"><span class="ct">Search Interest Over Time — Index 0–100</span><span style="font-size:10px;color:var(--teal);font-family:\'DM Mono\',monospace">'+(cfg?cfg.name:'')+' · Last '+pl+'</span></div><div class="cw"><canvas id="mc"></canvas></div></div>'+
-    '<div class="sb fi" style="animation-delay:0.1s">'+
-      '<div class="card" id="alertsCard" style="display:none"><div class="ch"><span class="ct">🔥 Breakout Alerts</span><span style="font-size:9px;color:#e8a020">vs prior 4 weeks</span></div><div class="cb2" style="padding:12px"><div id="alertsList"></div></div></div>'+
-      '<div class="card sov-card"><div class="ch"><span class="ct">Share of Voice</span><span class="sov-info" onmouseenter="showSOVTip(event)" onmouseleave="hideSOVTip()" style="cursor:help;font-size:11px;color:var(--teal);border:1px solid rgba(58,172,172,0.3);border-radius:10px;padding:1px 8px">ℹ How calculated</span></div><div class="cb2" style="padding:12px"><div class="sov-tabs"><button class="sov-tab active" onclick="setSOVType(this,&quot;brand&quot;)">🏷 Brands</button><button class="sov-tab" onclick="setSOVType(this,&quot;generic&quot;)">📈 Trends</button></div><canvas id="donutChart"></canvas><div class="dl" id="dl"></div></div></div>'+
-      '<div class="card"><div class="ch"><span class="ct">Ranking</span><span style="font-size:9px;color:var(--muted)">avg interest</span></div><div class="cb2" style="padding:12px"><div class="rl" id="rl"></div></div></div>'+
+
+    // ── Row 2: Full-width chart (cols 1-4) ──
+    '<div class="card mcc fi" style="animation-delay:0.05s">'+
+      '<div class="ch">'+
+        '<span class="ct">Search Interest Over Time — Index 0-100</span>'+
+        '<span style="font-size:10px;color:var(--teal);font-family:monospace">'+geoLabel+'</span>'+
+      '</div>'+
+      '<div class="cw"><canvas id="mc"></canvas></div>'+
     '</div>'+
-    '<div class="card hmc fi" style="animation-delay:0.14s"><div class="ch"><span class="ct">Monthly Heatmap</span><span style="font-size:9px;color:var(--muted)">hover for details</span></div><div class="cb2"><div class="hmg" id="hmg"></div></div></div>'+
-    '<div class="card cpc fi" style="animation-delay:0.18s"><div class="ch"><span class="ct">Period vs Prior</span><span id="cmpPeriodLabel" style="font-size:9px;color:var(--muted)"></span></div><div class="cb2" style="padding:0"><table class="cpt"><thead><tr id="cmpHead"><th>Keyword</th><th>Avg</th><th>Peak</th><th>Δ%</th><th>Trend</th></tr></thead><tbody id="ctb"></tbody></table></div></div>';
+
+    // ── Row 3: Heatmap (cols 1-2) ──
+    '<div class="card hmc fi" style="animation-delay:0.1s">'+
+      '<div class="ch"><span class="ct">Monthly Heatmap</span><span style="font-size:9px;color:var(--muted)">hover for details</span></div>'+
+      '<div class="cb2"><div class="hmg" id="hmg"></div></div>'+
+    '</div>'+
+
+    // ── Row 3: Compare (cols 3-4) ──
+    '<div class="card cpc fi" style="animation-delay:0.12s">'+
+      '<div class="ch"><span class="ct">Period vs Prior</span><span id="cmpPeriodLabel" style="font-size:9px;color:var(--muted)"></span></div>'+
+      '<div class="cb2" style="padding:0"><table class="cpt">'+
+        '<thead><tr id="cmpHead"><th>Keyword</th><th>Avg</th><th>Peak</th><th>D%</th><th>Trend</th></tr></thead>'+
+        '<tbody id="ctb"></tbody>'+
+      '</table></div>'+
+    '</div>'+
+
+    // ── Col 5, Rows 1-3: Sidebar (SOV + Alerts + Ranking) ──
+    '<div class="sb fi" style="animation-delay:0.08s">'+
+
+      // SOV card
+      '<div class="card sov-card">'+
+        '<div class="ch">'+
+          '<span class="ct">Share of Voice</span>'+
+          '<span class="sov-info" onmouseenter="showSOVTip(event)" onmouseleave="hideSOVTip()" style="cursor:help;font-size:10px;color:var(--teal);border:1px solid rgba(58,172,172,0.3);border-radius:10px;padding:1px 7px">i How</span>'+
+        '</div>'+
+        '<div class="cb2" style="padding:10px 12px">'+
+          '<div class="sov-tabs">'+
+            '<button class="sov-tab active" data-t="brand" onclick="sovClick(this)">Brands</button>'+
+            '<button class="sov-tab" data-t="generic" onclick="sovClick(this)">Trends</button>'+
+          '</div>'+
+          '<canvas id="donutChart" style="max-height:150px"></canvas>'+
+          '<div class="dl" id="dl" style="margin-top:6px"></div>'+
+        '</div>'+
+      '</div>'+
+
+      // Alerts card
+      '<div class="card" id="alertsCard" style="display:none">'+
+        '<div class="ch"><span class="ct">Breakout Alerts</span><span style="font-size:9px;color:#e8a020">20+ pt jump</span></div>'+
+        '<div class="cb2" style="padding:12px"><div id="alertsList"></div></div>'+
+      '</div>'+
+
+      // Ranking card
+      '<div class="card">'+
+        '<div class="ch"><span class="ct">Ranking</span><span style="font-size:9px;color:var(--muted)">avg interest</span></div>'+
+        '<div class="cb2" style="padding:12px"><div class="rl" id="rl"></div></div>'+
+      '</div>'+
+
+    '</div>';
 }
 function showND(t,d){document.getElementById('mg').innerHTML='<div class="nds"><div class="ndi">📭</div><div class="ndt">'+t+'</div><div class="ndd">'+d+'</div></div>';}
 
@@ -474,18 +541,21 @@ function rKPI(){
 }
 
 function rMC(){
+  const cv=document.getElementById('mc');
+  if(!cv){console.error('rMC: #mc canvas missing');return;}
   const{keywords,dates,kwData}=getAD();const allKW=getAllKW();
-  const doS=false; // smoothing removed - raw dataconst type=document.getElementById('cts')?.value||'line';
+  if(!keywords.length){console.warn('rMC: no active keywords');return;}
+  const doS=false;
+  const type=document.getElementById('cts')?.value||'line';
   const labels=dates.map(d=>{const dt=new Date(d+'T00:00:00');return per>=60?dt.toLocaleString('default',{month:'short',year:'numeric'}):dt.toLocaleString('default',{month:'short',year:'2-digit'});});
-  const datasets=keywords.map(kw=>{const col=C[allKW.indexOf(kw)%C.length];let v=dates.map(d=>kwData[kw][d]||0);if(doS)v=smooth(v);
+  const datasets=keywords.map(kw=>{const col=C[allKW.indexOf(kw)%C.length];let v=dates.map(d=>kwData[kw][d]||0);
     return{label:kw,data:v,borderColor:col,backgroundColor:type==='area'?col+'28':col+'15',borderWidth:2,pointRadius:per>=60?1:2,pointHoverRadius:6,pointBackgroundColor:col,tension:0.4,fill:type==='area'};});
-  if(cM)cM.destroy();
-  const cv=document.getElementById('mc');if(!cv)return;
+  if(cM){cM.destroy();cM=null;}
   cM=new Chart(cv.getContext('2d'),{type:type==='bar'?'bar':'line',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
     plugins:{legend:{display:false},tooltip:{backgroundColor:'#181e2c',borderColor:'rgba(255,255,255,0.08)',borderWidth:1,titleColor:'#7a8899',bodyColor:'#eef0f4',padding:12,callbacks:{label:item=>' '+item.dataset.label+': '+item.parsed.y}}},
     scales:{x:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#4e5a70',font:{size:10,family:'DM Mono'},maxTicksLimit:per>=60?24:13}},y:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#4e5a70',font:{size:10,family:'DM Mono'}},min:0,max:100}}}});
+  console.log('rMC: chart rendered with',keywords.length,'keywords',dates.length,'dates');
 }
-
 function rRank(){
   const{keywords,dates,kwData}=getAD();const allKW=getAllKW();
   const el=document.getElementById('rl');if(!el)return;
@@ -498,9 +568,10 @@ function rRank(){
 
 function rDonut(){
   // Filter by sovType independently of main sT toggle
+  const curSOV=sovType||'brand';
   const rows=tD[aid]||[];const allKW=getAllKW();const aq=aKW[aid]||new Set();
   const aD=[...new Set(rows.map(r=>r.date))].sort();const dates=aD.slice(-per);
-  const sovRows=rows.filter(r=>r.type===sovType&&aq.has(r.keyword)&&dates.includes(r.date));
+  const sovRows=rows.filter(r=>r.type===curSOV&&aq.has(r.keyword)&&dates.includes(r.date));
   const sovKWs=[...new Set(sovRows.map(r=>r.keyword))];
   const kwData={};
   sovKWs.forEach(kw=>{kwData[kw]={};dates.forEach(d=>{kwData[kw][d]=0;});});
@@ -779,11 +850,12 @@ function recordRefreshTime(id){
 
 // ── SHARE OF VOICE TYPE ──
 let sovType='brand';
+function sovClick(btn){setSOVType(btn, btn.dataset.t);}
 function setSOVType(btn, type){
   sovType=type;
   document.querySelectorAll('.sov-tab').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  rDonut();
+  if(btn)btn.classList.add('active');
+  try{rDonut();}catch(e){console.error('rDonut in setSOVType:',e.message);}
 }
 
 function showSOVTip(e){
