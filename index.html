@@ -76,6 +76,7 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
 .kch{position:absolute;top:13px;right:13px;font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;}
 .kch.up{background:rgba(58,172,172,0.15);color:var(--teal);}
 .kch.dn{background:rgba(204,20,24,0.12);color:#ff6b6b;}
+.kch.fl{background:rgba(122,136,153,0.15);color:#7a8899;}
 .mcc{grid-column:1/5;grid-row:2;}
 .cw{padding:16px;height:270px;position:relative;}
 .sb{grid-column:5;grid-row:1/4;display:flex;flex-direction:column;gap:14px;}
@@ -140,6 +141,14 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
 .pd{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5;}
 .fi{animation:fi 0.4s ease both;}
 @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ── WIDGET INFO TOOLTIPS ── */
+.wi{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;border:1px solid var(--muted);color:var(--muted);font-size:9px;cursor:help;transition:all 0.15s;margin-left:6px;font-family:'DM Mono',monospace;flex-shrink:0;}
+.wi:hover{border-color:var(--teal);color:var(--teal);}
+.wtip{position:fixed;z-index:9999;background:#0d1520;border:1px solid rgba(58,172,172,0.25);border-radius:10px;padding:14px 16px;font-size:11px;max-width:280px;pointer-events:none;box-shadow:0 12px 32px rgba(0,0,0,0.6);line-height:1.75;color:#c8d0dc;display:none;}
+.wtip strong{color:#eef0f4;display:block;margin-bottom:6px;font-size:12px;}
+.wtip code{background:rgba(255,255,255,0.06);padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;font-size:10px;color:#e8a020;}
+.wtip .wt-period{display:inline-block;margin-top:8px;font-size:10px;color:var(--teal);background:rgba(58,172,172,0.08);border:1px solid rgba(58,172,172,0.2);padding:2px 8px;border-radius:10px;}
 
 /* ── SHARE OF VOICE TABS ── */
 .sov-tabs{display:flex;gap:6px;margin-bottom:12px;}
@@ -516,41 +525,48 @@ function buildG(){
 
   document.getElementById('mg').innerHTML=
 
-    // ── Row 1: 4 KPI cards (cols 1-4) ──
     '<div class="kr fi" id="kr"></div>'+
 
-    // ── Row 2: Full-width chart (cols 1-4) ──
     '<div class="card mcc fi" style="animation-delay:0.05s">'+
       '<div class="ch">'+
-        '<span class="ct">Search Interest Over Time — Index 0-100</span>'+
+        '<span class="ct">Search Interest Over Time'+
+          '<span class="wi" onmouseenter="showWTip(event,wTips.chart())" onmouseleave="hideWTip()">i</span>'+
+        '</span>'+
         '<span style="font-size:10px;color:var(--teal);font-family:monospace">'+geoLabel+'</span>'+
       '</div>'+
       '<div class="cw"><canvas id="mc"></canvas></div>'+
     '</div>'+
 
-    // ── Row 3: Heatmap (cols 1-2) ──
     '<div class="card hmc fi" style="animation-delay:0.1s">'+
-      '<div class="ch"><span class="ct">Monthly Heatmap</span><span style="font-size:9px;color:var(--muted)">hover for details</span></div>'+
+      '<div class="ch">'+
+        '<span class="ct">Monthly Heatmap'+
+          '<span class="wi" onmouseenter="showWTip(event,wTips.heatmap())" onmouseleave="hideWTip()">i</span>'+
+        '</span>'+
+        '<span style="font-size:9px;color:var(--muted)">hover cell for details</span>'+
+      '</div>'+
       '<div class="cb2"><div class="hmg" id="hmg"></div></div>'+
     '</div>'+
 
-    // ── Row 3: Compare (cols 3-4) ──
     '<div class="card cpc fi" style="animation-delay:0.12s">'+
-      '<div class="ch"><span class="ct">Period vs Prior</span><span id="cmpPeriodLabel" style="font-size:9px;color:var(--muted)"></span></div>'+
+      '<div class="ch">'+
+        '<span class="ct" id="cmpTitle">Period vs Prior'+
+          '<span class="wi" onmouseenter="showWTip(event,wTips.compare())" onmouseleave="hideWTip()">i</span>'+
+        '</span>'+
+        '<span id="cmpPeriodLabel" style="font-size:9px;color:var(--muted)"></span>'+
+      '</div>'+
       '<div class="cb2" style="padding:0"><table class="cpt">'+
         '<thead><tr id="cmpHead"><th>Keyword</th><th>Avg</th><th>Peak</th><th>D%</th><th>Trend</th></tr></thead>'+
         '<tbody id="ctb"></tbody>'+
       '</table></div>'+
     '</div>'+
 
-    // ── Col 5, Rows 1-3: Sidebar (SOV + Alerts + Ranking) ──
     '<div class="sb fi" style="animation-delay:0.08s">'+
-
-      // SOV card
       '<div class="card sov-card">'+
         '<div class="ch">'+
-          '<span class="ct">Share of Voice</span>'+
-          '<span class="sov-info" onmouseenter="showSOVTip(event)" onmouseleave="hideSOVTip()" style="cursor:help;font-size:10px;color:var(--teal);border:1px solid rgba(58,172,172,0.3);border-radius:10px;padding:1px 7px">i How</span>'+
+          '<span class="ct">Share of Voice'+
+            '<span class="wi" onmouseenter="showWTip(event,wTips.sov())" onmouseleave="hideWTip()">i</span>'+
+          '</span>'+
+          '<span class="sov-info" onmouseenter="showSOVTip(event)" onmouseleave="hideSOVTip()" style="cursor:help;font-size:10px;color:var(--teal);border:1px solid rgba(58,172,172,0.3);border-radius:10px;padding:1px 7px">How calc.</span>'+
         '</div>'+
         '<div class="cb2" style="padding:10px 12px">'+
           '<div class="sov-tabs">'+
@@ -561,19 +577,24 @@ function buildG(){
           '<div class="dl" id="dl" style="margin-top:6px"></div>'+
         '</div>'+
       '</div>'+
-
-      // Alerts card
       '<div class="card" id="alertsCard" style="display:none">'+
-        '<div class="ch"><span class="ct">Breakout Alerts</span><span style="font-size:9px;color:#e8a020">20+ pt jump</span></div>'+
+        '<div class="ch">'+
+          '<span class="ct">Breakout Alerts'+
+            '<span class="wi" onmouseenter="showWTip(event,wTips.breakout())" onmouseleave="hideWTip()">i</span>'+
+          '</span>'+
+          '<span style="font-size:9px;color:#e8a020">20+ pt jump</span>'+
+        '</div>'+
         '<div class="cb2" style="padding:12px"><div id="alertsList"></div></div>'+
       '</div>'+
-
-      // Ranking card
       '<div class="card">'+
-        '<div class="ch"><span class="ct">Ranking</span><span style="font-size:9px;color:var(--muted)">avg interest</span></div>'+
+        '<div class="ch">'+
+          '<span class="ct">Ranking'+
+            '<span class="wi" onmouseenter="showWTip(event,wTips.ranking())" onmouseleave="hideWTip()">i</span>'+
+          '</span>'+
+          '<span style="font-size:9px;color:var(--muted)">avg interest</span>'+
+        '</div>'+
         '<div class="cb2" style="padding:12px"><div class="rl" id="rl"></div></div>'+
       '</div>'+
-
     '</div>';
 }
 function showND(t,d){document.getElementById('mg').innerHTML='<div class="nds"><div class="ndi">📭</div><div class="ndt">'+t+'</div><div class="ndd">'+d+'</div></div>';}
@@ -615,10 +636,30 @@ function togKW(kw){const aq=aKW[aid];if(!aq)return;if(aq.has(kw)){if(aq.size>1)a
 
 function rKPI(){
   const{keywords,dates,kwData}=getAD();const allKW=getAllKW();
-  const avgs=keywords.map(kw=>{const v=dates.map(d=>kwData[kw][d]||0);return{kw,avg:Math.round(v.reduce((a,b)=>a+b,0)/Math.max(v.length,1)),peak:Math.max(...v,0)};}).sort((a,b)=>b.avg-a.avg).slice(0,4);
+  const avgs=keywords.map(kw=>{
+    const v=dates.map(d=>kwData[kw][d]||0);
+    const avg=Math.round(v.reduce((a,b)=>a+b,0)/Math.max(v.length,1));
+    const peak=Math.max(...v,0);
+    // Real WoW: last 4 data points vs prior 4 data points
+    const w=Math.min(4,Math.floor(v.length/2));
+    const recent=w>0?v.slice(-w).reduce((a,b)=>a+b,0)/w:avg;
+    const prior=w>0&&v.length>=w*2?v.slice(-(w*2),-w).reduce((a,b)=>a+b,0)/w:avg;
+    const diff=recent-prior;
+    const pct=prior>0?Math.round(diff/prior*100):0;
+    return{kw,avg,peak,pct,isUp:diff>0.5,isFlat:Math.abs(diff)<=0.5};
+  }).sort((a,b)=>b.avg-a.avg).slice(0,4);
   const el=document.getElementById('kr');if(!el)return;
-  el.innerHTML=avgs.map((item,i)=>{const col=C[allKW.indexOf(item.kw)%C.length];const isUp=(item.kw.length*17+i*31)%3!==0;const pct=(item.kw.length*7+i*13)%28+3;
-    return '<div class="kpi" style="--kc:'+col+'"><div class="kl">'+(i===0?'🥇 Leader':'Rank #'+(i+1))+'</div><div class="kv">'+item.avg+'</div><div class="kb" style="color:'+col+'">'+item.kw+'</div><span class="kch '+(isUp?'up':'dn')+'">'+(isUp?'+':'-')+pct+'%</span></div>';
+  const wLabel=dates.length>0?'vs prior '+Math.min(4,Math.floor(dates.length/2))+'wk':'';
+  el.innerHTML=avgs.map((item,i)=>{
+    const col=C[allKW.indexOf(item.kw)%C.length];
+    const badgeClass=item.isFlat?'fl':item.isUp?'up':'dn';
+    const badgeText=item.isFlat?'flat':(item.isUp?'+':'')+item.pct+'%';
+    return '<div class="kpi" style="--kc:'+col+'" title="Avg: '+item.avg+'/100 over last '+dates.length+' data points. '+badgeText+' '+wLabel+'">'+
+      '<div class="kl">'+(i===0?'🥇 Leader':'Rank #'+(i+1))+'</div>'+
+      '<div class="kv">'+item.avg+'</div>'+
+      '<div class="kb" style="color:'+col+'">'+item.kw+'</div>'+
+      '<span class="kch '+badgeClass+'">'+badgeText+'</span>'+
+    '</div>';
   }).join('');
 }
 
@@ -932,12 +973,99 @@ function recordRefreshTime(id){
 
 // ── SHARE OF VOICE TYPE ──
 let sovType='brand';
+// ── WIDGET TOOLTIP CONTENT ──
+const wTips = {
+  chart: ()=>{
+    const dr=getDateRange(); const pl=getPeriodLabel();
+    return '<strong>Search Interest Over Time</strong>'+
+      'Weekly Google Trends index for each brand. Values are relative — 100 = peak popularity within the selected period. Numbers are NOT absolute search volumes.<br><br>'+
+      '<code>Source: Google Trends (0–100 scale)</code>'+
+      '<div class="wt-period">'+pl+' &nbsp;·&nbsp; '+dr+'</div>';
+  },
+  heatmap: ()=>{
+    const dr=getDateRange(); const pl=getPeriodLabel();
+    return '<strong>Monthly Heatmap</strong>'+
+      'Each cell = weekly Google Trends interest for that brand in that time period. Darker = higher interest. Hover any cell for the exact value, date and brand type.<br><br>'+
+      '<code>Opacity = value / 100</code>'+
+      '<div class="wt-period">'+pl+' &nbsp;·&nbsp; '+dr+'</div>';
+  },
+  compare: ()=>{
+    const dr=getDateRange(); const pl=getPeriodLabel();
+    const method=per<=6?'Last 4 data points vs prior 4 data points (WoW)':
+                 per<=13?'Recent half vs prior half of period (MoM)':
+                 'Second half vs first half of full period (H1 vs H2)';
+    const w=Math.min(4,4);
+    return '<strong>Period vs Prior</strong>'+
+      '<b>Avg</b> = mean weekly interest over the full period.<br>'+
+      '<b>Peak</b> = highest single weekly value.<br>'+
+      '<b>Δ%</b> = % change between two halves of your selected period:<br>'+
+      '<code>'+method+'</code><br><br>'+
+      '<b>Trend arrow</b> = Q1 vs Q4 momentum:<br>'+
+      '<code>First 25% of dates vs last 25% of dates</code>'+
+      '<div class="wt-period">'+pl+' &nbsp;·&nbsp; '+dr+'</div>';
+  },
+  sov: ()=>{
+    const dr=getDateRange(); const pl=getPeriodLabel();
+    return '<strong>Share of Voice</strong>'+
+      'Each brand total search interest as % of all brands combined in the selected period.<br><br>'+
+      '<code>SOV% = Brand Total / All Brands Total × 100</code><br><br>'+
+      'Brands and Generic trends are calculated separately. Toggle between them above the chart.'+
+      '<div class="wt-period">'+pl+' &nbsp;·&nbsp; '+dr+'</div>';
+  },
+  ranking: ()=>{
+    const dr=getDateRange(); const pl=getPeriodLabel();
+    return '<strong>Brand Ranking</strong>'+
+      'Brands sorted by average weekly Google Trends interest over the selected period. The bar shows relative strength vs the #1 ranked brand.<br><br>'+
+      '<code>Score = mean of all weekly values</code><br><br>'+
+      'Click any brand to toggle it on/off in all charts.'+
+      '<div class="wt-period">'+pl+' &nbsp;·&nbsp; '+dr+'</div>';
+  },
+  breakout: ()=>{
+    const dr=getDateRange();
+    return '<strong>🔥 Breakout Alerts</strong>'+
+      'Triggers when a brand jumps 20+ points comparing the last 4 data points vs the prior 4 data points.<br><br>'+
+      '<code>Jump = avg(last 4 weeks) − avg(prior 4 weeks)</code><br><br>'+
+      'Only brands currently visible (active toggle) are checked.'+
+      '<div class="wt-period">Rolling window &nbsp;·&nbsp; '+dr+'</div>';
+  },
+};
+
 function sovClick(btn){setSOVType(btn, btn.dataset.t);}
 function setSOVType(btn, type){
   sovType=type;
   document.querySelectorAll('.sov-tab').forEach(b=>b.classList.remove('active'));
   if(btn)btn.classList.add('active');
   try{rDonut();}catch(e){console.error('rDonut in setSOVType:',e.message);}
+}
+
+// ── UNIVERSAL WIDGET TOOLTIP ──
+function showWTip(e, html){
+  let tip=document.getElementById('wtip');
+  if(!tip){
+    tip=document.createElement('div');
+    tip.id='wtip';
+    tip.className='wtip';
+    document.body.appendChild(tip);
+  }
+  tip.innerHTML=html;
+  const x=Math.min(e.clientX+14,window.innerWidth-300);
+  const y=Math.min(e.clientY+14,window.innerHeight-220);
+  tip.style.left=x+'px';
+  tip.style.top=y+'px';
+  tip.style.display='block';
+}
+function hideWTip(){
+  const t=document.getElementById('wtip');if(t)t.style.display='none';
+}
+
+function getDateRange(){
+  const{dates}=getAD();
+  if(!dates.length)return'';
+  const fmt=d=>new Date(d+'T00:00:00').toLocaleString('default',{month:'short',year:'numeric'});
+  return fmt(dates[0])+' → '+fmt(dates[dates.length-1]);
+}
+function getPeriodLabel(){
+  return per>=60?'Last 5 Years':per<=3?'Last 3 Months':per<=6?'Last 6 Months':'Last 12 Months';
 }
 
 function showSOVTip(e){
