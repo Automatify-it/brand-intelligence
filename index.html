@@ -77,9 +77,9 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
 .kch.up{background:rgba(58,172,172,0.15);color:var(--teal);}
 .kch.dn{background:rgba(204,20,24,0.12);color:#ff6b6b;}
 .kch.fl{background:rgba(122,136,153,0.15);color:#7a8899;}
-.mcc{grid-column:1/5;grid-row:2;}
+.mcc{grid-column:1/4;grid-row:2;}
 .cw{padding:16px;height:270px;position:relative;}
-.sb{grid-column:5;grid-row:1/4;display:flex;flex-direction:column;gap:14px;}
+.sb{grid-column:5;grid-row:1/5;display:flex;flex-direction:column;gap:14px;}
 .rl{display:flex;flex-direction:column;gap:5px;}
 .ri{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:var(--surface2);border:1px solid transparent;transition:all 0.15s;cursor:pointer;}
 .ri:hover{border-color:var(--border);transform:translateX(2px);}
@@ -286,7 +286,7 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
 @media(max-width:1200px){
   main{grid-template-columns:1fr 1fr 1fr;}
   .kr{grid-column:1/4;grid-row:auto;grid-template-columns:repeat(2,1fr);}
-  .sb-top{grid-column:1/4;grid-row:auto;}
+  
   .mcc{grid-column:1/4;grid-row:auto;}
   .sb{grid-column:1/4;grid-row:auto;flex-direction:row;flex-wrap:wrap;}
   .sb .card{flex:1;min-width:200px;}
@@ -307,7 +307,7 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
   .kr{grid-column:1;grid-template-columns:repeat(2,1fr);gap:8px;}
   .kpi{padding:12px;}
   .kv{font-size:28px;}
-  .sb-top,.mcc,.sb,.hmc,.cpc,.mavg{grid-column:1;grid-row:auto;}
+  .mcc,.sb,.hmc,.cpc,.mavg{grid-column:1;grid-row:auto;}
   .cw{height:200px;}
   .sb{flex-direction:column;}
   .modal{width:95vw;padding:16px;}
@@ -634,22 +634,10 @@ function buildG(){
   const pl=per>=260?'5yr':per<=13?'3mo':per<=26?'6mo':'12mo';
   document.getElementById('mg').innerHTML=
 
-    // Row 1: 4 KPIs + SOV sidebar
+    // Row 1: KPIs cols 1-4
     '<div class="kr fi" id="kr"></div>'+
-    '<div class="card sb-top fi">'+
-      '<div class="ch"><span class="ct">Share of Voice<span class="wi" onmouseenter="showWTip(event,wTips.sov())" onmouseleave="hideWTip()">i</span></span>'+
-      '<span class="sov-info" onmouseenter="showSOVTip(event)" onmouseleave="hideSOVTip()">ℹ calc</span></div>'+
-      '<div class="cb2" style="padding:10px 12px">'+
-        '<div class="sov-tabs">'+
-          '<button class="sov-tab active" data-t="brand" onclick="sovClick(this)">BRANDS</button>'+
-          '<button class="sov-tab" data-t="generic" onclick="sovClick(this)">GENERIC</button>'+
-        '</div>'+
-        '<canvas id="donutChart" style="max-height:150px"></canvas>'+
-        '<div id="dl" style="margin-top:6px"></div>'+
-      '</div>'+
-    '</div>'+
 
-    // Row 2: Chart + sidebar continues
+    // Row 2: Chart cols 1-4
     '<div class="card mcc fi" style="animation-delay:.05s">'+
       '<div class="ch">'+
         '<span class="ct">Search Interest Over Time — 0–100<span class="wi" onmouseenter="showWTip(event,wTips.chart())" onmouseleave="hideWTip()">i</span></span>'+
@@ -657,7 +645,42 @@ function buildG(){
       '</div>'+
       '<div class="cw"><canvas id="mc"></canvas></div>'+
     '</div>'+
+
+    // Row 3: Heatmap cols 1-2
+    '<div class="card hmc fi" style="animation-delay:.1s">'+
+      '<div class="ch">'+
+        '<span class="ct">Heatmap<span class="wi" onmouseenter="showWTip(event,wTips.heatmap())" onmouseleave="hideWTip()">i</span></span>'+
+        '<div class="hm-toggle">'+
+          '<button class="hm-btn active" onclick="setHmGran(this,this.dataset.g)" data-g="weekly">Weekly</button>'+
+          '<button class="hm-btn" onclick="setHmGran(this,this.dataset.g)" data-g="monthly">Monthly</button>'+
+        '</div>'+
+      '</div>'+
+      '<div style="overflow-x:auto;padding:0 16px 12px"><div id="hmg"></div></div>'+
+    '</div>'+
+
+    // Row 3: Compare cols 3-4
+    '<div class="card cpc fi" style="animation-delay:.12s">'+
+      '<div class="ch"><span class="ct">Period vs Prior<span class="wi" onmouseenter="showWTip(event,wTips.compare())" onmouseleave="hideWTip()">i</span></span>'+
+      '<span id="cmpPL" style="font-size:9px;color:var(--muted)"></span></div>'+
+      '<div style="padding:0"><table class="cpt"><thead><tr id="cmpHead"></tr></thead><tbody id="ctb"></tbody></table></div>'+
+    '</div>'+
+
+    // Col 5, rows 1-4: Sidebar (SOV + Alerts + Ranking)
     '<div class="sb fi" style="animation-delay:.08s">'+
+      '<div class="card sov-card">'+
+        '<div class="ch">'+
+          '<span class="ct">Share of Voice<span class="wi" onmouseenter="showWTip(event,wTips.sov())" onmouseleave="hideWTip()">i</span></span>'+
+          '<span class="sov-info" onmouseenter="showSOVTip(event)" onmouseleave="hideSOVTip()">ℹ calc</span>'+
+        '</div>'+
+        '<div class="cb2" style="padding:10px 12px">'+
+          '<div class="sov-tabs">'+
+            '<button class="sov-tab active" data-t="brand" onclick="sovClick(this)">BRANDS</button>'+
+            '<button class="sov-tab" data-t="generic" onclick="sovClick(this)">GENERIC</button>'+
+          '</div>'+
+          '<canvas id="donutChart" style="max-height:150px"></canvas>'+
+          '<div id="dl" style="margin-top:6px"></div>'+
+        '</div>'+
+      '</div>'+
       '<div class="card" id="alertsCard" style="display:none">'+
         '<div class="ch"><span class="ct">🔥 Breakout Alerts<span class="wi" onmouseenter="showWTip(event,wTips.breakout())" onmouseleave="hideWTip()">i</span></span>'+
         '<span style="font-size:9px;color:#e8a020">20+ pt jump</span></div>'+
@@ -670,25 +693,7 @@ function buildG(){
       '</div>'+
     '</div>'+
 
-    // Row 3: Heatmap + Compare + sidebar
-    '<div class="card hmc fi" style="animation-delay:.1s">'+
-      '<div class="ch">'+
-        '<span class="ct">Heatmap<span class="wi" onmouseenter="showWTip(event,wTips.heatmap())" onmouseleave="hideWTip()">i</span></span>'+
-        '<div class="hm-toggle">'+
-          '<button class="hm-btn active" onclick="setHmGran(this,\'weekly\')">Weekly</button>'+
-          '<button class="hm-btn" onclick="setHmGran(this,\'monthly\')">Monthly</button>'+
-        '</div>'+
-      '</div>'+
-      '<div style="overflow-x:auto;padding:0 16px 12px"><div id="hmg"></div></div>'+
-    '</div>'+
-
-    '<div class="card cpc fi" style="animation-delay:.12s">'+
-      '<div class="ch"><span class="ct" id="cmpTitle">Period vs Prior<span class="wi" onmouseenter="showWTip(event,wTips.compare())" onmouseleave="hideWTip()">i</span></span>'+
-      '<span id="cmpPL" style="font-size:9px;color:var(--muted)"></span></div>'+
-      '<div style="padding:0"><table class="cpt"><thead><tr id="cmpHead"></tr></thead><tbody id="ctb"></tbody></table></div>'+
-    '</div>'+
-
-    // Row 4: Monthly averages — FULL WIDTH, both brands and generics
+    // Row 4: Monthly averages full width
     '<div class="card mavg fi" style="grid-column:1/-1;animation-delay:.15s">'+
       '<div class="ch">'+
         '<span class="ct">Monthly Averages — Brands &amp; Generic<span class="wi" onmouseenter="showWTip(event,wTips.monthly())" onmouseleave="hideWTip()">i</span></span>'+
@@ -700,7 +705,6 @@ function buildG(){
       '</div>'+
     '</div>';
 }
-
 function showND(t,d){document.getElementById('mg').innerHTML='<div class="nds"><div class="ndi">📭</div><div class="ndt">'+t+'</div><div class="ndd">'+d+'</div></div>';}
 
 // ── Tabs ──
