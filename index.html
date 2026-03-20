@@ -21,12 +21,12 @@ header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify
 .hd{width:1px;height:28px;background:rgba(255,255,255,0.1);}
 .dtm{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2.5px;color:var(--text);line-height:1;}
 .dts{font-size:10px;color:var(--teal);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;}
-.hr{display:flex;align-items:center;gap:10px;}
+.hr{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;}
 .lp{display:flex;align-items:center;gap:7px;background:var(--surface2);border:1px solid var(--border);padding:5px 12px;border-radius:20px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted2);}
 .ld{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite;}
 .ld.red{background:var(--accent);}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.2}}
-.btn{padding:7px 14px;border-radius:6px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;transition:all 0.18s;white-space:nowrap;}
+.btn{padding:6px 12px;border-radius:6px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;transition:all 0.18s;white-space:nowrap;}
 .bg{background:transparent;color:var(--muted2);border:1px solid var(--border);}.bg:hover{color:var(--text);border-color:rgba(255,255,255,0.2);}
 .bt{background:var(--teal);color:#fff;}.bt:hover{background:#2e9090;transform:translateY(-1px);}
 .bgr{background:#1a3a1a;color:#50c878;border:1px solid rgba(80,200,120,0.3);}.bgr:hover{background:#1f4a1f;transform:translateY(-1px);}
@@ -77,7 +77,7 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
 .kch.up{background:rgba(58,172,172,0.15);color:var(--teal);}
 .kch.dn{background:rgba(204,20,24,0.12);color:#ff6b6b;}
 .kch.fl{background:rgba(122,136,153,0.15);color:#7a8899;}
-.mcc{grid-column:1/4;grid-row:2;}
+.mcc{grid-column:1/5;grid-row:2;}
 .cw{padding:16px;height:270px;position:relative;}
 .sb{grid-column:5;grid-row:1/5;display:flex;flex-direction:column;gap:14px;}
 .rl{display:flex;flex-direction:column;gap:5px;}
@@ -263,14 +263,14 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
 }
 
 /* ── MONTHLY AVG TABLE ── */
-.mavg{grid-column:1/-1;}
+.mavg{grid-column:1/5;}
 /* ── HM toggle ── */
 .hm-toggle{display:flex;gap:4px;}
 .hm-btn{padding:2px 10px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:10px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s;font-weight:600;}
 .hm-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
 .hm-btn:hover:not(.active){color:var(--text);border-color:rgba(255,255,255,.2);}
 /* ── Sidebar top (SOV at row 1) ── */
-.sb-top{grid-column:5;grid-row:1;display:flex;flex-direction:column;}
+
 /* ── KPI flat badge ── */
 .kch.fl{background:rgba(122,136,153,.15);color:#7a8899;}
 /* ── Widget tooltip ── */
@@ -319,6 +319,7 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
   .kch{font-size:9px;}
 }
 </style>
+<!-- Yandex.Metrika counter --> <script type="text/javascript">     (function(m,e,t,r,i,k,a){         m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};         m[i].l=1*new Date();         for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}         k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)     })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=108172114', 'ym');      ym(108172114, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true}); </script> <noscript><div><img src="https://mc.yandex.ru/watch/108172114" style="position:absolute; left:-9999px;" alt="" /></div></noscript> <!-- /Yandex.Metrika counter -->
 </head>
 <body>
 
@@ -697,7 +698,7 @@ function buildG(){
     '<div class="card mavg fi" style="grid-column:1/-1;animation-delay:.15s">'+
       '<div class="ch">'+
         '<span class="ct">Monthly Averages — Brands &amp; Generic<span class="wi" onmouseenter="showWTip(event,wTips.monthly())" onmouseleave="hideWTip()">i</span></span>'+
-        '<span style="font-size:9px;color:var(--muted)">avg weekly interest per month · use for internal monthly dashboards</span>'+
+
       '</div>'+
       '<div style="overflow-x:auto;padding:0 16px 16px">'+
         '<div id="mavg-brands" style="margin-bottom:16px"></div>'+
@@ -847,13 +848,13 @@ function buildHMTable(keywords,dates,kwData,allKW){
   const gridCols='80px repeat('+cols.length+',minmax(18px,1fr)) 40px';
   let h='<div style="display:grid;grid-template-columns:'+gridCols+';gap:2px;font-family:monospace;font-size:9px;min-width:'+(cols.length*22+130)+'px">';
   // Header
-  h+='<div></div>'+colLabels.map(l=>'<div style="color:var(--muted);text-align:center;padding-bottom:3px;overflow:hidden;text-overflow:ellipsis">'+l+'</div>').join('')+'<div style="color:var(--teal);text-align:center;font-weight:700;padding-bottom:3px">AVG</div>';
+  h+='<div style="position:sticky;left:0;background:var(--surface);z-index:2"></div>'+colLabels.map(l=>'<div style="color:var(--muted);text-align:center;padding-bottom:3px;overflow:hidden;text-overflow:ellipsis">'+l+'</div>').join('')+'<div style="color:var(--teal);text-align:center;font-weight:700;padding-bottom:3px">AVG</div>';
   // Rows
   keywords.forEach(kw=>{
     const col=C[allKW.indexOf(kw)%C.length];
     const vals=cols.map(c=>getVal(kw,c));
     const kwAvg=Math.round(vals.reduce((a,b)=>a+b,0)/Math.max(vals.length,1));
-    h+='<div style="display:flex;align-items:center;overflow:hidden;padding-right:4px"><span style="color:'+col+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:9px">'+kw+'</span></div>';
+    h+='<div style="display:flex;align-items:center;padding-right:4px;position:sticky;left:0;background:var(--surface);z-index:2"><span style="color:'+col+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:9px">'+kw+'</span></div>';
     vals.forEach((v,mi)=>{
       const a=(0.08+(v/100)*0.88).toFixed(2);
       const lbl=useMonthly?'Monthly avg '+colLabels[mi]:new Date(cols[mi]+'T00:00:00').toLocaleString('default',{month:'long',year:'numeric'});
@@ -863,7 +864,7 @@ function buildHMTable(keywords,dates,kwData,allKW){
     h+='<div style="height:18px;border-radius:2px;background:'+col+';opacity:'+aA+';display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff" title="'+kw+' avg: '+kwAvg+'">'+kwAvg+'</div>';
   });
   // ALL AVG row
-  h+='<div style="color:var(--teal);font-weight:700;font-size:9px;display:flex;align-items:center">ALL AVG</div>';
+  h+='<div style="color:var(--teal);font-weight:700;font-size:9px;display:flex;align-items:center;position:sticky;left:0;background:var(--surface);z-index:2">ALL AVG</div>';
   cols.forEach((c,ci)=>{
     const cAvg=keywords.length?Math.round(keywords.reduce((s,kw)=>s+getVal(kw,c),0)/keywords.length):0;
     h+='<div style="height:18px;border-radius:2px;background:var(--teal);opacity:'+(0.08+(cAvg/100)*0.5).toFixed(2)+';display:flex;align-items:center;justify-content:center;font-size:8px;color:#fff" title="All avg '+colLabels[ci]+': '+cAvg+'">'+cAvg+'</div>';
@@ -933,14 +934,14 @@ function rMonthlyAvg(){
   function buildMonthlyTable(keywords,kwData,title,accentColor){
     if(!keywords.length)return'<div style="color:var(--muted);font-size:11px;padding:4px 0">No '+title+' data</div>';
     const monthLabels=months.map(k=>{const[y,m]=k.split('-');return new Date(parseInt(y),parseInt(m)-1,1).toLocaleString('default',{month:'short',year:'numeric'});});
-    const allDates=Object.values(groups).flat();
-    const gridCols='90px repeat('+months.length+',minmax(60px,1fr)) 60px';
+    const gridCols='90px repeat('+months.length+',minmax(58px,1fr)) 58px';
+    const minW=(months.length*62+160)+'px';
     let h='<div style="font-size:10px;font-weight:700;color:'+accentColor+';text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">'+title+'</div>';
-    h+='<div style="display:grid;grid-template-columns:'+gridCols+';gap:2px;font-size:10px;min-width:'+(months.length*65+160)+'px">';
-    // Header
-    h+='<div style="color:var(--muted2);font-weight:600;padding:3px 0">Keyword</div>';
+    h+='<div style="display:grid;grid-template-columns:'+gridCols+';gap:2px;font-size:10px;min-width:'+minW+'">';
+    // Header row - keyword col is sticky
+    h+='<div style="color:var(--muted2);font-weight:600;padding:3px 0;position:sticky;left:0;background:var(--surface);z-index:2">Keyword</div>';
     h+=monthLabels.map(l=>'<div style="color:var(--muted2);font-weight:600;text-align:center;padding:3px 2px">'+l+'</div>').join('');
-    h+='<div style="color:var(--teal);font-weight:700;text-align:center;padding:3px 0">AVG</div>';
+    h+='<div style="color:var(--teal);font-weight:700;text-align:center;padding:3px 0;position:sticky;right:0;background:var(--surface)">AVG</div>';
     // Data rows
     keywords.forEach(kw=>{
       const col=C[allKW.indexOf(kw)%C.length];
@@ -949,26 +950,25 @@ function rMonthlyAvg(){
         return Math.round(v.reduce((a,b)=>a+b,0)/Math.max(v.length,1));
       });
       const periodAvg=Math.round(monthAvgs.reduce((a,b)=>a+b,0)/Math.max(monthAvgs.length,1));
-      h+='<div style="display:flex;align-items:center;padding:4px 0;overflow:hidden"><span style="color:'+col+';font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+kw+'</span></div>';
+      h+='<div style="display:flex;align-items:center;padding:4px 0;position:sticky;left:0;background:var(--surface);z-index:1"><span style="color:'+col+';font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+kw+'</span></div>';
       monthAvgs.forEach((v,mi)=>{
         const bg=v>0?'rgba('+hexToRgb(col)+','+((v/100)*0.3+0.05).toFixed(2)+')':'transparent';
         h+='<div style="background:'+bg+';color:#eef0f4;text-align:center;padding:4px 2px;border-radius:3px;font-family:monospace">'+v+'</div>';
       });
-      h+='<div style="background:rgba(58,172,172,0.15);color:var(--teal);text-align:center;padding:4px 2px;border-radius:3px;font-weight:700;font-family:monospace">'+periodAvg+'</div>';
+      h+='<div style="background:rgba(58,172,172,0.15);color:var(--teal);text-align:center;padding:4px 2px;border-radius:3px;font-weight:700;font-family:monospace;position:sticky;right:0">'+periodAvg+'</div>';
     });
     // ALL AVG row
-    h+='<div style="color:var(--teal);font-weight:700;font-size:10px;padding:4px 0;border-top:1px solid var(--border);margin-top:2px">ALL AVG</div>';
-    months.forEach((mk,mi)=>{
+    h+='<div style="color:var(--teal);font-weight:700;font-size:10px;padding:5px 0;border-top:1px solid var(--border);margin-top:2px;position:sticky;left:0;background:var(--surface);z-index:1">ALL AVG</div>';
+    months.forEach((mk)=>{
       const cAvg=keywords.length?Math.round(keywords.reduce((s,kw)=>{const ds=groups[mk];const v=ds.map(d=>kwData[kw][d]||0);return s+Math.round(v.reduce((a,b)=>a+b,0)/Math.max(v.length,1));},0)/keywords.length):0;
       h+='<div style="background:rgba(58,172,172,0.1);color:var(--teal);text-align:center;padding:4px 2px;border-radius:3px;font-weight:600;font-family:monospace;border-top:1px solid var(--border)">'+cAvg+'</div>';
     });
     const allM=keywords.flatMap(kw=>months.map(mk=>{const ds=groups[mk];const v=ds.map(d=>kwData[kw][d]||0);return Math.round(v.reduce((a,b)=>a+b,0)/Math.max(v.length,1));}));
     const oa=allM.length?Math.round(allM.reduce((a,b)=>a+b,0)/allM.length):0;
-    h+='<div style="background:rgba(58,172,172,0.2);color:var(--teal);text-align:center;padding:4px 2px;border-radius:3px;font-weight:700;font-family:monospace;border-top:1px solid var(--border)">'+oa+'</div>';
+    h+='<div style="background:rgba(58,172,172,0.2);color:var(--teal);text-align:center;padding:4px 2px;border-radius:3px;font-weight:700;font-family:monospace;border-top:1px solid var(--border);position:sticky;right:0">'+oa+'</div>';
     h+='</div>';
     return h;
   }
-
   elB.innerHTML=buildMonthlyTable(brandData.keywords,brandData.kwData,'Brands','#3aacac');
   elG.innerHTML=buildMonthlyTable(genericData.keywords,genericData.kwData,'Generic Trends','#e8a020');
 }
@@ -1186,6 +1186,6 @@ loadAll();
 
 </script>
 
-<div style="text-align:center;padding:16px 0 20px;font-size:10px;color:#2a3547;font-family:'DM Mono',monospace;letter-spacing:2px;user-select:none;">MADE WITH <span style="color:#cc1418">♥</span> BY MAXIM LORD</div>
+<div style="text-align:center;padding:16px 0 20px;font-size:10px;color:#2a3547;font-family:'DM Mono',monospace;letter-spacing:2px;user-select:none;">MADE WITH <span style="color:#cc1418;display:inline-block;animation:heartbeat 1.4s ease infinite">♥</span> BY MAXIM LORD</div>
 </body>
 </html>
