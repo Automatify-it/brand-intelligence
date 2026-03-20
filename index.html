@@ -350,10 +350,10 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
 <div class="cb">
   <div class="cg"><div class="cl">Period</div>
     <select id="ps" onchange="onCC()">
-      <option value="12" selected>Last 12 Months</option>
-      <option value="6">Last 6 Months</option>
-      <option value="3">Last 3 Months</option>
-      <option value="60">Last 5 Years</option>
+      <option value="52" selected>Last 12 Months</option>
+      <option value="26">Last 6 Months</option>
+      <option value="13">Last 3 Months</option>
+      <option value="260">Last 5 Years</option>
     </select>
   </div>
   <div class="cg"><div class="cl">Chart Type</div>
@@ -405,7 +405,7 @@ const DT = [
     generics:[]},
 ];
 
-let TC=loadTC(),aid=TC[0]?.id||'CA-Ontario',per=12,tD={},tS={},aKW={},cM=null,cD=null,sT='brand';
+let TC=loadTC(),aid=TC[0]?.id||'CA-Ontario',per=52,tD={},tS={},aKW={},cM=null,cD=null,sT='brand';
 Chart.defaults.color='#4e5a70';Chart.defaults.font.family='DM Sans';
 
 function loadTC(){try{const s=localStorage.getItem('bi_v4');if(s){const p=JSON.parse(s);if(Array.isArray(p)&&p.length)return p;}}catch(e){}return JSON.parse(JSON.stringify(DT));}
@@ -520,7 +520,7 @@ function rAll(){
 
 function buildG(){
   const cfg=TC.find(t=>t.id===aid);
-  const pl=per>=60?'5 Years':per+'mo';
+  const pl=per>=260?'5 Years':per<=13?'3 Months':per<=26?'6 Months':'12 Months';
   const geoLabel=(cfg?cfg.name:'')+' - Last '+pl;
 
   document.getElementById('mg').innerHTML=
@@ -654,11 +654,13 @@ function rKPI(){
     const col=C[allKW.indexOf(item.kw)%C.length];
     const badgeClass=item.isFlat?'fl':item.isUp?'up':'dn';
     const badgeText=item.isFlat?'flat':(item.isUp?'+':'')+item.pct+'%';
-    return '<div class="kpi" style="--kc:'+col+'" title="Avg: '+item.avg+'/100 over last '+dates.length+' data points. '+badgeText+' '+wLabel+'">'+
+    const periodTip='Avg '+item.avg+'/100 over '+dates.length+' weeks. '+badgeText+': avg last 4wk vs prior 4wk';
+    return '<div class="kpi" style="--kc:'+col+'" title="'+periodTip+'">'+
       '<div class="kl">'+(i===0?'🥇 Leader':'Rank #'+(i+1))+'</div>'+
       '<div class="kv">'+item.avg+'</div>'+
       '<div class="kb" style="color:'+col+'">'+item.kw+'</div>'+
-      '<span class="kch '+badgeClass+'">'+badgeText+'</span>'+
+      '<span class="kch '+badgeClass+'" title="'+badgeText+': last 4 weeks vs prior 4 weeks">'+badgeText+'</span>'+
+      '<div style="position:absolute;bottom:10px;right:13px;font-size:8px;color:var(--muted);font-family:monospace">4wk vs 4wk</div>'+
     '</div>';
   }).join('');
 }
@@ -670,13 +672,13 @@ function rMC(){
   if(!keywords.length){console.warn('rMC: no active keywords');return;}
   const doS=false;
   const type=document.getElementById('cts')?.value||'line';
-  const labels=dates.map(d=>{const dt=new Date(d+'T00:00:00');return per>=60?dt.toLocaleString('default',{month:'short',year:'numeric'}):dt.toLocaleString('default',{month:'short',year:'2-digit'});});
+  const labels=dates.map(d=>{const dt=new Date(d+'T00:00:00');return per>=260?dt.toLocaleString('default',{month:'short',year:'numeric'}):dt.toLocaleString('default',{month:'short',year:'2-digit'});});
   const datasets=keywords.map(kw=>{const col=C[allKW.indexOf(kw)%C.length];let v=dates.map(d=>kwData[kw][d]||0);
-    return{label:kw,data:v,borderColor:col,backgroundColor:type==='area'?col+'28':col+'15',borderWidth:2,pointRadius:per>=60?1:2,pointHoverRadius:6,pointBackgroundColor:col,tension:0.4,fill:type==='area'};});
+    return{label:kw,data:v,borderColor:col,backgroundColor:type==='area'?col+'28':col+'15',borderWidth:2,pointRadius:per>=260?1:2,pointHoverRadius:6,pointBackgroundColor:col,tension:0.4,fill:type==='area'};});
   if(cM){cM.destroy();cM=null;}
   cM=new Chart(cv.getContext('2d'),{type:type==='bar'?'bar':'line',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
     plugins:{legend:{display:false},tooltip:{backgroundColor:'#181e2c',borderColor:'rgba(255,255,255,0.08)',borderWidth:1,titleColor:'#7a8899',bodyColor:'#eef0f4',padding:12,callbacks:{label:item=>' '+item.dataset.label+': '+item.parsed.y}}},
-    scales:{x:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#4e5a70',font:{size:10,family:'DM Mono'},maxTicksLimit:per>=60?24:13}},y:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#4e5a70',font:{size:10,family:'DM Mono'}},min:0,max:100}}}});
+    scales:{x:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#4e5a70',font:{size:10,family:'DM Mono'},maxTicksLimit:per>=260?24:13}},y:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#4e5a70',font:{size:10,family:'DM Mono'}},min:0,max:100}}}});
   console.log('rMC: chart rendered with',keywords.length,'keywords',dates.length,'dates');
 }
 function rRank(){
@@ -747,7 +749,7 @@ function rHM(){
   const{keywords,dates,kwData}=getAD();const allKW=getAllKW();
   const el=document.getElementById('hmg');if(!el)return;
   el.style.gridTemplateColumns='72px repeat('+dates.length+',1fr)';
-  const mL=dates.map(d=>{const dt=new Date(d+'T00:00:00');return per>=60?dt.toLocaleString('default',{month:'short',year:'2-digit'}):dt.toLocaleString('default',{month:'short'});});
+  const mL=dates.map(d=>{const dt=new Date(d+'T00:00:00');return per>=260?dt.toLocaleString('default',{month:'short',year:'2-digit'}):dt.toLocaleString('default',{month:'short'});});
   let html='<div></div>'+mL.map(m=>'<div class="hmmo">'+m+'</div>').join('');
   keywords.forEach(kw=>{
     const col=C[allKW.indexOf(kw)%C.length];const vals=dates.map(d=>kwData[kw][d]||0);const kwType=getKWT(kw);
@@ -779,11 +781,11 @@ function hideHMTip(){const t=document.getElementById('hmTip');if(t)t.style.displ
 function rCmp(){
   const{keywords,dates,kwData}=getAD();const allKW=getAllKW();
   const el=document.getElementById('ctb');if(!el)return;
-  const compLabel=per<=6?'WoW':per<=13?'MoM':'H1vsH2';
+  const compLabel=per<=26?'Last 4wk vs Prior 4wk':per<=52?'Recent Half vs Prior Half':'H1 vs H2';
   const headEl=document.getElementById('cmpHead');
   if(headEl)headEl.innerHTML='<th>Keyword</th><th>Avg</th><th>Peak</th><th>'+compLabel+' Δ%</th><th>Trend</th>';
   const lbl=document.getElementById('cmpPeriodLabel');
-  if(lbl)lbl.textContent=per<=6?'last 4wk vs prior 4wk':per<=13?'recent vs prior half':'first half vs second half';
+  if(lbl)lbl.textContent=per<=26?'last 4 weeks vs prior 4 weeks':per<=52?'recent half vs prior half':'first half vs second half';
   el.innerHTML=keywords.map(kw=>{
     const vals=dates.map(d=>kwData[kw][d]||0);
     const avg=Math.round(vals.reduce((a,b)=>a+b,0)/Math.max(vals.length,1));
@@ -795,7 +797,7 @@ function rCmp(){
     const half=Math.max(1,Math.floor(vals.length/2));
     const h1avg=vals.slice(0,half).reduce((a,b)=>a+b,0)/half;
     const h2avg=vals.slice(-half).reduce((a,b)=>a+b,0)/half;
-    const compC=per<=13?recentW:h2avg;const compP=per<=13?priorW:h1avg;
+    const compC=per<=52?recentW:h2avg;const compP=per<=52?priorW:h1avg;
     const diff=compC-compP;const pct=compP>0?Math.round(diff/compP*100):0;
     const isUp=diff>0.5;const isFlat=Math.abs(diff)<=0.5;
     const q=Math.max(1,Math.floor(vals.length/4));
@@ -991,8 +993,8 @@ const wTips = {
   },
   compare: ()=>{
     const dr=getDateRange(); const pl=getPeriodLabel();
-    const method=per<=6?'Last 4 data points vs prior 4 data points (WoW)':
-                 per<=13?'Recent half vs prior half of period (MoM)':
+    const method=per<=26?'Last 4 data points vs prior 4 data points (WoW)':
+                 per<=52?'Recent half vs prior half of period':
                  'Second half vs first half of full period (H1 vs H2)';
     const w=Math.min(4,4);
     return '<strong>Period vs Prior</strong>'+
@@ -1065,7 +1067,7 @@ function getDateRange(){
   return fmt(dates[0])+' → '+fmt(dates[dates.length-1]);
 }
 function getPeriodLabel(){
-  return per>=60?'Last 5 Years':per<=3?'Last 3 Months':per<=6?'Last 6 Months':'Last 12 Months';
+  return per>=260?'Last 5 Years':per<=13?'Last 3 Months':per<=26?'Last 6 Months':'Last 12 Months';
 }
 
 function showSOVTip(e){
