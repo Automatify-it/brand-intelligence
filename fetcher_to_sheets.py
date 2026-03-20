@@ -53,123 +53,49 @@ API_DELAY = 2.0
 
 TABS = [
     (
-        "CA-Ontario",
-        "CA", "CA-ON",
-        # Brands (up to 12)
-        [
-            "TD Bank", "RBC", "Tim Hortons", "Loblaw",
-            "Rogers", "Bell", "Shopify", "Air Canada",
-            "CIBC", "Scotiabank", "Telus", "Metro Inc"
-        ],
-        # Generic trends for Ontario market context
-        [
-            "online banking", "grocery delivery", "mobile plans",
-            "cloud computing", "electric vehicles"
-        ]
+        "CA-Ontario", "CA", "CA-ON",
+        ["tooniebet", "swiper", "betmgm", "888casino", "powerplay", "fanduel", "draftkings", "playnow"],
+        ["Online casino", "Casino", "online casino canada", "Slots", "Sports betting", "live casino"]
     ),
     (
-        "CA-All",
-        "CA", "",
-        [
-            "Tim Hortons", "Loblaw", "Rogers", "Bell",
-            "Shopify", "Air Canada", "Bombardier", "Manulife",
-            "Lululemon", "Couche-Tard", "Power Corporation", "BCE"
-        ],
-        [
-            "online shopping Canada", "digital banking Canada",
-            "streaming Canada", "EV Canada", "fintech Canada"
-        ]
+        "CA-All", "CA", "",
+        ["tooniebet", "swiper", "betmgm", "888casino", "powerplay", "fanduel", "draftkings", "playnow"],
+        ["Online casino", "Casino", "online casino canada", "Slots", "Sports betting", "live casino"]
     ),
     (
-        "Greece",
-        "GR", "",
-        [
-            "Alpha Bank", "Sklavenitis", "Cosmote", "OPAP",
-            "Jumbo", "Fourlis", "Autohellas", "Hellenic Petroleum",
-            "Piraeus Bank", "Eurobank", "Public Greece", "Kotsovolos"
-        ],
-        [
-            "ηλεκτρονικές αγορές", "online banking Ελλάδα",
-            "streaming Ελλάδα", "ηλεκτρικά αυτοκίνητα", "delivery φαγητού"
-        ]
+        "Greece", "GR", "",
+        ["elabet", "betsson", "stoiximan", "netbet", "pamestoixima", "novibet", "pokerstars", "sportingbet"],
+        ["Online casino", "casino", "στοίχημα", "αθλητικό στοίχημα", "live casino"]
     ),
     (
-        "Mexico",
-        "MX", "",
-        [
-            "OXXO", "Bimbo", "BBVA Mexico", "Cemex",
-            "América Móvil", "Liverpool", "Coppel", "Soriana",
-            "Telcel", "Elektra", "Femsa", "Mercado Libre Mexico"
-        ],
-        [
-            "compras en línea México", "banca digital México",
-            "streaming México", "delivery comida", "fintech México"
-        ]
+        "Mexico", "MX", "",
+        ["campobet", "novibet", "codere", "sportium", "betway", "betfair", "rushbet", "netbet"],
+        ["ruleta online", "casino", "casino online", "apuestas deportivas", "slots", "juegos de casino", "live casino", "casino en vivo"]
     ),
     (
-        "Sweden",
-        "SE", "",
-        [
-            "IKEA", "Spotify", "H&M", "Volvo",
-            "Ericsson", "Klarna", "SEB Bank", "Skanska",
-            "Swedbank", "ICA Gruppen", "Hexagon", "Atlas Copco"
-        ],
-        [
-            "näthandel Sverige", "digital bank Sverige",
-            "streaming Sverige", "elbil Sverige", "fintech Sverige"
-        ]
+        "Sweden", "SE", "",
+        ["betinia", "swiper", "campobet", "quick casino", "lodur", "unibet", "lucky casino", "paf"],
+        ["casino", "casino online", "spela casino", "slots", "live casino", "casino bonus", "bet", "odds"]
     ),
     (
-        "Denmark",
-        "DK", "",
-        [
-            "Maersk", "Lego", "Novo Nordisk", "Carlsberg",
-            "Vestas", "Coloplast", "Danske Bank", "TDC",
-            "Ørsted", "DSV", "Pandora", "Rockwool"
-        ],
-        [
-            "online shopping Danmark", "digital bank Danmark",
-            "streaming Danmark", "elbil Danmark", "bæredygtighed"
-        ]
+        "Denmark", "DK", "",
+        ["betinia", "swiper", "campobet", "danske spil", "tivolicasino", "mariacasino", "unibet", "betsson"],
+        ["bet", "Casino", "Online casino", "Odds", "slots"]
     ),
     (
-        "Spain",
-        "ES", "",
-        [
-            "Zara", "BBVA", "Santander", "Telefónica",
-            "Iberdrola", "Mango", "CaixaBank", "El Corte Inglés",
-            "Inditex", "Repsol", "Amadeus", "Ferrovial"
-        ],
-        [
-            "compras online España", "banca digital España",
-            "streaming España", "coche eléctrico", "fintech España"
-        ]
+        "Spain", "ES", "",
+        [],   # Add brands when ready
+        []    # Add generic trends when ready
     ),
     (
-        "Romania",
-        "RO", "",
-        [
-            "eMAG", "Dedeman", "Kaufland", "Lidl",
-            "BCR", "BRD", "Dacia", "Vodafone Romania",
-            "Orange Romania", "Banca Transilvania", "Altex", "Flanco"
-        ],
-        [
-            "cumpărături online România", "banking online România",
-            "streaming România", "mașini electrice România", "livrare mâncare"
-        ]
+        "Romania", "RO", "",
+        ["don ro", "topbet", "netbet", "Swiper", "betano", "casa pariurilor", "betfair", "888"],
+        ["Casino Online", "Casino", "pacanele", "jocuri cazino", "pariuri sportive"]
     ),
     (
-        "Italy",
-        "IT", "",
-        [
-            "Ferrari", "Gucci", "Eni", "Enel",
-            "UniCredit", "Fiat", "Prada", "Telecom Italia",
-            "Intesa Sanpaolo", "Luxottica", "Pirelli", "Leonardo"
-        ],
-        [
-            "acquisti online Italia", "banca digitale Italia",
-            "streaming Italia", "auto elettrica Italia", "fintech Italia"
-        ]
+        "Italy", "IT", "",
+        [],   # Add brands when ready
+        []    # Add generic trends when ready
     ),
 ]
 
@@ -403,7 +329,11 @@ def process_tab(spreadsheet, tab_name, geo, region, brands, generics):
 
     # ── Fetch brands ──
     print(f"\n  Brands ({len(brands)}):")
-    brand_df, brand_source = fetch_with_fallback(brands, geo, region, TIMEFRAME)
+    if not brands:
+        print("  ⏭ No brands configured for this tab — skipping")
+        brand_df, brand_source = None, "skipped"
+    else:
+        brand_df, brand_source = fetch_with_fallback(brands, geo, region, TIMEFRAME)
 
     if brand_df is not None:
         rows = write_to_sheet(None, brands, brand_df, "brand", geo, region, brand_source)
@@ -421,7 +351,11 @@ def process_tab(spreadsheet, tab_name, geo, region, brands, generics):
 
     # ── Fetch generic trends ──
     print(f"\n  Generic trends ({len(generics)}):")
-    gen_df, gen_source = fetch_with_fallback(generics, geo, region, TIMEFRAME)
+    if not generics:
+        print("  ⏭ No generic trends configured for this tab — skipping")
+        gen_df, gen_source = None, "skipped"
+    else:
+        gen_df, gen_source = fetch_with_fallback(generics, geo, region, TIMEFRAME)
 
     if gen_df is not None:
         rows = write_to_sheet(None, generics, gen_df, "generic", geo, region, gen_source)
