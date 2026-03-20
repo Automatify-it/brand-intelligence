@@ -28,7 +28,7 @@ from datetime import datetime
 # ▼▼▼  EDIT THIS SECTION  ▼▼▼
 # ═══════════════════════════════════════════════════════════
 
-SHEET_ID         = "YOUR_GOOGLE_SHEET_ID_HERE"
+SHEET_ID         = "1CkCZeWpfzaFAhVDxqqK7qqrWj28ZXP3IhqKkX6Udefg"
 CREDENTIALS_FILE = "credentials.json"
 
 # SerpAPI key (free tier = 100 searches/month)
