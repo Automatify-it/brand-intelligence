@@ -303,15 +303,33 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
 const SID = "1CkCZeWpfzaFAhVDxqqK7qqrWj28ZXP3IhqKkX6Udefg";
 const C = ['#cc1418','#3aacac','#e8a020','#7b8cde','#e05c8a','#50c878','#f0a060','#a0c8f0','#ff8c42','#c9e265','#9b5de5','#00bbf9'];
 const DT = [
-  {id:'CA-Ontario',flag:'🇨🇦',name:'Ontario',st:'CA-Ontario',brands:["TD Bank","RBC","Tim Hortons","Loblaw","Rogers","Bell","Shopify","Air Canada","CIBC","Scotiabank","Telus","Metro Inc"],generics:["online banking","grocery delivery","mobile plans","cloud computing","electric vehicles"]},
-  {id:'CA-All',flag:'🇨🇦',name:'Canada',st:'CA-All',brands:["Tim Hortons","Loblaw","Rogers","Bell","Shopify","Air Canada","Bombardier","Manulife","Lululemon","Couche-Tard","Power Corporation","BCE"],generics:["online shopping Canada","digital banking Canada","streaming Canada","EV Canada","fintech Canada"]},
-  {id:'Greece',flag:'🇬🇷',name:'Greece',st:'Greece',brands:["Alpha Bank","Sklavenitis","Cosmote","OPAP","Jumbo","Fourlis","Autohellas","Hellenic Petroleum","Piraeus Bank","Eurobank","Public Greece","Kotsovolos"],generics:["online banking Greece","streaming Greece","delivery food Greece","digital banking","electric vehicles Greece"]},
-  {id:'Mexico',flag:'🇲🇽',name:'Mexico',st:'Mexico',brands:["OXXO","Bimbo","BBVA Mexico","Cemex","América Móvil","Liverpool","Coppel","Soriana","Telcel","Elektra","Femsa","Mercado Libre Mexico"],generics:["compras online México","banca digital México","streaming México","delivery comida","fintech México"]},
-  {id:'Sweden',flag:'🇸🇪',name:'Sweden',st:'Sweden',brands:["IKEA","Spotify","H&M","Volvo","Ericsson","Klarna","SEB Bank","Skanska","Swedbank","ICA Gruppen","Hexagon","Atlas Copco"],generics:["näthandel Sverige","digital bank Sverige","streaming Sverige","elbil Sverige","fintech Sverige"]},
-  {id:'Denmark',flag:'🇩🇰',name:'Denmark',st:'Denmark',brands:["Maersk","Lego","Novo Nordisk","Carlsberg","Vestas","Coloplast","Danske Bank","TDC","Ørsted","DSV","Pandora","Rockwool"],generics:["online shopping Danmark","digital bank Danmark","streaming Danmark","elbil Danmark","bæredygtighed"]},
-  {id:'Spain',flag:'🇪🇸',name:'Spain',st:'Spain',brands:["Zara","BBVA","Santander","Telefónica","Iberdrola","Mango","CaixaBank","El Corte Inglés","Inditex","Repsol","Amadeus","Ferrovial"],generics:["compras online España","banca digital España","streaming España","coche eléctrico","fintech España"]},
-  {id:'Romania',flag:'🇷🇴',name:'Romania',st:'Romania',brands:["eMAG","Dedeman","Kaufland","Lidl","BCR","BRD","Dacia","Vodafone Romania","Orange Romania","Banca Transilvania","Altex","Flanco"],generics:["cumpărături online România","banking online România","streaming România","mașini electrice România","livrare mâncare"]},
-  {id:'Italy',flag:'🇮🇹',name:'Italy',st:'Italy',brands:["Ferrari","Gucci","Eni","Enel","UniCredit","Fiat","Prada","Telecom Italia","Intesa Sanpaolo","Luxottica","Pirelli","Leonardo"],generics:["acquisti online Italia","banca digitale Italia","streaming Italia","auto elettrica Italia","fintech Italia"]},
+  {id:'CA-Ontario',flag:'🇨🇦',name:'Ontario',st:'CA-Ontario',
+    brands:["tooniebet","swiper","betmgm","888casino","powerplay","fanduel","draftkings","playnow"],
+    generics:["Online casino","Casino","online casino canada","Slots","Sports betting","live casino"]},
+  {id:'CA-All',flag:'🇨🇦',name:'Canada',st:'CA-All',
+    brands:["tooniebet","swiper","betmgm","888casino","powerplay","fanduel","draftkings","playnow"],
+    generics:["Online casino","Casino","online casino canada","Slots","Sports betting","live casino"]},
+  {id:'Greece',flag:'🇬🇷',name:'Greece',st:'Greece',
+    brands:["elabet","betsson","stoiximan","netbet","pamestoixima","novibet","pokerstars","sportingbet"],
+    generics:["Online casino","casino","στοίχημα","αθλητικό στοίχημα","live casino"]},
+  {id:'Mexico',flag:'🇲🇽',name:'Mexico',st:'Mexico',
+    brands:["campobet","novibet","codere","sportium","betway","betfair","rushbet","netbet"],
+    generics:["ruleta online","casino","casino online","apuestas deportivas","slots","juegos de casino","live casino","casino en vivo"]},
+  {id:'Sweden',flag:'🇸🇪',name:'Sweden',st:'Sweden',
+    brands:["betinia","swiper","campobet","quick casino","lodur","unibet","lucky casino","paf"],
+    generics:["casino","casino online","spela casino","slots","live casino","casino bonus","bet","odds"]},
+  {id:'Denmark',flag:'🇩🇰',name:'Denmark',st:'Denmark',
+    brands:["betinia","swiper","campobet","danske spil","tivolicasino","mariacasino","unibet","betsson"],
+    generics:["bet","Casino","Online casino","Odds","slots"]},
+  {id:'Spain',flag:'🇪🇸',name:'Spain',st:'Spain',
+    brands:[],
+    generics:[]},
+  {id:'Romania',flag:'🇷🇴',name:'Romania',st:'Romania',
+    brands:["don ro","topbet","netbet","Swiper","betano","casa pariurilor","betfair","888"],
+    generics:["Casino Online","Casino","pacanele","jocuri cazino","pariuri sportive"]},
+  {id:'Italy',flag:'🇮🇹',name:'Italy',st:'Italy',
+    brands:[],
+    generics:[]},
 ];
 
 let TC=loadTC(),aid=TC[0]?.id||'CA-Ontario',per=12,tD={},tS={},aKW={},cM=null,cD=null,sT='brand';
@@ -889,6 +907,7 @@ document.getElementById('editModal').addEventListener('click',e=>{if(e.target.id
 document.getElementById('addTabModal').addEventListener('click',e=>{if(e.target.id==='addTabModal')closeATM();});
 
 loadAll();
+
 
 </script>
 </body>
