@@ -334,7 +334,7 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
   <div class="la">
     <svg width="110" height="20" viewBox="0 0 171 32" fill="none" xmlns="http://www.w3.org/2000/svg"><mask id="mh" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="171" height="32"><path d="M170.473 0H0V32H170.473V0Z" fill="white"/></mask><g mask="url(#mh)"><path d="M50.7815 17.0816L37.7157 4.10472V27.8951H45.3924V22.5419L50.7815 27.8951L56.1705 22.5419V27.8951H63.847V4.10472L50.7815 17.0825V17.0816ZM67.6847 27.8942H85.5267V21.3833H75.3606V19.2544H84.3898V12.7435H75.3606V10.6146H85.5267V4.10376H67.6847V27.8942ZM127.684 27.8942H145.526V21.3833H135.36V19.2544H144.389V12.7435H135.36V10.6146H145.526V4.10376H127.684V27.8942ZM116.17 27.8942H123.846V4.10376H116.17V27.8942ZM166.296 20.6425L170.474 27.8942H162.797L159.421 22.0333H157.041V27.8942H149.364V4.10376H161.497C166.455 4.10376 170.474 8.11772 170.474 13.0685C170.474 16.2556 168.806 19.0527 166.296 20.6425ZM162.27 13.0685C162.27 11.6232 161.097 10.4512 159.65 10.4512H157.04V12.8391C157.034 12.9146 157.029 12.9911 157.029 13.0685C157.029 13.146 157.034 13.2225 157.04 13.298V15.6859H159.65C161.097 15.6859 162.27 14.5139 162.27 13.0685ZM113.187 15.9994C113.187 22.5686 107.855 27.8942 101.277 27.8942H89.3661V4.10472H101.277C107.855 4.10472 113.187 9.43024 113.187 15.9994ZM104.972 15.9994C104.972 13.0255 102.895 10.6156 100.334 10.6156H97.0409V21.3842H100.334C102.896 21.3842 104.972 18.9733 104.972 16.0004V15.9994Z" fill="white"/><path d="M0.00012207 9.66064V22.3373L11.1572 15.9985L0.00012207 9.66064Z" fill="#D80B1A"/><path d="M32.7422 16.0005L21.0137 22.6634L4.58044 32V23.1796L17.2174 16.0005L4.58044 8.82042V0L21.0137 9.33661L32.7422 16.0005Z" fill="white"/></g></svg>
     <div class="hd"></div>
-    <div><div class="dtm">Brand Intelligence</div><div class="dts">SEO Maxim's Dashboard</div></div>
+    <div><div class="dtm">Brand Intelligence</div><div class="dts">SEO Maxim's Google Trends Dashboard - SEO Team</div></div>
   </div>
   <div class="hr">
     <div class="lp"><span class="ld" id="ld"></span><span id="lu">Loading...</span></div>
@@ -800,12 +800,10 @@ function rCmp(){
     const compC=per<=52?recentW:h2avg;const compP=per<=52?priorW:h1avg;
     const diff=compC-compP;const pct=compP>0?Math.round(diff/compP*100):0;
     const isUp=diff>0.5;const isFlat=Math.abs(diff)<=0.5;
-    const q=Math.max(1,Math.floor(vals.length/4));
-    const q1=vals.slice(0,q).reduce((a,b)=>a+b,0)/q;
-    const q4=vals.slice(-q).reduce((a,b)=>a+b,0)/q;
-    const mom=q4-q1;
-    const arrow=mom>3?'↑':mom<-3?'↓':'→';
-    const arC=mom>3?'#3aacac':mom<-3?'#ff6b6b':'#7a8899';
+    // Trend arrow uses the SAME diff as the badge — always consistent
+    // Threshold: >2 points = meaningful move, <=2 = flat
+    const arrow=isFlat?'→':isUp?'↑':'↓';
+    const arC=isFlat?'#7a8899':isUp?'#3aacac':'#ff6b6b';
     const bg=isFlat?'rgba(122,136,153,0.15)':isUp?'rgba(58,172,172,0.14)':'rgba(204,20,24,0.12)';
     const fc=isFlat?'#7a8899':isUp?'#3aacac':'#ff6b6b';
     const pctStr=isFlat?'flat':(isUp?'+':'')+pct+'%';
