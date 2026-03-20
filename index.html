@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Brand Intelligence - Google Trends Dashboard</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,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">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0b0e15;--surface:#111620;--surface2:#181e2c;--border:rgba(255,255,255,0.07);--accent:#cc1418;--teal:#3aacac;--text:#eef0f4;--muted:#4e5a70;--muted2:#7a8899;--danger:#ff4d6d;--navy:#0d1520;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(58,172,172,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(58,172,172,0.025) 1px,transparent 1px);background-size:52px 52px;pointer-events:none;z-index:0;}
+#ls{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;}
+.lbw{width:260px;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;}
+.lb{height:100%;background:var(--accent);border-radius:2px;width:0%;transition:width 0.4s ease;}
+.lt{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted2);letter-spacing:1px;}
+header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:62px;background:var(--navy);border-bottom:1px solid rgba(255,255,255,0.06);box-shadow:0 4px 24px rgba(0,0,0,0.4);}
+.la{display:flex;align-items:center;gap:20px;}
+.hd{width:1px;height:28px;background:rgba(255,255,255,0.1);}
+.dtm{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2.5px;color:var(--text);line-height:1;}
+.dts{font-size:10px;color:var(--teal);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;}
+.hr{display:flex;align-items:center;gap:10px;}
+.lp{display:flex;align-items:center;gap:7px;background:var(--surface2);border:1px solid var(--border);padding:5px 12px;border-radius:20px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted2);}
+.ld{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite;}
+.ld.red{background:var(--accent);}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.2}}
+.btn{padding:7px 14px;border-radius:6px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;transition:all 0.18s;white-space:nowrap;}
+.bg{background:transparent;color:var(--muted2);border:1px solid var(--border);}.bg:hover{color:var(--text);border-color:rgba(255,255,255,0.2);}
+.bt{background:var(--teal);color:#fff;}.bt:hover{background:#2e9090;transform:translateY(-1px);}
+.bgr{background:#1a3a1a;color:#50c878;border:1px solid rgba(80,200,120,0.3);}.bgr:hover{background:#1f4a1f;transform:translateY(-1px);}
+.tabs-bar{position:sticky;top:62px;z-index:99;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:stretch;overflow-x:auto;scrollbar-width:none;}
+.tabs-bar::-webkit-scrollbar{display:none;}
+.ti{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 18px;min-height:58px;min-width:100px;cursor:pointer;border-bottom:3px solid transparent;transition:all 0.18s;position:relative;white-space:nowrap;user-select:none;gap:2px;}
+.ti:hover{background:rgba(255,255,255,0.03);}
+.ti.active{border-bottom-color:var(--accent);background:rgba(204,20,24,0.05);}
+.tf{font-size:17px;line-height:1;}
+.tn{font-size:11px;font-weight:600;color:var(--muted2);transition:color 0.18s;}
+.ti.active .tn,.ti:hover .tn{color:var(--text);}
+.ts{position:absolute;top:7px;right:7px;font-size:8px;padding:1px 5px;border-radius:6px;font-family:'DM Mono',monospace;border:1px solid var(--border);background:var(--surface2);color:var(--muted);}
+.ti.active .ts{background:var(--accent);color:#fff;border-color:var(--accent);}
+.ts.ok{color:var(--teal);border-color:rgba(58,172,172,0.3);}
+.ts.err{color:var(--danger);border-color:rgba(255,77,109,0.3);}
+.tab-add{display:flex;align-items:center;justify-content:center;min-width:52px;cursor:pointer;color:var(--muted);font-size:22px;transition:color 0.18s;border-left:1px solid var(--border);padding:0 16px;}
+.tab-add:hover{color:var(--teal);}
+.cb{position:relative;z-index:9;background:rgba(17,22,32,0.97);border-bottom:1px solid var(--border);padding:10px 32px;display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;}
+.cg{display:flex;flex-direction:column;gap:5px;}
+.cl{font-size:9px;text-transform:uppercase;letter-spacing:1.8px;color:var(--muted);}
+select{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;outline:none;transition:border-color 0.2s;}
+select:focus{border-color:var(--teal);}
+select option{background:#181e2c;}
+.qt{display:flex;flex-wrap:wrap;gap:5px;align-items:center;max-width:640px;}
+.qtag{display:flex;align-items:center;gap:4px;padding:3px 8px 3px 9px;border-radius:20px;font-size:11px;font-weight:500;border:1px solid;cursor:pointer;transition:all 0.15s;user-select:none;}
+.qtag .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.qtag .rm{opacity:0.4;font-size:12px;}
+.qtag:hover .rm{opacity:1;}
+.qtag.inactive{opacity:0.2;}
+.ttog{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted2);padding:3px 10px;border-radius:20px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;user-select:none;transition:all 0.15s;}
+.ttog.ab{border-color:rgba(58,172,172,0.4);color:var(--teal);}
+.ttog.ag{border-color:rgba(232,160,32,0.4);color:#e8a020;}
+.ttog.aa{border-color:rgba(255,255,255,0.2);color:var(--text);}
+main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr 280px;gap:14px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color 0.2s;}
+.card:hover{border-color:rgba(255,255,255,0.11);}
+.ch{padding:13px 18px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.ct{font-size:10px;text-transform:uppercase;letter-spacing:1.8px;color:var(--muted2);}
+.cb2{padding:16px;}
+.kr{grid-column:1/5;grid-row:1;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:15px 17px;position:relative;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;}
+.kpi:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3);}
+.kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--kc,var(--teal));}
+.kl{font-size:9px;text-transform:uppercase;letter-spacing:1.8px;color:var(--muted);margin-bottom:6px;}
+.kv{font-family:'Bebas Neue',sans-serif;font-size:38px;line-height:1;}
+.kb{font-size:11px;margin-top:3px;font-weight:500;}
+.kch{position:absolute;top:13px;right:13px;font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;}
+.kch.up{background:rgba(58,172,172,0.15);color:var(--teal);}
+.kch.dn{background:rgba(204,20,24,0.12);color:#ff6b6b;}
+.kch.fl{background:rgba(122,136,153,0.15);color:#7a8899;}
+.mcc{grid-column:1/5;grid-row:2;}
+.cw{padding:16px;height:270px;position:relative;}
+.sb{grid-column:5;grid-row:1/4;display:flex;flex-direction:column;gap:14px;}
+.rl{display:flex;flex-direction:column;gap:5px;}
+.ri{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:var(--surface2);border:1px solid transparent;transition:all 0.15s;cursor:pointer;}
+.ri:hover{border-color:var(--border);transform:translateX(2px);}
+.rn{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);width:14px;}
+.rd{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.rname{flex:1;font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rbw{width:44px;height:3px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden;}
+.rb{height:100%;border-radius:2px;transition:width 0.6s cubic-bezier(0.4,0,0.2,1);}
+.rs{font-family:'Bebas Neue',sans-serif;font-size:18px;}
+.rt{font-size:8px;color:var(--muted);font-family:'DM Mono',monospace;width:40px;text-align:right;}
+.hmc{grid-column:1/3;grid-row:3;min-width:0;}
+.hmg{display:grid;gap:3px;font-family:'DM Mono',monospace;font-size:9px;min-width:600px;}
+.hml{color:var(--muted2);display:flex;align-items:center;padding-right:3px;overflow:hidden;}
+.hml span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:9px;}
+.hmmo{color:var(--muted);text-align:center;padding-bottom:3px;font-size:9px;}
+.hmc2{height:18px;border-radius:3px;cursor:pointer;transition:transform 0.12s;}
+.hmc2:hover{transform:scale(1.2);z-index:5;position:relative;cursor:crosshair;}
+.cpc{grid-column:3/5;grid-row:3;}
+.cpt{width:100%;border-collapse:collapse;}
+.cpt th{font-size:8px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);text-align:left;padding:5px 7px;border-bottom:1px solid var(--border);}
+.cpt td{padding:6px 7px;font-size:11px;border-bottom:1px solid rgba(255,255,255,0.02);}
+.cpt tr:last-child td{border-bottom:none;}
+.cpt tr:hover td{background:rgba(255,255,255,0.02);}
+.cpb{display:inline-block;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:700;font-family:'DM Mono',monospace;}
+.nds{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;gap:16px;text-align:center;}
+.ndi{font-size:48px;opacity:0.3;}
+.ndt{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;color:var(--muted2);}
+.ndd{font-size:13px;color:var(--muted);max-width:400px;line-height:1.7;}
+#donutChart{max-height:140px;}
+.dl{margin-top:10px;display:flex;flex-wrap:wrap;gap:5px;}
+.dli{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted2);}
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(5px);z-index:300;place-items:center;}
+.mo.open{display:grid;}
+.modal{background:var(--surface);border:1px solid rgba(255,255,255,0.11);border-radius:16px;padding:28px;width:560px;max-width:95vw;animation:mIn 0.2s ease-out;max-height:90vh;overflow-y:auto;}
+@keyframes mIn{from{opacity:0;transform:scale(0.95) translateY(10px)}to{opacity:1;transform:none}}
+.modal h2{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;margin-bottom:4px;}
+.msub{font-size:12px;color:var(--muted2);margin-bottom:18px;line-height:1.6;}
+.msec{margin-bottom:18px;}
+.mst{font-size:10px;text-transform:uppercase;letter-spacing:1.8px;color:var(--muted2);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.mst .ml{flex:1;height:1px;background:var(--border);}
+.kwl{display:flex;flex-direction:column;gap:7px;}
+.kwr{display:flex;gap:8px;align-items:center;}
+.kwd{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.kwi{flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:7px 11px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:12px;outline:none;transition:border-color 0.2s;}
+.kwi:focus{border-color:var(--teal);}
+.kwr2{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:0 2px;transition:color 0.15s;line-height:1;}
+.kwr2:hover{color:var(--danger);}
+.akb{display:flex;align-items:center;gap:6px;background:none;border:1px dashed var(--border);color:var(--muted);padding:7px 12px;border-radius:6px;cursor:pointer;font-size:12px;width:100%;justify-content:center;transition:all 0.15s;margin-top:4px;font-family:'DM Sans',sans-serif;}
+.akb:hover{border-color:var(--teal);color:var(--teal);}
+.mf{display:flex;gap:10px;margin-top:20px;justify-content:flex-end;}
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.cb3{display:inline-flex;align-items:center;gap:6px;background:rgba(232,160,32,0.1);border:1px solid rgba(232,160,32,0.3);color:#e8a020;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;margin-bottom:14px;}
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+.pc{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.pc.hi{border-color:rgba(58,172,172,0.35);background:rgba(58,172,172,0.05);}
+.pn{font-size:11px;font-weight:600;color:var(--text);margin-bottom:4px;}
+.pp{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--teal);line-height:1;}
+.pp span{font-size:12px;font-family:'DM Sans',sans-serif;color:var(--muted2);}
+.pd{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5;}
+.fi{animation:fi 0.4s ease both;}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.hm-toggle{display:flex;gap:4px;align-items:center;}
+.hm-btn{padding:2px 10px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:10px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.15s;font-weight:600;}
+.hm-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.hm-btn:hover:not(.active){color:var(--text);border-color:rgba(255,255,255,0.2);}
+
+/* ── WIDGET INFO TOOLTIPS ── */
+.wi{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;border:1px solid var(--muted);color:var(--muted);font-size:9px;cursor:help;transition:all 0.15s;margin-left:6px;font-family:'DM Mono',monospace;flex-shrink:0;}
+.wi:hover{border-color:var(--teal);color:var(--teal);}
+.wtip{position:fixed;z-index:9999;background:#0d1520;border:1px solid rgba(58,172,172,0.25);border-radius:10px;padding:14px 16px;font-size:11px;max-width:280px;pointer-events:none;box-shadow:0 12px 32px rgba(0,0,0,0.6);line-height:1.75;color:#c8d0dc;display:none;}
+.wtip strong{color:#eef0f4;display:block;margin-bottom:6px;font-size:12px;}
+.wtip code{background:rgba(255,255,255,0.06);padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;font-size:10px;color:#e8a020;}
+.wtip .wt-period{display:inline-block;margin-top:8px;font-size:10px;color:var(--teal);background:rgba(58,172,172,0.08);border:1px solid rgba(58,172,172,0.2);padding:2px 8px;border-radius:10px;}
+
+/* ── SHARE OF VOICE TABS ── */
+.sov-tabs{display:flex;gap:6px;margin-bottom:12px;}
+.sov-tab{flex:1;padding:5px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--muted2);font-size:11px;font-weight:600;cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif;}
+.sov-tab.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.sov-tab:hover:not(.active){color:var(--text);border-color:rgba(255,255,255,0.2);}
+.sov-tooltip{position:fixed;z-index:9999;background:#181e2c;border:1px solid rgba(58,172,172,0.3);border-radius:10px;padding:14px 16px;font-size:11px;max-width:260px;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,0.5);line-height:1.7;color:#c8d0dc;}
+.sov-tooltip strong{color:var(--teal);}
+.sov-tooltip code{background:#0b0e15;padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;font-size:10px;color:#e8a020;}
+
+/* ── BREAKOUT ALERT ── */
+.breakout-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(232,160,32,0.15);border:1px solid rgba(232,160,32,0.4);color:#e8a020;padding:1px 7px;border-radius:10px;font-size:9px;font-weight:700;font-family:'DM Mono',monospace;animation:bpulse 2s infinite;}
+@keyframes bpulse{0%,100%{box-shadow:0 0 0 0 rgba(232,160,32,0.4)}50%{box-shadow:0 0 0 4px rgba(232,160,32,0)}}
+.tab-fire{position:absolute;top:6px;left:6px;font-size:11px;animation:bpulse 1.5s infinite;}
+.alert-row{display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(232,160,32,0.06);border:1px solid rgba(232,160,32,0.2);border-radius:8px;margin-bottom:10px;font-size:11px;}
+.alert-row .abrand{font-weight:600;color:#e8a020;}
+.alert-row .aval{font-family:'DM Mono',monospace;color:#eef0f4;}
+
+/* ── REFRESH INDICATOR ── */
+.tab-refresh{position:absolute;bottom:5px;font-size:8px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:0;white-space:nowrap;}
+
+/* ── NOTES ── */
+.notes-area{width:100%;min-height:60px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;padding:10px 12px;resize:vertical;outline:none;transition:border-color 0.2s;line-height:1.6;}
+.notes-area:focus{border-color:var(--teal);}
+.notes-saved{font-size:10px;color:var(--teal);opacity:0;transition:opacity 0.3s;}
+.notes-saved.show{opacity:1;}
+
+/* ── PDF EXPORT ── */
+@media print{
+  #ls,header .hr,#tb .tab-add,.cb,.hmTip,.toast{display:none!important;}
+  body{background:#fff!important;color:#000!important;}
+  .card{border:1px solid #ddd!important;background:#fff!important;break-inside:avoid;}
+  main{grid-template-columns:1fr 1fr 1fr!important;}
+  .sidebar{grid-column:auto!important;grid-row:auto!important;}
+}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:3px;}
+.toast{position:fixed;bottom:24px;right:24px;z-index:500;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:12px;color:var(--text);box-shadow:0 8px 32px rgba(0,0,0,0.4);display:flex;align-items:center;gap:10px;animation:su 0.3s ease;max-width:340px;}
+@keyframes su{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.toast.hide{animation:sd 0.3s ease forwards;}
+@keyframes sd{to{opacity:0;transform:translateY(16px)}}
+/* ── TABLET (≤1200px) ── */
+@media(max-width:1200px){
+  main{grid-template-columns:1fr 1fr 1fr;gap:12px;}
+  .kr{grid-column:1/4;grid-template-columns:repeat(4,1fr);}
+  .mcc{grid-column:1/4;grid-row:auto;}
+  .hmc{grid-column:1/3;grid-row:auto;}
+  .cpc{grid-column:3/4;grid-row:auto;}
+  .sb{grid-column:1/4;grid-row:auto;flex-direction:row;flex-wrap:wrap;gap:12px;}
+  .sb .card{flex:1;min-width:200px;}
+  .sov-card{flex:2;}
+}
+
+/* ── MOBILE (≤768px) ── */
+@media(max-width:768px){
+  header{padding:0 14px;height:auto;min-height:56px;flex-wrap:wrap;gap:8px;padding-top:10px;padding-bottom:10px;}
+  .logo-area svg{width:80px;}
+  .hd{display:none;}
+  .dtm{font-size:14px;}
+  .dts{font-size:9px;}
+  .hr{gap:6px;flex-wrap:wrap;}
+  .hr .live-pill{font-size:9px;padding:4px 8px;}
+  .hr .btn{padding:5px 10px;font-size:11px;}
+
+  .tabs-bar{top:0;position:relative;}
+  .ti{min-width:80px;padding:0 10px;min-height:48px;}
+  .tf{font-size:14px;}
+  .tn{font-size:10px;}
+  .tab-refresh{display:none;}
+
+  .cb{padding:8px 14px;gap:10px;position:relative;}
+  .cg select{font-size:11px;padding:5px 8px;}
+  .qt{max-width:100%;gap:4px;}
+  .qtag{font-size:10px;padding:2px 7px;}
+  .ttog{font-size:10px;padding:2px 8px;}
+
+  main{grid-template-columns:1fr;padding:10px;gap:10px;}
+  .kr{grid-column:1;grid-template-columns:repeat(2,1fr);gap:8px;}
+  .kpi{padding:12px 14px;}
+  .kv{font-size:28px;}
+  .mcc{grid-column:1;grid-row:auto;}
+  .cw{height:220px;padding:10px;}
+  .hmc{grid-column:1;grid-row:auto;}
+  .cpc{grid-column:1;grid-row:auto;}
+  .sb{grid-column:1;grid-row:auto;flex-direction:column;}
+  .sb .card{width:100%;}
+
+  .hmg{overflow-x:auto;}
+  .hml span{font-size:8px;}
+  .hmmo{font-size:8px;}
+  .hmc2{height:14px;}
+
+  .cpt th,.cpt td{padding:5px 5px;font-size:10px;}
+
+  .modal{padding:20px;width:95vw;}
+  .modal h2{font-size:18px;}
+  .mg{grid-template-columns:1fr;}
+
+  .dl{display:none;}
+}
+
+/* ── SMALL MOBILE (≤480px) ── */
+@media(max-width:480px){
+  .kr{grid-template-columns:1fr 1fr;}
+  .kpi-change{position:static;display:inline-block;margin-top:4px;}
+  .hr .live-pill{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div id="ls">
+  <svg width="130" height="24" viewBox="0 0 171 32" fill="none" xmlns="http://www.w3.org/2000/svg"><mask id="ml" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="171" height="32"><path d="M170.473 0H0V32H170.473V0Z" fill="white"/></mask><g mask="url(#ml)"><path d="M50.7815 17.0816L37.7157 4.10472V27.8951H45.3924V22.5419L50.7815 27.8951L56.1705 22.5419V27.8951H63.847V4.10472L50.7815 17.0825V17.0816ZM67.6847 27.8942H85.5267V21.3833H75.3606V19.2544H84.3898V12.7435H75.3606V10.6146H85.5267V4.10376H67.6847V27.8942ZM127.684 27.8942H145.526V21.3833H135.36V19.2544H144.389V12.7435H135.36V10.6146H145.526V4.10376H127.684V27.8942ZM116.17 27.8942H123.846V4.10376H116.17V27.8942ZM166.296 20.6425L170.474 27.8942H162.797L159.421 22.0333H157.041V27.8942H149.364V4.10376H161.497C166.455 4.10376 170.474 8.11772 170.474 13.0685C170.474 16.2556 168.806 19.0527 166.296 20.6425ZM162.27 13.0685C162.27 11.6232 161.097 10.4512 159.65 10.4512H157.04V12.8391C157.034 12.9146 157.029 12.9911 157.029 13.0685C157.029 13.146 157.034 13.2225 157.04 13.298V15.6859H159.65C161.097 15.6859 162.27 14.5139 162.27 13.0685ZM113.187 15.9994C113.187 22.5686 107.855 27.8942 101.277 27.8942H89.3661V4.10472H101.277C107.855 4.10472 113.187 9.43024 113.187 15.9994ZM104.972 15.9994C104.972 13.0255 102.895 10.6156 100.334 10.6156H97.0409V21.3842H100.334C102.896 21.3842 104.972 18.9733 104.972 16.0004V15.9994Z" fill="white"/><path d="M0.00012207 9.66064V22.3373L11.1572 15.9985L0.00012207 9.66064Z" fill="#D80B1A"/><path d="M32.7422 16.0005L21.0137 22.6634L4.58044 32V23.1796L17.2174 16.0005L4.58044 8.82042V0L21.0137 9.33661L32.7422 16.0005Z" fill="white"/></g></svg>
+  <div class="lbw"><div class="lb" id="lb"></div></div>
+  <div class="lt" id="lt">LOADING DATA...</div>
+  <div id="ldebug" style="font-size:10px;color:#4e5a70;font-family:monospace;margin-top:8px;max-width:400px;text-align:center"></div>
+</div>
+
+<div class="mo" id="editModal">
+  <div class="modal">
+    <h2>Edit Keywords <span id="etl" style="color:var(--teal);font-size:16px"></span></h2>
+    <p class="msub">Saved in your browser and persist until changed. Run fetcher_to_sheets.py to get real data for new keywords.</p>
+    <div class="msec">
+      <div class="mst">&#127991; Brand Keywords <div class="ml"></div> <small style="color:var(--muted);font-size:10px;font-family:'DM Mono',monospace">max 12</small></div>
+      <div class="kwl" id="ebl"></div>
+      <button class="akb" onclick="addKwRow('brand')">&#65291; Add Brand</button>
+    </div>
+    <div class="msec">
+      <div class="mst">&#128200; Generic Trends <div class="ml"></div> <small style="color:var(--muted);font-size:10px;font-family:'DM Mono',monospace">max 5</small></div>
+      <div class="kwl" id="egl"></div>
+      <button class="akb" onclick="addKwRow('generic')">&#65291; Add Trend</button>
+    </div>
+    <div class="msec" style="margin-bottom:0">
+      <div class="mst">&#128221; Notes <div class="ml"></div> <span class="notes-saved" id="notesSaved">saved</span></div>
+      <textarea class="notes-area" id="tabNotes" placeholder="Add context notes for this market tab... e.g. 'Romania spike in Dec = Black Friday campaign launch'"></textarea>
+    </div>
+    <div class="mf">
+      <button class="btn bg" onclick="closeEM()">Cancel</button>
+      <button class="btn bt" onclick="saveKW()">&#10003; Save & Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="addTabModal">
+  <div class="modal">
+    <h2>Add New Country Tab</h2>
+    <div class="cb3">&#9889; Concept Feature</div>
+    <p class="msub">Tab appears instantly with sample data. Add to fetcher_to_sheets.py and run for real data, or upgrade SerpAPI for full automation.</p>
+    <div class="mg">
+      <div class="cg" style="display:flex;flex-direction:column;gap:5px"><div class="cl">Country Name</div><input class="kwi" id="nN" placeholder="e.g. Portugal" style="width:100%"></div>
+      <div class="cg" style="display:flex;flex-direction:column;gap:5px"><div class="cl">Flag Emoji</div><input class="kwi" id="nF" placeholder="e.g. 🇵🇹" style="width:100%"></div>
+      <div class="cg" style="display:flex;flex-direction:column;gap:5px"><div class="cl">Geo Code</div><input class="kwi" id="nG" placeholder="e.g. PT" style="width:100%"></div>
+      <div class="cg" style="display:flex;flex-direction:column;gap:5px"><div class="cl">Sheet Tab Name</div><input class="kwi" id="nS" placeholder="e.g. Portugal" style="width:100%"></div>
+    </div>
+    <div class="msec">
+      <div class="mst">&#127991; Initial Brands <div class="ml"></div></div>
+      <div class="kwl" id="nbl">
+        <div class="kwr"><span class="kwd" style="background:#cc1418"></span><input class="kwi" placeholder="Brand 1"><button class="kwr2" onclick="removeKW(this)">&#215;</button></div>
+        <div class="kwr"><span class="kwd" style="background:#3aacac"></span><input class="kwi" placeholder="Brand 2"><button class="kwr2" onclick="removeKW(this)">&#215;</button></div>
+        <div class="kwr"><span class="kwd" style="background:#e8a020"></span><input class="kwi" placeholder="Brand 3"><button class="kwr2" onclick="removeKW(this)">&#215;</button></div>
+      </div>
+      <button class="akb" onclick="addNTR()">&#65291; Add Brand</button>
+    </div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted2);margin-bottom:10px;">&#128176; SerpAPI Pricing to auto-fetch this tab</div>
+      <div class="pg">
+        <div class="pc"><div class="pn">Free</div><div class="pp">$0 <span>/mo</span></div><div class="pd">100 searches/mo. ~5 manual refreshes. No credit card.</div></div>
+        <div class="pc hi"><div class="pn">Hobby &#11088; Recommended</div><div class="pp">$50 <span>/mo</span></div><div class="pd">5,000 searches/mo. Weekly auto-refresh for 15+ tabs.</div></div>
+        <div class="pc"><div class="pn">Business</div><div class="pp">$150 <span>/mo</span></div><div class="pd">15,000 searches/mo. Daily refresh, unlimited tabs.</div></div>
+        <div class="pc"><div class="pn">Enterprise</div><div class="pp">$500 <span>/mo</span></div><div class="pd">100k searches/mo. Multi-client, SLA.</div></div>
+      </div>
+      <p style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.6;">&#128161; 10 tabs x weekly refresh = ~160 calls/mo. <strong style="color:var(--teal)">$50 Hobby covers it easily.</strong></p>
+    </div>
+    <div class="mf">
+      <button class="btn bg" onclick="closeATM()">Cancel</button>
+      <button class="btn bgr" onclick="createTab()">&#65291; Create Tab</button>
+    </div>
+  </div>
+</div>
+
+<header>
+  <div class="la">
+    <svg width="110" height="20" viewBox="0 0 171 32" fill="none" xmlns="http://www.w3.org/2000/svg"><mask id="mh" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="171" height="32"><path d="M170.473 0H0V32H170.473V0Z" fill="white"/></mask><g mask="url(#mh)"><path d="M50.7815 17.0816L37.7157 4.10472V27.8951H45.3924V22.5419L50.7815 27.8951L56.1705 22.5419V27.8951H63.847V4.10472L50.7815 17.0825V17.0816ZM67.6847 27.8942H85.5267V21.3833H75.3606V19.2544H84.3898V12.7435H75.3606V10.6146H85.5267V4.10376H67.6847V27.8942ZM127.684 27.8942H145.526V21.3833H135.36V19.2544H144.389V12.7435H135.36V10.6146H145.526V4.10376H127.684V27.8942ZM116.17 27.8942H123.846V4.10376H116.17V27.8942ZM166.296 20.6425L170.474 27.8942H162.797L159.421 22.0333H157.041V27.8942H149.364V4.10376H161.497C166.455 4.10376 170.474 8.11772 170.474 13.0685C170.474 16.2556 168.806 19.0527 166.296 20.6425ZM162.27 13.0685C162.27 11.6232 161.097 10.4512 159.65 10.4512H157.04V12.8391C157.034 12.9146 157.029 12.9911 157.029 13.0685C157.029 13.146 157.034 13.2225 157.04 13.298V15.6859H159.65C161.097 15.6859 162.27 14.5139 162.27 13.0685ZM113.187 15.9994C113.187 22.5686 107.855 27.8942 101.277 27.8942H89.3661V4.10472H101.277C107.855 4.10472 113.187 9.43024 113.187 15.9994ZM104.972 15.9994C104.972 13.0255 102.895 10.6156 100.334 10.6156H97.0409V21.3842H100.334C102.896 21.3842 104.972 18.9733 104.972 16.0004V15.9994Z" fill="white"/><path d="M0.00012207 9.66064V22.3373L11.1572 15.9985L0.00012207 9.66064Z" fill="#D80B1A"/><path d="M32.7422 16.0005L21.0137 22.6634L4.58044 32V23.1796L17.2174 16.0005L4.58044 8.82042V0L21.0137 9.33661L32.7422 16.0005Z" fill="white"/></g></svg>
+    <div class="hd"></div>
+    <div><div class="dtm">Brand Intelligence</div><div class="dts">GOOGLE TRENDS DASHBOARD — SEO TEAM</div></div>
+  </div>
+  <div class="hr">
+    <div class="lp"><span class="ld" id="ld"></span><span id="lu">Loading...</span></div>
+    <button class="btn bg" onclick="expCSV()">&#8595; CSV</button>
+    <button class="btn bg" onclick="expPDF()">&#128438; PDF</button>
+    <button class="btn bg" onclick="openEM()">&#10000; Edit Keywords</button>
+    <button class="btn bg" onclick="refData()">&#8635; Refresh</button>
+  </div>
+</header>
+
+<div class="tabs-bar" id="tb"></div>
+
+<div class="cb">
+  <div class="cg"><div class="cl">Period</div>
+    <select id="ps" onchange="onCC()">
+      <option value="52" selected>Last 12 Months</option>
+      <option value="26">Last 6 Months</option>
+      <option value="13">Last 3 Months</option>
+      <option value="260">Last 5 Years</option>
+    </select>
+  </div>
+  <div class="cg"><div class="cl">Chart Type</div>
+    <select id="cts" onchange="rMC()">
+      <option value="line">Line</option>
+      <option value="bar">Bar</option>
+      <option value="area">Area</option>
+    </select>
+  </div>
+
+  <div class="cg" style="margin-left:auto"><div class="cl">Toggle BRANDS / GENERIC</div><div class="qt" id="qt"></div></div>
+</div>
+
+<main id="mg">
+  <div class="nds"><div class="ndi">&#128225;</div><div class="ndt">Loading Data</div><div class="ndd">Fetching from Google Sheets...</div></div>
+</main>
+
+<script>
+
+const SID = "1CkCZeWpfzaFAhVDxqqK7qqrWj28ZXP3IhqKkX6Udefg";
+const C = ['#cc1418','#3aacac','#e8a020','#7b8cde','#e05c8a','#50c878','#f0a060','#a0c8f0','#ff8c42','#c9e265','#9b5de5','#00bbf9'];
+const DT = [
+  {id:'CA-Ontario',flag:'🇨🇦',name:'Ontario',st:'CA-Ontario',
+    brands:["tooniebet","swiper","betmgm","888casino","powerplay","fanduel","draftkings","playnow"],
+    generics:["Online casino","Casino","online casino canada","Slots","Sports betting","live casino"]},
+  {id:'CA-All',flag:'🇨🇦',name:'Canada',st:'CA-All',
+    brands:["tooniebet","swiper","betmgm","888casino","powerplay","fanduel","draftkings","playnow"],
+    generics:["Online casino","Casino","online casino canada","Slots","Sports betting","live casino"]},
+  {id:'Greece',flag:'🇬🇷',name:'Greece',st:'Greece',
+    brands:["elabet","betsson","stoiximan","netbet","pamestoixima","novibet","pokerstars","sportingbet"],
+    generics:["Online casino","casino","στοίχημα","αθλητικό στοίχημα","live casino"]},
+  {id:'Mexico',flag:'🇲🇽',name:'Mexico',st:'Mexico',
+    brands:["campobet","novibet","codere","sportium","betway","betfair","rushbet","netbet"],
+    generics:["ruleta online","casino","casino online","apuestas deportivas","slots","juegos de casino","live casino","casino en vivo"]},
+  {id:'Sweden',flag:'🇸🇪',name:'Sweden',st:'Sweden',
+    brands:["betinia","swiper","campobet","quick casino","lodur","unibet","lucky casino","paf"],
+    generics:["casino","casino online","spela casino","slots","live casino","casino bonus","bet","odds"]},
+  {id:'Denmark',flag:'🇩🇰',name:'Denmark',st:'Denmark',
+    brands:["betinia","swiper","campobet","danske spil","tivolicasino","mariacasino","unibet","betsson"],
+    generics:["bet","Casino","Online casino","Odds","slots"]},
+  {id:'Spain',flag:'🇪🇸',name:'Spain',st:'Spain',
+    brands:[],
+    generics:[]},
+  {id:'Romania',flag:'🇷🇴',name:'Romania',st:'Romania',
+    brands:["don ro","topbet","netbet","Swiper","betano","casa pariurilor","betfair","888"],
+    generics:["Casino Online","Casino","pacanele","jocuri cazino","pariuri sportive"]},
+  {id:'Italy',flag:'🇮🇹',name:'Italy',st:'Italy',
+    brands:[],
+    generics:[]},
+];
+
+let TC=loadTC(),aid=TC[0]?.id||'CA-Ontario',per=52,hmGran='weekly',tD={},tS={},aKW={},cM=null,cD=null,sT='brand';
+Chart.defaults.color='#4e5a70';Chart.defaults.font.family='DM Sans';
+
+function loadTC(){try{const s=localStorage.getItem('bi_v4');if(s){const p=JSON.parse(s);if(Array.isArray(p)&&p.length)return p;}}catch(e){}return JSON.parse(JSON.stringify(DT));}
+function saveTC(){localStorage.setItem('bi_v4',JSON.stringify(TC));}
+function getTC(id){return TC.find(t=>t.id===id);}
+
+function csvURL(tab){return 'https://docs.google.com/spreadsheets/d/'+SID+'/gviz/tq?tqx=out:csv&sheet='+encodeURIComponent(tab);}
+function parseCSV(txt){
+  const L=txt.trim().split('\n');if(L.length<2)return[];
+  const H=L[0].split(',').map(h=>h.replace(/^"|"$/g,'').trim().toLowerCase());
+  const R=[];
+  for(let i=1;i<L.length;i++){const V=sCSV(L[i]);if(V.length<H.length)continue;const o={};H.forEach((h,j)=>{o[h]=(V[j]||'').replace(/^"|"$/g,'').trim();});if(o.date&&o.keyword)R.push(o);}
+  return R;
+}
+function sCSV(l){const r=[];let c='',q=false;for(let i=0;i<l.length;i++){const ch=l[i];if(ch==='"')q=!q;else if(ch===','&&!q){r.push(c);c='';}else c+=ch;}r.push(c);return r;}
+
+async function fetchT(id){
+  const cfg=getTC(id);if(!cfg)return;
+  tS[id]='loading';rTS();
+  return new Promise((resolve)=>{
+    const ts=Date.now();
+    const cbName='gvizCb_'+ts+'_'+id.replace(/[^a-z0-9]/gi,'_');
+    if(!window.google)window.google={};
+    if(!window.google.visualization)window.google.visualization={};
+    if(!window.google.visualization.Query)window.google.visualization.Query={};
+    if(!window._gvizPending)window._gvizPending={};
+    window._gvizPending[cbName]={id,resolve};
+    window[cbName]=function(data){_gvizDone(cbName,data);};
+    window.google.visualization.Query.setResponse=function(data){
+      const keys=Object.keys(window._gvizPending||{});
+      if(keys.length>0)_gvizDone(keys[keys.length-1],data);
+    };
+    const s=document.createElement('script');
+    s.id='sc_'+cbName;
+    s.onerror=()=>{tS[id]='error';tD[id]=[];delete window[cbName];s.remove();rTS();resolve();};
+    s.src='https://docs.google.com/spreadsheets/d/'+SID+'/gviz/tq?tqx=out:json;responseHandler:'+cbName+'&sheet='+encodeURIComponent(cfg.st);
+    document.head.appendChild(s);
+    setTimeout(()=>{if(window._gvizPending&&window._gvizPending[cbName]){tS[id]='error';tD[id]=[];delete window._gvizPending[cbName];delete window[cbName];s.remove();rTS();resolve();}},15000);
+  });
+}
+
+function _gvizDone(cbName,data){
+  if(!window._gvizPending||!window._gvizPending[cbName])return;
+  const{id,resolve}=window._gvizPending[cbName];
+  delete window._gvizPending[cbName];delete window[cbName];
+  const sc=document.getElementById('sc_'+cbName);if(sc)sc.remove();
+  if(!data){tS[id]='error';tD[id]=[];rTS();resolve();return;}
+  try{
+    const rows=parseGVIZ(data);
+    console.log('Loaded',id,':',rows.length,'rows');
+    if(!rows.length){tS[id]='empty';tD[id]=[];}
+    else{tD[id]=rows;tS[id]='ok';if(!aKW[id])aKW[id]=new Set(rows.map(r=>r.keyword));recordRefreshTime(id);}
+  }catch(e){console.error('Parse error',id,e.message);tS[id]='error';tD[id]=[];}
+  rTS();resolve();
+}
+
+function parseGVIZ(data){
+  const table=data.table;if(!table||!table.cols||!table.rows)return[];
+  const headers=table.cols.map(c=>(c.label||c.id||'').toLowerCase().trim());
+  const ci={date:headers.indexOf('date'),keyword:headers.indexOf('keyword'),interest:headers.indexOf('interest'),type:headers.indexOf('type'),country:headers.indexOf('country'),region:headers.indexOf('region'),monthyear:headers.indexOf('monthyear'),year:headers.indexOf('year'),fetchedat:headers.indexOf('fetchedat')};
+  const rows=[];
+  for(const row of table.rows){
+    if(!row.c)continue;
+    const g=(i)=>{if(i<0||!row.c[i])return'';const cell=row.c[i];if(cell.v&&typeof cell.v==='string'&&cell.v.startsWith('Date(')){const m=cell.v.match(/Date\((\d+),(\d+),(\d+)\)/);if(m)return m[1]+'-'+String(parseInt(m[2])+1).padStart(2,'0')+'-'+String(m[3]).padStart(2,'0');}return String(cell.v||cell.f||'').trim();};
+    const o={date:g(ci.date),keyword:g(ci.keyword),interest:g(ci.interest),type:g(ci.type)||'brand',country:g(ci.country),region:g(ci.region),monthyear:g(ci.monthyear),year:g(ci.year),fetchedat:g(ci.fetchedat)};
+    if(o.date&&o.keyword)rows.push(o);
+  }
+  return rows;
+}
+
+async function loadAll(){
+  setL(5,'Connecting to Google Sheets...');
+  for(let i=0;i<TC.length;i++){const cfg=TC[i];setL(Math.round((i/TC.length)*85)+10,'Loading '+cfg.flag+' '+cfg.name+'...');await fetchT(cfg.id);}
+  setL(100,'Ready!');setTimeout(hideL,400);rAll();updLU();
+}
+function setL(p,t){document.getElementById('lb').style.width=p+'%';document.getElementById('lt').textContent=t;}
+function hideL(){const el=document.getElementById('ls');el.style.transition='opacity 0.4s';el.style.opacity='0';setTimeout(()=>el.style.display='none',400);}
+
+function getAD(){
+  const rows=tD[aid]||[];const aq=aKW[aid]||new Set();
+  const tf=rows.filter(r=>sT==='all'?true:r.type===sT);
+  const aD=[...new Set(tf.map(r=>r.date))].sort();const dates=aD.slice(-per);
+  const filt=tf.filter(r=>aq.has(r.keyword)&&dates.includes(r.date));
+  const kws=[...new Set(filt.map(r=>r.keyword))];const kd={};
+  kws.forEach(kw=>{kd[kw]={};dates.forEach(d=>{kd[kw][d]=0;});});
+  filt.forEach(r=>{if(kd[r.keyword])kd[r.keyword][r.date]=parseInt(r.interest)||0;});
+  return{keywords:kws,dates,kwData:kd};
+}
+function getAllKW(){return[...new Set((tD[aid]||[]).map(r=>r.keyword))];}
+function getKWT(kw){const r=(tD[aid]||[]).find(x=>x.keyword===kw);return r?r.type:'brand';}
+function smooth(arr,w=3){return arr.map((v,i)=>{const s=arr.slice(Math.max(0,i-w+1),i+1);return Math.round(s.reduce((a,b)=>a+b,0)/s.length);});}
+
+
+
+function renderMonthlyAvg(){
+  const el=document.getElementById('monthlyAvgTable');if(!el)return;
+  const{keywords,months,monthlyData}=getMonthlyAvgData();
+  if(!keywords.length||!months.length){el.innerHTML='<div style="padding:16px;color:var(--muted);font-size:12px">No data</div>';return;}
+  const allKW=getAllKW();
+
+  // Format month labels
+  const mLabels=months.map(mk=>{
+    const[y,m]=mk.split('-');
+    return new Date(parseInt(y),parseInt(m)-1,1).toLocaleString('default',{month:'short',year:'2-digit'});
+  });
+
+  let html='<table style="width:100%;border-collapse:collapse;font-size:11px">';
+  // Header
+  html+='<thead><tr style="border-bottom:1px solid var(--border)">';
+  html+='<th style="text-align:left;padding:7px 12px;font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted2);white-space:nowrap;position:sticky;left:0;background:var(--surface);z-index:1">Keyword</th>';
+  mLabels.forEach(ml=>{
+    html+='<th style="padding:6px 8px;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted2);text-align:center;white-space:nowrap">'+ml+'</th>';
+  });
+  html+='<th style="padding:6px 8px;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--teal);text-align:center;white-space:nowrap">PERIOD AVG</th>';
+  html+='</tr></thead><tbody>';
+
+  keywords.forEach(kw=>{
+    const col=C[allKW.indexOf(kw)%C.length];
+    const monthVals=months.map(mk=>monthlyData[kw][mk]||0);
+    const periodAvg=monthVals.length?Math.round(monthVals.reduce((a,b)=>a+b,0)/monthVals.length):0;
+    const maxVal=Math.max(...monthVals,1);
+
+    html+='<tr style="border-bottom:1px solid rgba(255,255,255,0.02)">';
+    html+='<td style="padding:6px 12px;display:flex;align-items:center;gap:6px;position:sticky;left:0;background:var(--surface);z-index:1">'
+      +'<span style="width:7px;height:7px;border-radius:50%;background:'+col+';display:inline-block;flex-shrink:0"></span>'
+      +'<span style="font-weight:500;color:'+col+';white-space:nowrap">'+kw+'</span>'
+      +'</td>';
+
+    monthVals.forEach(v=>{
+      const intensity=maxVal>0?v/maxVal:0;
+      const bg=v>0?col+''+Math.round(intensity*40+15).toString(16).padStart(2,'0'):'transparent';
+      const textCol=v>0?'#eef0f4':'var(--muted)';
+      html+='<td style="padding:5px 8px;text-align:center;font-family:monospace;background:'+bg+';color:'+textCol+'">'+
+        (v>0?v:'—')+'</td>';
+    });
+
+    // Period avg cell
+    html+='<td style="padding:5px 8px;text-align:center;font-family:monospace;font-weight:700;color:'+col+';background:'+col+'18">'+periodAvg+'</td>';
+    html+='</tr>';
+  });
+
+  // ALL BRANDS AVG row
+  html+='<tr style="border-top:1px solid var(--border);background:rgba(58,172,172,0.04)">';
+  html+='<td style="padding:6px 12px;font-size:10px;font-weight:700;color:var(--teal);position:sticky;left:0;background:rgba(58,172,172,0.06);z-index:1">ALL BRANDS AVG</td>';
+  months.forEach(mk=>{
+    const colAvg=keywords.length?Math.round(keywords.reduce((s,kw)=>s+(monthlyData[kw][mk]||0),0)/keywords.length):0;
+    html+='<td style="padding:5px 8px;text-align:center;font-family:monospace;font-weight:600;color:var(--teal)">'+colAvg+'</td>';
+  });
+  const allMonthAvgs=months.map(mk=>keywords.length?Math.round(keywords.reduce((s,kw)=>s+(monthlyData[kw][mk]||0),0)/keywords.length):0);
+  const overallAvg=allMonthAvgs.length?Math.round(allMonthAvgs.reduce((a,b)=>a+b,0)/allMonthAvgs.length):0;
+  html+='<td style="padding:5px 8px;text-align:center;font-family:monospace;font-weight:700;color:var(--teal)">'+overallAvg+'</td>';
+  html+='</tr>';
+
+  html+='</tbody></table>';
+  el.innerHTML=html;
+}
+
+function rAll(){
+  rTabs();rQT();
+  const{keywords}=getAD();
+  if(!keywords.length){const st=tS[aid];showND(st==='error'?'Could Not Load Data':'No Data Yet',st==='error'?'Could not read Sheet. Check browser console (F12).':'Run fetcher_to_sheets.py for this tab, then click Refresh.');return;}
+  buildG();
+  sovType=sovType||'brand';
+  // Use requestAnimationFrame to ensure DOM is painted before rendering charts
+  // Double rAF ensures browser has fully painted the new DOM before Chart.js runs
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    const tabs=document.querySelectorAll('.sov-tab');
+    if(tabs.length){
+      tabs.forEach(t=>t.classList.remove('active'));
+      tabs.forEach((t,i)=>{if((sovType==='generic'&&i===1)||(sovType!=='generic'&&i===0))t.classList.add('active');});
+    }
+    [rKPI,rMC,rRank,rDonut,rHM,rCmp,renderMonthlyAvg,detectBreakouts].forEach(fn=>{
+      try{fn();}catch(e){console.error(fn.name+' failed:',e.message);}
+    });
+  }));
+}
+
+function buildG(){
+  const cfg=TC.find(t=>t.id===aid);
+  const pl=per>=260?'5 Years':per<=13?'3 Months':per<=26?'6 Months':'12 Months';
+  const geoLabel=(cfg?cfg.name:'')+' - Last '+pl;
+
+  document.getElementById('mg').innerHTML=
+
+    '<div class="kr fi" id="kr"></div>'+
+
+    '<div class="card mcc fi" style="animation-delay:0.05s">'+
+      '<div class="ch">'+
+        '<span class="ct">Search Interest Over Time'+
+          '<span class="wi" onmouseenter="showWTip(event,wTips.chart())" onmouseleave="hideWTip()">i</span>'+
+        '</span>'+
+        '<span style="font-size:10px;color:var(--teal);font-family:monospace">'+geoLabel+'</span>'+
+      '</div>'+
+      '<div class="cw"><canvas id="mc"></canvas></div>'+
+    '</div>'+
+
+    '<div class="card hmc fi" style="animation-delay:0.1s">'+
+    '<div class="card hmc fi" style="animation-delay:0.1s">'+
+      '<div class="ch">'+
+        '<span class="ct">Heatmap'+
+          '<span class="wi" onmouseenter="showWTip(event,wTips.heatmap())" onmouseleave="hideWTip()">i</span>'+
+        '</span>'+
+        '<div class="hm-toggle"><button class="hm-btn active" id="hmBtnW" onclick="setHmGran(this,\'weekly\')">Weekly</button><button class="hm-btn" id="hmBtnM" onclick="setHmGran(this,\'monthly\')">Monthly</button></div>'+
+      '</div>'+
+      '<div class="cb2" style="overflow-x:auto;padding-bottom:8px"><div class="hmg" id="hmg"></div></div>'+
+    '</div>'+
+    '<div class="card cpc fi" style="animation-delay:0.12s">'+
+      '<div class="ch">'+
+        '<span class="ct" id="cmpTitle">Period vs Prior'+
+          '<span class="wi" onmouseenter="showWTip(event,wTips.compare())" onmouseleave="hideWTip()">i</span>'+
+        '</span>'+
+        '<span id="cmpPeriodLabel" style="font-size:9px;color:var(--muted)"></span>'+
+      '</div>'+
+      '<div class="cb2" style="padding:0"><table class="cpt">'+
+        '<thead><tr id="cmpHead"><th>Keyword</th><th>Avg</th><th>Peak</th><th>D%</th><th>Trend</th></tr></thead>'+
+        '<tbody id="ctb"></tbody>'+
+      '</table></div>'+
+    '</div>'+
+
+    '<div class="card fi" style="grid-column:1/5;grid-row:4;animation-delay:0.2s">'+
+      '<div class="ch">'+
+        '<span class="ct">Monthly Averages — Aggregated from Weekly Data'+
+          '<span class="wi" onmouseenter="showWTip(event,wTips.monthly())" onmouseleave="hideWTip()">i</span>'+
+        '</span>'+
+        '<span style="font-size:9px;color:var(--teal)">avg of weekly values per calendar month · copy-paste ready for monthly reporting</span>'+
+      '</div>'+
+      '<div class="cb2" style="padding:0;overflow-x:auto"><div id="monthlyAvgTable"></div></div>'+
+    '</div>'+
+
+    '<div class="sb fi" style="animation-delay:0.08s">'+
+      '<div class="card sov-card">'+
+        '<div class="ch">'+
+          '<span class="ct">Share of Voice'+
+            '<span class="wi" onmouseenter="showWTip(event,wTips.sov())" onmouseleave="hideWTip()">i</span>'+
+          '</span>'+
+          '<span class="sov-info" onmouseenter="showSOVTip(event)" onmouseleave="hideSOVTip()" style="cursor:help;font-size:10px;color:var(--teal);border:1px solid rgba(58,172,172,0.3);border-radius:10px;padding:1px 7px">How calc.</span>'+
+        '</div>'+
+        '<div class="cb2" style="padding:10px 12px">'+
+          '<div class="sov-tabs">'+
+            '<button class="sov-tab active" data-t="brand" onclick="sovClick(this)">BRANDS</button>'+
+            '<button class="sov-tab" data-t="generic" onclick="sovClick(this)">GENERIC</button>'+
+          '</div>'+
+          '<canvas id="donutChart" style="max-height:150px"></canvas>'+
+          '<div class="dl" id="dl" style="margin-top:6px"></div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="card" id="alertsCard" style="display:none">'+
+        '<div class="ch">'+
+          '<span class="ct">Breakout Alerts'+
+            '<span class="wi" onmouseenter="showWTip(event,wTips.breakout())" onmouseleave="hideWTip()">i</span>'+
+          '</span>'+
+          '<span style="font-size:9px;color:#e8a020">20+ pt jump</span>'+
+        '</div>'+
+        '<div class="cb2" style="padding:12px"><div id="alertsList"></div></div>'+
+      '</div>'+
+      '<div class="card">'+
+        '<div class="ch">'+
+          '<span class="ct">Ranking'+
+            '<span class="wi" onmouseenter="showWTip(event,wTips.ranking())" onmouseleave="hideWTip()">i</span>'+
+          '</span>'+
+          '<span style="font-size:9px;color:var(--muted)">avg interest</span>'+
+        '</div>'+
+        '<div class="cb2" style="padding:12px"><div class="rl" id="rl"></div></div>'+
+      '</div>'+
+    '</div>';
+}
+function showND(t,d){document.getElementById('mg').innerHTML='<div class="nds"><div class="ndi">📭</div><div class="ndt">'+t+'</div><div class="ndd">'+d+'</div></div>';}
+
+function rTabs(){
+  document.getElementById('tb').innerHTML=TC.map(t=>{
+    const st=tS[t.id]||'empty';
+    const stL=st==='ok'?'✓':st==='error'?'✗':st==='loading'?'…':'–';
+    const stC=st==='ok'?'ok':st==='error'?'err':'';
+    const fires=(window._tabBreakouts||{})[t.id]||0;
+    const fireBadge=fires>0?'<span class="tab-fire">🔥</span>':'';
+    const rt=(window._tabRefreshTime||{})[t.id]||'';
+    const rtLabel=rt?'<span class="tab-refresh">'+rt+'</span>':'';
+    return '<div class="ti '+(t.id===aid?'active':'')+'" onclick="swT(\''+t.id+'\')">'
+      +fireBadge
+      +'<span class="ts '+stC+'">'+stL+'</span>'
+      +'<span class="tf">'+t.flag+'</span>'
+      +'<span class="tn">'+t.name+'</span>'
+      +rtLabel
+      +'</div>';
+  }).join('')+'<div class="tab-add" onclick="openATM()" title="Add new country tab">＋</div>';
+}
+function rTS(){rTabs();}
+function swT(id){aid=id;sT='brand';rAll();const tabs=document.querySelectorAll('.ti');const idx=TC.findIndex(t=>t.id===id);if(tabs[idx])tabs[idx].scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});}
+
+function rQT(){
+  const allKW=getAllKW();const aq=aKW[aid]||new Set();
+  const vis=sT==='all'?allKW:allKW.filter(k=>getKWT(k)===sT);
+  document.getElementById('qt').innerHTML=
+    '<div class="ttog '+(sT==='brand'?'ab':'')+'" onclick="setST(\'brand\')">🏷 BRANDS</div>'+
+    '<div class="ttog '+(sT==='generic'?'ag':'')+'" onclick="setST(\'generic\')">📈 GENERIC</div>'+
+    '<div class="ttog '+(sT==='all'?'aa':'')+'" onclick="setST(\'all\')">ALL</div>'+
+    vis.map(kw=>{const col=C[allKW.indexOf(kw)%C.length];const s=kw.replace(/'/g,"\\'");
+      return '<div class="qtag '+(aq.has(kw)?'':'inactive')+'" style="border-color:'+col+'22;color:'+col+';background:'+col+'10" onclick="togKW(\''+s+'\')"><span class="dot" style="background:'+col+'"></span>'+kw+'<span class="rm">×</span></div>';
+    }).join('');
+}
+function setST(t){sT=t;rQT();rMC();rRank();rDonut();rHM();rCmp();}
+function togKW(kw){const aq=aKW[aid];if(!aq)return;if(aq.has(kw)){if(aq.size>1)aq.delete(kw);}else aq.add(kw);rQT();rKPI();rMC();rRank();rDonut();rHM();rCmp();}
+
+function rKPI(){
+  const{keywords,dates,kwData}=getAD();const allKW=getAllKW();
+  const avgs=keywords.map(kw=>{
+    const v=dates.map(d=>kwData[kw][d]||0);
+    const avg=Math.round(v.reduce((a,b)=>a+b,0)/Math.max(v.length,1));
+    const peak=Math.max(...v,0);
+    // Real WoW: last 4 data points vs prior 4 data points
+    const w=Math.min(4,Math.floor(v.length/2));
+    const recent=w>0?v.slice(-w).reduce((a,b)=>a+b,0)/w:avg;
+    const prior=w>0&&v.length>=w*2?v.slice(-(w*2),-w).reduce((a,b)=>a+b,0)/w:avg;
+    const diff=recent-prior;
+    const pct=prior>0?Math.round(diff/prior*100):0;
+    return{kw,avg,peak,pct,isUp:diff>0.5,isFlat:Math.abs(diff)<=0.5};
+  }).sort((a,b)=>b.avg-a.avg).slice(0,4);
+  const el=document.getElementById('kr');if(!el)return;
+  const wLabel=dates.length>0?'vs prior '+Math.min(4,Math.floor(dates.length/2))+'wk':'';
+  el.innerHTML=avgs.map((item,i)=>{
+    const col=C[allKW.indexOf(item.kw)%C.length];
+    const badgeClass=item.isFlat?'fl':item.isUp?'up':'dn';
+    const badgeText=item.isFlat?'flat':(item.isUp?'+':'')+item.pct+'%';
+    const periodTip='Avg '+item.avg+'/100 over '+dates.length+' weeks. '+badgeText+': avg last 4wk vs prior 4wk';
+    return '<div class="kpi" style="--kc:'+col+'" title="'+periodTip+'">'+
+      '<div class="kl">'+(i===0?'🥇 Leader':'Rank #'+(i+1))+'</div>'+
+      '<div class="kv">'+item.avg+'</div>'+
+      '<div class="kb" style="color:'+col+'">'+item.kw+'</div>'+
+      '<span class="kch '+badgeClass+'" title="'+badgeText+': last 4 weeks vs prior 4 weeks">'+badgeText+'</span>'+
+      '<div style="position:absolute;bottom:10px;right:13px;font-size:8px;color:var(--muted);font-family:monospace">4wk vs 4wk</div>'+
+    '</div>';
+  }).join('');
+}
+
+function rMC(){
+  const cv=document.getElementById('mc');
+  if(!cv){console.error('rMC: #mc canvas missing');return;}
+  const{keywords,dates,kwData}=getAD();const allKW=getAllKW();
+  if(!keywords.length){console.warn('rMC: no active keywords');return;}
+  const doS=false;
+  const type=document.getElementById('cts')?.value||'line';
+  const labels=dates.map(d=>{const dt=new Date(d+'T00:00:00');return per>=260?dt.toLocaleString('default',{month:'short',year:'numeric'}):dt.toLocaleString('default',{month:'short',year:'2-digit'});});
+  const datasets=keywords.map(kw=>{const col=C[allKW.indexOf(kw)%C.length];let v=dates.map(d=>kwData[kw][d]||0);
+    return{label:kw,data:v,borderColor:col,backgroundColor:type==='area'?col+'28':col+'15',borderWidth:2,pointRadius:per>=260?1:2,pointHoverRadius:6,pointBackgroundColor:col,tension:0.4,fill:type==='area'};});
+  if(cM){cM.destroy();cM=null;}
+  cM=new Chart(cv.getContext('2d'),{type:type==='bar'?'bar':'line',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+    plugins:{legend:{display:false},tooltip:{backgroundColor:'#181e2c',borderColor:'rgba(255,255,255,0.08)',borderWidth:1,titleColor:'#7a8899',bodyColor:'#eef0f4',padding:12,callbacks:{label:item=>' '+item.dataset.label+': '+item.parsed.y}}},
+    scales:{x:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#4e5a70',font:{size:10,family:'DM Mono'},maxTicksLimit:per>=260?24:13}},y:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#4e5a70',font:{size:10,family:'DM Mono'}},min:0,max:100}}}});
+  console.log('rMC: chart rendered with',keywords.length,'keywords',dates.length,'dates');
+}
+function rRank(){
+  const{keywords,dates,kwData}=getAD();const allKW=getAllKW();
+  const el=document.getElementById('rl');if(!el)return;
+  const sorted=keywords.map(kw=>{const v=dates.map(d=>kwData[kw][d]||0);return{kw,avg:Math.round(v.reduce((a,b)=>a+b,0)/Math.max(v.length,1)),type:getKWT(kw)};}).sort((a,b)=>b.avg-a.avg);
+  const mx=sorted[0]?.avg||1;
+  el.innerHTML=sorted.map((item,i)=>{const col=C[allKW.indexOf(item.kw)%C.length];const pct=Math.round(item.avg/mx*100);const s=item.kw.replace(/'/g,"\\'");
+    return '<div class="ri" onclick="togKW(\''+s+'\')"><span class="rn">'+(i+1)+'</span><span class="rd" style="background:'+col+'"></span><span class="rname" title="'+item.kw+'">'+item.kw+'</span><div class="rbw"><div class="rb" style="width:'+pct+'%;background:'+col+'"></div></div><span class="rs">'+item.avg+'</span><span class="rt">'+item.type.toUpperCase()+'</span></div>';
+  }).join('');
+}
+
+function rDonut(){
+  // Filter by sovType independently of main sT toggle
+  const curSOV=sovType||'brand';
+  const rows=tD[aid]||[];const allKW=getAllKW();const aq=aKW[aid]||new Set();
+  const aD=[...new Set(rows.map(r=>r.date))].sort();const dates=aD.slice(-per);
+  const sovRows=rows.filter(r=>r.type===curSOV&&aq.has(r.keyword)&&dates.includes(r.date));
+  const sovKWs=[...new Set(sovRows.map(r=>r.keyword))];
+  const kwData={};
+  sovKWs.forEach(kw=>{kwData[kw]={};dates.forEach(d=>{kwData[kw][d]=0;});});
+  sovRows.forEach(r=>{if(kwData[r.keyword])kwData[r.keyword][r.date]=parseInt(r.interest)||0;});
+
+  if(!sovKWs.length){
+    if(cD)cD.destroy();
+    const leg=document.getElementById('dl');
+    if(leg)leg.innerHTML='<div style="color:var(--muted);font-size:11px;text-align:center;padding:8px">No '+sovType+' data for this tab</div>';
+    return;
+  }
+
+  const tot=sovKWs.map(kw=>dates.reduce((s,d)=>s+(kwData[kw][d]||0),0));
+  const sum=tot.reduce((a,b)=>a+b,1);
+  const cols=sovKWs.map(kw=>C[allKW.indexOf(kw)%C.length]);
+
+  if(cD)cD.destroy();
+  const cv=document.getElementById('donutChart');if(!cv)return;
+  cD=new Chart(cv.getContext('2d'),{
+    type:'doughnut',
+    data:{labels:sovKWs,datasets:[{data:tot,backgroundColor:cols,borderColor:'#111620',borderWidth:3}]},
+    options:{
+      responsive:true,maintainAspectRatio:true,cutout:'65%',
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{
+          label:item=>{
+            const pct=Math.round(item.parsed/sum*100);
+            const avg=Math.round(tot[item.dataIndex]/dates.length);
+            return [' '+item.label+': '+pct+'% SOV',' Avg interest: '+avg];
+          }
+        }}
+      }
+    }
+  });
+
+  const leg=document.getElementById('dl');
+  if(leg)leg.innerHTML=sovKWs.map((kw,i)=>{
+    const col=cols[i];
+    const pct=Math.round(tot[i]/sum*100);
+    const avg=Math.round(tot[i]/dates.length);
+    return '<div class="dli" style="width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">'
+      +'<span style="display:flex;align-items:center;gap:5px"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+col+'"></span>'+kw+'</span>'
+      +'<span><strong style="color:'+col+'">'+pct+'%</strong> <span style="color:var(--muted);font-size:9px">avg '+avg+'</span></span>'
+      +'</div>';
+  }).join('');
+}
+
+function setHmGran(btn, gran){
+  hmGran=gran;
+  document.querySelectorAll('.hm-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  rHM();
+}
+
+// Group weekly dates by month → returns {monthKey: [dates]}
+function groupByMonth(dates){
+  const groups={};
+  dates.forEach(d=>{
+    const dt=new Date(d+'T00:00:00');
+    const key=dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0');
+    if(!groups[key])groups[key]=[];
+    groups[key].push(d);
+  });
+  return groups;
+}
+
+function rHM(){
+  const{keywords,dates,kwData}=getAD();const allKW=getAllKW();
+  const el=document.getElementById('hmg');if(!el)return;
+
+  if(hmGran==='monthly'){
+    // ── MONTHLY VIEW: aggregate weekly → monthly avg ──
+    const groups=groupByMonth(dates);
+    const monthKeys=Object.keys(groups).sort();
+    const monthLabels=monthKeys.map(k=>{
+      const[y,m]=k.split('-');
+      return new Date(y,parseInt(m)-1,1).toLocaleString('default',{month:'short',year:'2-digit'});
+    });
+
+    el.style.gridTemplateColumns='72px repeat('+monthKeys.length+',1fr) 44px';
+    let html='<div></div>'+monthLabels.map(m=>'<div class="hmmo">'+m+'</div>').join('')
+      +'<div class="hmmo" style="color:var(--teal);font-weight:700">AVG</div>';
+
+    keywords.forEach(kw=>{
+      const col=C[allKW.indexOf(kw)%C.length];
+      const kwType=getKWT(kw);
+      const monthAvgs=monthKeys.map(k=>{
+        const ds=groups[k];
+        const vals=ds.map(d=>kwData[kw][d]||0);
+        return Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
+      });
+      const periodAvg=Math.round(monthAvgs.reduce((a,b)=>a+b,0)/monthAvgs.length);
+
+      html+='<div class="hml"><span style="color:'+col+'">'+kw+'</span></div>';
+      monthAvgs.forEach((v,mi)=>{
+        const a=(0.08+(v/100)*0.88).toFixed(2);
+        const[y,m]=monthKeys[mi].split('-');
+        const monthFull=new Date(y,parseInt(m)-1,1).toLocaleString('default',{month:'long',year:'numeric'});
+        html+='<div class="hmc2" style="background:'+col+';opacity:'+a+'"'
+          +' data-kw="'+kw.replace(/"/g,'&quot;')+'" data-val="'+v+'" data-date="Monthly avg — '+monthFull
+          +'" data-type="'+kwType+'" data-col="'+col+'"'
+          +' onmouseenter="showHMTip(event,this)" onmouseleave="hideHMTip()"></div>';
+      });
+      const avgA=(0.08+(periodAvg/100)*0.88).toFixed(2);
+      html+='<div style="height:18px;border-radius:3px;background:'+col+';opacity:'+avgA+';display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:8px;font-weight:700;color:#fff;cursor:default" title="'+kw+' avg: '+periodAvg+'">'+periodAvg+'</div>';
+    });
+
+    // ALL AVG row
+    html+='<div class="hml" style="color:var(--teal);font-weight:700">ALL AVG</div>';
+    monthKeys.forEach((k,mi)=>{
+      const colAvg=keywords.length?Math.round(keywords.reduce((s,kw)=>{
+        const ds=groups[k];const vals=ds.map(d=>kwData[kw][d]||0);
+        return s+Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
+      },0)/keywords.length):0;
+      const[y,m]=k.split('-');
+      const monthFull=new Date(y,parseInt(m)-1,1).toLocaleString('default',{month:'long',year:'numeric'});
+      html+='<div style="height:18px;border-radius:3px;background:var(--teal);opacity:'+(0.08+(colAvg/100)*0.5).toFixed(2)+';display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:8px;color:#fff;cursor:default" title="All avg — '+monthFull+': '+colAvg+'">'+colAvg+'</div>';
+    });
+    const allVals=keywords.flatMap(kw=>monthKeys.map(k=>{const ds=groups[k];const v=ds.map(d=>kwData[kw][d]||0);return Math.round(v.reduce((a,b)=>a+b,0)/v.length);}));
+    const overallAvg=allVals.length?Math.round(allVals.reduce((a,b)=>a+b,0)/allVals.length):0;
+    html+='<div style="height:18px;border-radius:3px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:8px;font-weight:700;color:#fff" title="Overall: '+overallAvg+'">'+overallAvg+'</div>';
+    el.innerHTML=html;
+
+  } else {
+    // ── WEEKLY VIEW (original) ──
+    el.style.gridTemplateColumns='72px repeat('+dates.length+',1fr) 44px';
+    const mL=dates.map(d=>{
+      const dt=new Date(d+'T00:00:00');
+      return per>=260?dt.toLocaleString('default',{month:'short',year:'2-digit'}):dt.toLocaleString('default',{month:'short'});
+    });
+    let html='<div></div>'+mL.map(m=>'<div class="hmmo">'+m+'</div>').join('')
+      +'<div class="hmmo" style="color:var(--teal);font-weight:700">AVG</div>';
+
+    keywords.forEach(kw=>{
+      const col=C[allKW.indexOf(kw)%C.length];
+      const vals=dates.map(d=>kwData[kw][d]||0);
+      const kwType=getKWT(kw);
+      const kwAvg=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):0;
+      html+='<div class="hml"><span style="color:'+col+'">'+kw+'</span></div>';
+      vals.forEach((v,mi)=>{
+        const a=(0.08+(v/100)*0.88).toFixed(2);
+        const dt=new Date(dates[mi]+'T00:00:00');
+        const monthFull=dt.toLocaleString('default',{month:'long',year:'numeric'});
+        html+='<div class="hmc2" style="background:'+col+';opacity:'+a+'"'
+          +' data-kw="'+kw.replace(/"/g,'&quot;')+'" data-val="'+v+'" data-date="'+monthFull
+          +'" data-type="'+kwType+'" data-col="'+col+'"'
+          +' onmouseenter="showHMTip(event,this)" onmouseleave="hideHMTip()"></div>';
+      });
+      const avgA=(0.08+(kwAvg/100)*0.88).toFixed(2);
+      html+='<div style="height:18px;border-radius:3px;background:'+col+';opacity:'+avgA+';display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:8px;font-weight:700;color:#fff;cursor:default" title="'+kw+' avg: '+kwAvg+'">'+kwAvg+'</div>';
+    });
+
+    html+='<div class="hml" style="color:var(--teal);font-weight:700">ALL AVG</div>';
+    dates.forEach(d=>{
+      const colAvg=keywords.length?Math.round(keywords.reduce((s,kw)=>s+(kwData[kw][d]||0),0)/keywords.length):0;
+      const dt=new Date(d+'T00:00:00');
+      const monthFull=dt.toLocaleString('default',{month:'long',year:'numeric'});
+      html+='<div style="height:18px;border-radius:3px;background:var(--teal);opacity:'+(0.08+(colAvg/100)*0.5).toFixed(2)+';display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:8px;color:#fff;cursor:default" title="All avg — '+monthFull+': '+colAvg+'">'+colAvg+'</div>';
+    });
+    const allVals=keywords.flatMap(kw=>dates.map(d=>kwData[kw][d]||0));
+    const overallAvg=allVals.length?Math.round(allVals.reduce((a,b)=>a+b,0)/allVals.length):0;
+    html+='<div style="height:18px;border-radius:3px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:8px;font-weight:700;color:#fff" title="Overall: '+overallAvg+'">'+overallAvg+'</div>';
+    el.innerHTML=html;
+  }
+}
+
+function showHMTip(e,el){
+  let tip=document.getElementById('hmTip');
+  if(!tip){tip=document.createElement('div');tip.id='hmTip';tip.style.cssText='position:fixed;z-index:9999;background:#181e2c;border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:10px 14px;font-size:12px;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,0.5);min-width:160px;';document.body.appendChild(tip);}
+  const kw=el.dataset.kw,val=el.dataset.val,date=el.dataset.date,type=el.dataset.type,col=el.dataset.col;
+  const bar=Math.round(parseInt(val)/100*80);
+  tip.innerHTML='<div style="display:flex;align-items:center;gap:7px;margin-bottom:8px"><span style="width:9px;height:9px;border-radius:50%;background:'+col+';display:inline-block"></span><strong style="color:#eef0f4;font-size:13px">'+kw+'</strong><span style="font-size:9px;color:#4e5a70;background:#111620;padding:1px 6px;border-radius:4px;font-family:monospace">'+type+'</span></div>'
+    +'<div style="color:#7a8899;font-size:11px;margin-bottom:8px">'+date+'</div>'
+    +'<div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:5px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden"><div style="width:'+bar+'%;height:100%;background:'+col+';border-radius:3px"></div></div><span style="font-family:\'Bebas Neue\',sans-serif;font-size:22px;color:#eef0f4;line-height:1">'+val+'</span><span style="font-size:10px;color:#4e5a70">/100</span></div>';
+  tip.style.left=Math.min(e.clientX+12,window.innerWidth-180)+'px';
+  tip.style.top=Math.min(e.clientY-20,window.innerHeight-120)+'px';
+  tip.style.display='block';
+}
+function hideHMTip(){const t=document.getElementById('hmTip');if(t)t.style.display='none';}
+
+function rCmp(){
+  const{keywords,dates,kwData}=getAD();const allKW=getAllKW();
+  const el=document.getElementById('ctb');if(!el)return;
+  const compLabel=per<=26?'Last 4wk vs Prior 4wk':per<=52?'Recent Half vs Prior Half':'H1 vs H2';
+  const headEl=document.getElementById('cmpHead');
+  if(headEl)headEl.innerHTML='<th>Keyword</th><th>Avg</th><th>Peak</th><th>'+compLabel+' Δ%</th><th>Trend</th>';
+  const lbl=document.getElementById('cmpPeriodLabel');
+  if(lbl)lbl.textContent=per<=26?'last 4 weeks vs prior 4 weeks':per<=52?'recent half vs prior half':'first half vs second half';
+  el.innerHTML=keywords.map(kw=>{
+    const vals=dates.map(d=>kwData[kw][d]||0);
+    const avg=Math.round(vals.reduce((a,b)=>a+b,0)/Math.max(vals.length,1));
+    const peak=Math.max(...vals,0);
+    const col=C[allKW.indexOf(kw)%C.length];
+    const w=Math.min(4,Math.floor(vals.length/2));
+    const recentW=vals.slice(-w).reduce((a,b)=>a+b,0)/Math.max(w,1);
+    const priorW=vals.slice(-(w*2),-w).reduce((a,b)=>a+b,0)/Math.max(w,1);
+    const half=Math.max(1,Math.floor(vals.length/2));
+    const h1avg=vals.slice(0,half).reduce((a,b)=>a+b,0)/half;
+    const h2avg=vals.slice(-half).reduce((a,b)=>a+b,0)/half;
+    const compC=per<=52?recentW:h2avg;const compP=per<=52?priorW:h1avg;
+    const diff=compC-compP;const pct=compP>0?Math.round(diff/compP*100):0;
+    const isUp=diff>0.5;const isFlat=Math.abs(diff)<=0.5;
+    // Trend arrow uses the SAME diff as the badge — always consistent
+    // Threshold: >2 points = meaningful move, <=2 = flat
+    const arrow=isFlat?'→':isUp?'↑':'↓';
+    const arC=isFlat?'#7a8899':isUp?'#3aacac':'#ff6b6b';
+    const bg=isFlat?'rgba(122,136,153,0.15)':isUp?'rgba(58,172,172,0.14)':'rgba(204,20,24,0.12)';
+    const fc=isFlat?'#7a8899':isUp?'#3aacac':'#ff6b6b';
+    const pctStr=isFlat?'flat':(isUp?'+':'')+pct+'%';
+    return '<tr><td><span style="display:flex;align-items:center;gap:5px"><span style="width:7px;height:7px;border-radius:50%;background:'+col+';display:inline-block;flex-shrink:0"></span><span style="font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90px" title="'+kw+'">'+kw+'</span></span></td>'
+      +'<td style="font-family:monospace;font-size:11px">'+avg+'</td>'
+      +'<td style="font-family:monospace;font-size:11px">'+peak+'</td>'
+      +'<td><span class="cpb" style="background:'+bg+';color:'+fc+'">'+pctStr+'</span></td>'
+      +'<td style="font-size:15px;color:'+arC+'">'+arrow+'</td></tr>';
+  }).join('');
+}
+
+function onCC(){per=parseInt(document.getElementById('ps').value);rKPI();rMC();rRank();rDonut();rHM();rCmp();}
+async function refData(){toast('Refreshing...');tD={};aKW={};await loadAll();toast('Refreshed!');}
+function updLU(){const rows=tD[aid]||[];const dot=document.getElementById('ld');const lbl=document.getElementById('lu');if(dot)dot.classList.toggle('red',!rows.length);if(lbl)lbl.textContent=rows[0]?.fetchedat?'Updated '+rows[0].fetchedat:rows.length?'Live':'No data';}
+function getMonthlyAvgData(){
+  const{keywords,dates,kwData}=getAD();
+  const groups=groupByMonth(dates);
+  const months=Object.keys(groups).sort();
+  const monthlyData={};
+  keywords.forEach(kw=>{
+    monthlyData[kw]={};
+    months.forEach(mk=>{
+      const ds=groups[mk];
+      const v=ds.map(d=>kwData[kw][d]||0);
+      monthlyData[kw][mk]=v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length):0;
+    });
+  });
+  return{keywords,months,monthlyData,dates,kwData};
+}
+
+function expCSV(){
+  const{keywords,months,monthlyData}=getMonthlyAvgData();
+  const{dates,kwData}=getAD();
+  const cfg=TC.find(t=>t.id===aid);
+  const allKW=getAllKW();
+
+  // Section 1: Weekly raw data
+  const weeklyRows=[['--- WEEKLY RAW DATA ---']];
+  weeklyRows.push(['Week',...keywords,'ALL_AVG']);
+  dates.forEach(d=>{
+    const vals=keywords.map(kw=>kwData[kw][d]||0);
+    const rowAvg=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):0;
+    weeklyRows.push([d,...vals,rowAvg]);
+  });
+  const weeklyAvgRow=['PERIOD_AVG',...keywords.map(kw=>{
+    const v=dates.map(d=>kwData[kw][d]||0);
+    return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length):0;
+  })];
+  const allW=keywords.flatMap(kw=>dates.map(d=>kwData[kw][d]||0));
+  weeklyAvgRow.push(allW.length?Math.round(allW.reduce((a,b)=>a+b,0)/allW.length):0);
+  weeklyRows.push(weeklyAvgRow);
+
+  // Section 2: Monthly aggregated averages
+  const monthRows=[[''],['--- MONTHLY AVERAGES (aggregated from weekly) ---']];
+  monthRows.push(['Month',...keywords,'ALL_BRANDS_AVG']);
+  months.forEach(mk=>{
+    const[y,m]=mk.split('-');
+    const label=new Date(parseInt(y),parseInt(m)-1,1).toLocaleString('default',{month:'long',year:'numeric'});
+    const vals=keywords.map(kw=>monthlyData[kw][mk]||0);
+    const rowAvg=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):0;
+    monthRows.push([label,...vals,rowAvg]);
+  });
+  // Period avg row
+  const mAvgRow=['PERIOD_AVG',...keywords.map(kw=>{
+    const v=months.map(mk=>monthlyData[kw][mk]||0);
+    return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length):0;
+  })];
+  const allM=keywords.flatMap(kw=>months.map(mk=>monthlyData[kw][mk]||0));
+  mAvgRow.push(allM.length?Math.round(allM.reduce((a,b)=>a+b,0)/allM.length):0);
+  monthRows.push(mAvgRow);
+
+  const allRows=[...weeklyRows,...monthRows];
+  const csv=allRows.map(r=>r.map(v=>String(v).includes(',')?'"'+v+'"':v).join(',')).join(String.fromCharCode(10));
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='trends_'+(cfg?cfg.id:aid)+'_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+  toast('CSV exported — weekly + monthly averages included!');
+}
+
+
+// ── BREAKOUT ALERTS ──
+function detectBreakouts(){
+  const{keywords,dates,kwData}=getAD();
+  const THRESH=20;const breakouts=[];
+  keywords.forEach(kw=>{
+    if(dates.length<8)return;
+    const vals=dates.map(d=>kwData[kw][d]||0);
+    const recent=vals.slice(-4).reduce((a,b)=>a+b,0)/4;
+    const prior=vals.slice(-8,-4).reduce((a,b)=>a+b,0)/4;
+    const jump=recent-prior;
+    if(jump>=THRESH)breakouts.push({kw,jump:Math.round(jump),recent:Math.round(recent),prior:Math.round(prior)});
+  });
+  breakouts.sort((a,b)=>b.jump-a.jump);
+  const card=document.getElementById('alertsCard');
+  const list=document.getElementById('alertsList');
+  if(card&&list){
+    if(!breakouts.length){card.style.display='none';}
+    else{
+      card.style.display='block';
+      const allKW=getAllKW();
+      list.innerHTML=breakouts.map(b=>{const col=C[allKW.indexOf(b.kw)%C.length];return '<div class="alert-row"><span style="font-size:16px">🔥</span><span class="abrand" style="color:'+col+'">'+b.kw+'</span><span class="aval">+'+b.jump+' pts</span><span style="font-size:10px;color:var(--muted)">'+b.prior+'→'+b.recent+'</span></div>';}).join('');
+    }
+  }
+  if(!window._tabBreakouts)window._tabBreakouts={};
+  window._tabBreakouts[aid]=breakouts.length;
+  return breakouts;
+}
+
+// ── PDF EXPORT ──
+function expPDF(){
+  const cfg=TC.find(t=>t.id===aid);
+  const date=new Date().toISOString().slice(0,10);
+  const title='Brand Intelligence — '+(cfg?cfg.name:'')+' — '+date;
+  const{keywords,dates,kwData}=getAD();const allKW=getAllKW();
+  const avgs=keywords.map(kw=>{const v=dates.map(d=>kwData[kw][d]||0);return{kw,avg:Math.round(v.reduce((a,b)=>a+b,0)/Math.max(v.length,1)),peak:Math.max(...v,0)};}).sort((a,b)=>b.avg-a.avg);
+  const kpiHTML=avgs.slice(0,4).map((item,i)=>{const col=C[allKW.indexOf(item.kw)%C.length];return '<div class="kpi" style="border-top:3px solid '+col+'"><div class="kl">'+(i===0?'🥇 Leader':'Rank #'+(i+1))+'</div><div class="kv" style="color:'+col+'">'+item.avg+'</div><div class="kb" style="color:'+col+'">'+item.kw+'</div></div>';}).join('');
+  const rankHTML=avgs.map(item=>{const col=C[allKW.indexOf(item.kw)%C.length];const half=Math.max(1,Math.floor(dates.length/2));const h1=dates.slice(0,half).map(d=>kwData[item.kw][d]||0).reduce((a,b)=>a+b,0)/half;const h2=dates.slice(-half).map(d=>kwData[item.kw][d]||0).reduce((a,b)=>a+b,0)/half;const diff=h2-h1;const pct=h1>0?Math.round(diff/h1*100):0;const isUp=diff>0;return '<tr><td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+col+';margin-right:6px"></span>'+item.kw+'</td><td>'+item.avg+'</td><td>'+item.peak+'</td><td><span style="padding:2px 6px;border-radius:4px;font-size:10px;background:'+(isUp?'rgba(58,172,172,0.15)':'rgba(204,20,24,0.12)')+';color:'+(isUp?'#3aacac':'#ff6b6b')+'">'+(isUp?'+':'')+pct+'%</span></td></tr>';}).join('');
+  const bkts=detectBreakouts();
+  const alertsHTML=bkts.length>0?bkts.map(b=>'<tr><td>🔥 '+b.kw+'</td><td style="color:#e8a020">+'+b.jump+' pts</td><td>'+b.prior+'→'+b.recent+'</td></tr>').join(''):'<tr><td colspan="3" style="color:#888">No breakouts this period</td></tr>';
+  const notes=localStorage.getItem('bi_notes_'+aid)||'';
+  const notesBr=notes.split(String.fromCharCode(10)).join('<br>');
+  const notesSection=notes?'<div style="background:#111620;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:16px;margin-bottom:16px"><h3 style="font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#7a8899;margin-bottom:8px">Notes</h3><p style="font-size:12px;line-height:1.7;color:#c8d0dc">'+notesBr+'</p></div>':'';
+  const html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+title+'</title>'
+    +'<style>body{margin:0;padding:24px;background:#0b0e15;color:#eef0f4;font-family:Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+    +'h1{font-size:20px;margin-bottom:4px}h2{font-size:12px;color:#3aacac;font-weight:normal;margin-bottom:20px}'
+    +'.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}'
+    +'.kpi{background:#111620;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:14px}'
+    +'.kl{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:#4e5a70;margin-bottom:6px}'
+    +'.kv{font-size:30px;font-weight:bold;line-height:1}.kb{font-size:11px;margin-top:4px}'
+    +'.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}'
+    +'.card{background:#111620;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:16px}'
+    +'.card h3{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#7a8899;margin-bottom:10px}'
+    +'table{width:100%;border-collapse:collapse;font-size:12px}'
+    +'th{font-size:9px;text-transform:uppercase;color:#4e5a70;text-align:left;padding:5px 7px;border-bottom:1px solid rgba(255,255,255,0.07)}'
+    +'td{padding:5px 7px;border-bottom:1px solid rgba(255,255,255,0.03)}'
+    +'.footer{margin-top:16px;font-size:10px;color:#4e5a70;text-align:center}'
+    +'</style></head><body>'
+    +'<h1>Brand Intelligence — '+(cfg?cfg.name:'')+'</h1>'
+    +'<h2>Google Trends Dashboard &nbsp;·&nbsp; '+date+' &nbsp;·&nbsp; Last '+(per>=60?'5 Years':per+' Months')+'</h2>'
+    +'<div class="kpi-grid">'+kpiHTML+'</div>'
+    +'<div class="grid">'
+      +'<div class="card"><h3>Brand Ranking & Comparison</h3><table><thead><tr><th>Brand</th><th>Avg</th><th>Peak</th><th>H1→H2</th></tr></thead><tbody>'+rankHTML+'</tbody></table></div>'
+      +'<div class="card"><h3>🔥 Breakout Alerts</h3><table><thead><tr><th>Brand</th><th>Jump</th><th>Score</th></tr></thead><tbody>'+alertsHTML+'</tbody></table></div>'
+    +'</div>'
+    +notesSection
+    +'<div class="footer">Generated by Brand Intelligence &nbsp;·&nbsp; '+new Date().toLocaleString()+'</div>'
+    +'<script>window.onload=function(){window.print()}<\/script>'
+    +'</body></html>';
+  const w=window.open('','_blank');
+  if(w){w.document.write(html);w.document.close();toast('PDF ready — save from print dialog');}
+  else toast('Allow pop-ups to use PDF export');
+}
+
+// ── EDIT KEYWORDS ──
+function openEM(){
+  const cfg=getTC(aid);if(!cfg)return;
+  document.getElementById('etl').innerHTML=cfg.flag+' '+cfg.name;
+  document.getElementById('ebl').innerHTML=(cfg.brands||[]).map((kw,i)=>kRH(kw,C[i%C.length])).join('');
+  document.getElementById('egl').innerHTML=(cfg.generics||[]).map(kw=>kRH(kw,'#e8a020')).join('');
+  document.getElementById('editModal').classList.add('open');
+  setTimeout(loadNotes,50);
+}
+function kRH(val,col){return '<div class="kwr"><span class="kwd" style="background:'+col+'"></span><input class="kwi" value="'+val.replace(/"/g,'&quot;')+'" placeholder="Keyword"><button class="kwr2" onclick="removeKW(this)">×</button></div>';}
+function addKwRow(type){const lId=type==='brand'?'ebl':'egl';const list=document.getElementById(lId);const max=type==='brand'?12:5;if(list.children.length>=max){toast('Max '+max+' keywords');return;}const col=type==='brand'?C[list.children.length%C.length]:'#e8a020';const d=document.createElement('div');d.innerHTML=kRH('',col);list.appendChild(d.firstElementChild);list.lastElementChild.querySelector('input').focus();}
+function removeKW(btn){btn.closest('.kwr').remove();}
+function closeEM(){document.getElementById('editModal').classList.remove('open');}
+function saveKW(){
+  const cfg=getTC(aid);if(!cfg)return;
+  cfg.brands=[...document.querySelectorAll('#ebl .kwi')].map(i=>i.value.trim()).filter(Boolean);
+  cfg.generics=[...document.querySelectorAll('#egl .kwi')].map(i=>i.value.trim()).filter(Boolean);
+  saveTC();
+  closeEM();
+  // Rebuild active keywords from existing sheet data — don't wipe it
+  // Only activate keywords that exist in the sheet data already
+  const existingKWs=new Set((tD[aid]||[]).map(r=>r.keyword));
+  const allNewKWs=[...cfg.brands,...cfg.generics];
+  const activeOnes=allNewKWs.filter(kw=>existingKWs.has(kw));
+  // If some new keywords exist in sheet, use those; otherwise keep all existing
+  if(activeOnes.length>0){
+    aKW[aid]=new Set(activeOnes);
+  } else if(existingKWs.size>0){
+    // Keywords were edited but none match sheet yet — keep showing existing data
+    aKW[aid]=existingKWs;
+  }
+  rAll();
+  const newKWs=allNewKWs.filter(kw=>!existingKWs.has(kw));
+  if(newKWs.length>0){
+    toast('Saved! New keywords ('+newKWs.join(', ')+') need fetcher_to_sheets.py to load data.');
+  } else {
+    toast('Keywords saved!');
+  }
+}
+
+// ── NOTES ──
+function loadNotes(){
+  const el=document.getElementById('tabNotes');if(!el)return;
+  el.value=localStorage.getItem('bi_notes_'+aid)||'';
+  el.oninput=function(){
+    clearTimeout(el._st);
+    el._st=setTimeout(()=>{
+      localStorage.setItem('bi_notes_'+aid,el.value);
+      const ind=document.getElementById('notesSaved');
+      if(ind){ind.classList.add('show');setTimeout(()=>ind.classList.remove('show'),1500);}
+    },600);
+  };
+}
+
+// ── ADD TAB ──
+function openATM(){document.getElementById('addTabModal').classList.add('open');}
+function closeATM(){document.getElementById('addTabModal').classList.remove('open');}
+function addNTR(){const list=document.getElementById('nbl');if(list.children.length>=12){toast('Max 12 brands');return;}const d=document.createElement('div');d.innerHTML='<div class="kwr"><span class="kwd" style="background:'+C[list.children.length%C.length]+'"></span><input class="kwi" placeholder="Brand name"><button class="kwr2" onclick="removeKW(this)">×</button></div>';list.appendChild(d.firstElementChild);}
+function createTab(){
+  const name=document.getElementById('nN').value.trim();const flag=document.getElementById('nF').value.trim()||'🌍';
+  const sheet=document.getElementById('nS').value.trim()||name;
+  if(!name){toast('Enter a country name');return;}
+  const brands=[...document.querySelectorAll('#nbl .kwi')].map(i=>i.value.trim()).filter(Boolean);
+  if(!brands.length){toast('Add at least one brand');return;}
+  const id='custom-'+name.toLowerCase().replace(/\s+/g,'-')+'-'+Date.now();
+  TC.push({id,flag,name,st:sheet,brands,generics:[],isCustom:true});
+  saveTC();tS[id]='empty';tD[id]=[];aKW[id]=new Set(brands);
+  closeATM();swT(id);toast(name+' tab created!');
+  ['nN','nF','nG','nS'].forEach(x=>{const el=document.getElementById(x);if(el)el.value='';});
+  document.getElementById('nbl').innerHTML='';
+}
+
+// ── REFRESH TIME ──
+function recordRefreshTime(id){
+  if(!window._tabRefreshTime)window._tabRefreshTime={};
+  window._tabRefreshTime[id]=new Date().toLocaleTimeString('default',{hour:'2-digit',minute:'2-digit'});
+}
+
+// ── SHARE OF VOICE TYPE ──
+let sovType='brand';
+// ── WIDGET TOOLTIP CONTENT ──
+const wTips = {
+  chart: ()=>{
+    const dr=getDateRange(); const pl=getPeriodLabel();
+    return '<strong>Search Interest Over Time</strong>'+
+      'Weekly Google Trends index for each brand. Values are relative — 100 = peak popularity within the selected period. Numbers are NOT absolute search volumes.<br><br>'+
+      '<code>Source: Google Trends (0–100 scale)</code>'+
+      '<div class="wt-period">'+pl+' &nbsp;·&nbsp; '+dr+'</div>';
+  },
+  heatmap: ()=>{
+    const dr=getDateRange(); const pl=getPeriodLabel();
+    return '<strong>Monthly Heatmap</strong>'+
+      'Each cell = weekly Google Trends interest for that brand in that time period. Darker = higher interest. Hover any cell for the exact value, date and brand type.<br><br>'+
+      '<code>Opacity = value / 100</code>'+
+      '<div class="wt-period">'+pl+' &nbsp;·&nbsp; '+dr+'</div>';
+  },
+  compare: ()=>{
+    const dr=getDateRange(); const pl=getPeriodLabel();
+    const method=per<=26?'Last 4 data points vs prior 4 data points (WoW)':
+                 per<=52?'Recent half vs prior half of period':
+                 'Second half vs first half of full period (H1 vs H2)';
+    const w=Math.min(4,4);
+    return '<strong>Period vs Prior</strong>'+
+      '<b>Avg</b> = mean weekly interest over the full period.<br>'+
+      '<b>Peak</b> = highest single weekly value.<br>'+
+      '<b>Δ%</b> = % change between two halves of your selected period:<br>'+
+      '<code>'+method+'</code><br><br>'+
+      '<b>Trend arrow</b> = Q1 vs Q4 momentum:<br>'+
+      '<code>First 25% of dates vs last 25% of dates</code>'+
+      '<div class="wt-period">'+pl+' &nbsp;·&nbsp; '+dr+'</div>';
+  },
+  sov: ()=>{
+    const dr=getDateRange(); const pl=getPeriodLabel();
+    return '<strong>Share of Voice</strong>'+
+      'Each brand total search interest as % of all brands combined in the selected period.<br><br>'+
+      '<code>SOV% = Brand Total / All Brands Total × 100</code><br><br>'+
+      'Brands and Generic trends are calculated separately. Toggle between them above the chart.'+
+      '<div class="wt-period">'+pl+' &nbsp;·&nbsp; '+dr+'</div>';
+  },
+  ranking: ()=>{
+    const dr=getDateRange(); const pl=getPeriodLabel();
+    return '<strong>Brand Ranking</strong>'+
+      'Brands sorted by average weekly Google Trends interest over the selected period. The bar shows relative strength vs the #1 ranked brand.<br><br>'+
+      '<code>Score = mean of all weekly values</code><br><br>'+
+      'Click any brand to toggle it on/off in all charts.'+
+      '<div class="wt-period">'+pl+' &nbsp;·&nbsp; '+dr+'</div>';
+  },
+  monthly: ()=>{
+    const dr=getDateRange();const pl=getPeriodLabel();
+    return '<strong>Monthly Averages</strong>'+
+      'Weekly Google Trends data aggregated into calendar months. Each cell = average of all weekly values within that month.<br><br>'+
+      '<code>Month Avg = sum(weekly values in month) / weeks in month</code><br><br>'+
+      'Use <b>PERIOD AVG</b> column for brand comparison. Copy the <b>ALL BRANDS AVG</b> row for market-level monthly reporting.'+
+      '<div class="wt-period">'+pl+' · '+dr+'</div>';
+  },
+  breakout: ()=>{
+    const dr=getDateRange();
+    return '<strong>🔥 Breakout Alerts</strong>'+
+      'Triggers when a brand jumps 20+ points comparing the last 4 data points vs the prior 4 data points.<br><br>'+
+      '<code>Jump = avg(last 4 weeks) − avg(prior 4 weeks)</code><br><br>'+
+      'Only brands currently visible (active toggle) are checked.'+
+      '<div class="wt-period">Rolling window &nbsp;·&nbsp; '+dr+'</div>';
+  },
+};
+
+function sovClick(btn){setSOVType(btn, btn.dataset.t);}
+function setSOVType(btn, type){
+  sovType=type;
+  document.querySelectorAll('.sov-tab').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  try{rDonut();}catch(e){console.error('rDonut in setSOVType:',e.message);}
+}
+
+// ── UNIVERSAL WIDGET TOOLTIP ──
+function showWTip(e, html){
+  let tip=document.getElementById('wtip');
+  if(!tip){
+    tip=document.createElement('div');
+    tip.id='wtip';
+    tip.className='wtip';
+    document.body.appendChild(tip);
+  }
+  tip.innerHTML=html;
+  const x=Math.min(e.clientX+14,window.innerWidth-300);
+  const y=Math.min(e.clientY+14,window.innerHeight-220);
+  tip.style.left=x+'px';
+  tip.style.top=y+'px';
+  tip.style.display='block';
+}
+function hideWTip(){
+  const t=document.getElementById('wtip');if(t)t.style.display='none';
+}
+
+function getDateRange(){
+  const{dates}=getAD();
+  if(!dates.length)return'';
+  const fmt=d=>new Date(d+'T00:00:00').toLocaleString('default',{month:'short',year:'numeric'});
+  return fmt(dates[0])+' → '+fmt(dates[dates.length-1]);
+}
+function getPeriodLabel(){
+  return per>=260?'Last 5 Years':per<=13?'Last 3 Months':per<=26?'Last 6 Months':'Last 12 Months';
+}
+
+function showSOVTip(e){
+  let tip=document.getElementById('sovTip');
+  if(!tip){
+    tip=document.createElement('div');
+    tip.id='sovTip';
+    tip.className='sov-tooltip';
+    document.body.appendChild(tip);
+  }
+  const sovTipHTML=[
+    '<strong>Share of Voice — How it works</strong><br><br>',
+    'Each brand SOV = its total search interest as a % of all brands combined.<br><br>',
+    '<code>SOV% = (Brand Total / All Brands Total) x 100</code><br><br>',
+    'Example: Brand A avg 45 over 12mo, all brands total = 300 → SOV = 15%.<br><br>',
+    '<span style="color:#4e5a70;font-size:10px">Source: Google Trends index (0-100 scale, relative to peak)</span>'
+  ].join('');
+  tip.innerHTML=sovTipHTML;
+  tip.style.left=Math.min(e.clientX+12,window.innerWidth-280)+'px';
+  tip.style.top=Math.min(e.clientY+12,window.innerHeight-200)+'px';
+  tip.style.display='block';
+}
+function hideSOVTip(){
+  const t=document.getElementById('sovTip');if(t)t.style.display='none';
+}
+
+let tT=null;
+function toast(msg){const ex=document.querySelector('.toast');if(ex)ex.remove();const el=document.createElement('div');el.className='toast';el.textContent=msg;document.body.appendChild(el);if(tT)clearTimeout(tT);tT=setTimeout(()=>{el.classList.add('hide');setTimeout(()=>el.remove(),300);},3500);}
+
+document.getElementById('editModal').addEventListener('click',e=>{if(e.target.id==='editModal')closeEM();});
+document.getElementById('addTabModal').addEventListener('click',e=>{if(e.target.id==='addTabModal')closeATM();});
+
+loadAll();
+
+
+</script>
+
+<div style="text-align:center;padding:16px 0 20px;font-size:10px;color:#2a3547;font-family:'DM Mono',monospace;letter-spacing:2px;user-select:none;">
+  MADE WITH ♥ BY MAXIM LORD
+</div>
+
+</body>
+</html>
