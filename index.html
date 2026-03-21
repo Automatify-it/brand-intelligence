@@ -903,26 +903,26 @@ function rCmp(){
   let compLabel, compDesc;
   if(per<=26){
     // Last 4 weeks vs prior 4 weeks
-    const r1=cmpDts.length>=4?fmt(dates[cmpDts.length-4]):'';
-    const r2=cmpDts.length>=1?fmt(dates[cmpDts.length-1]):'';
-    const p1=cmpDts.length>=8?fmt(dates[cmpDts.length-8]):'';
-    const p2=cmpDts.length>=5?fmt(dates[cmpDts.length-5]):'';
+    const r1=cmpDts.length>=4?fmt(cmpDts[cmpDts.length-4]):'';
+    const r2=cmpDts.length>=1?fmt(cmpDts[cmpDts.length-1]):'';
+    const p1=cmpDts.length>=8?fmt(cmpDts[cmpDts.length-8]):'';
+    const p2=cmpDts.length>=5?fmt(cmpDts[cmpDts.length-5]):'';
     compLabel='WoW Δ%';
     compDesc=(p1&&p2&&r1&&r2)?p1+'–'+p2+' vs '+r1+'–'+r2:'last 4wk vs prior 4wk';
   } else if(per<=52){
     // Recent half vs prior half
     const h1start=cmpDts.length?fmt(cmpDts[0]):'';
-    const h1end=cmpDts.length>=half?fmt(dates[half-1]):'';
+    const h1end=cmpDts.length>=half?fmt(cmpDts[half-1]):'';
     const h2start=cmpDts.length>half?fmt(cmpDts[half]):'';
-    const h2end=cmpDts.length?fmt(dates[cmpDts.length-1]):'';
+    const h2end=cmpDts.length?fmt(cmpDts[cmpDts.length-1]):'';
     compLabel='H1→H2 Δ%';
     compDesc=(h1start&&h2end)?'H1 ('+h1start+'–'+h1end+') vs H2 ('+h2start+'–'+h2end+')':'first half vs second half';
   } else {
     // 5 years — H1 vs H2 of full period
     const h1start=cmpDts.length?fmt(cmpDts[0]):'';
-    const h1end=cmpDts.length>=half?fmt(dates[half-1]):'';
+    const h1end=cmpDts.length>=half?fmt(cmpDts[half-1]):'';
     const h2start=cmpDts.length>half?fmt(cmpDts[half]):'';
-    const h2end=cmpDts.length?fmt(dates[cmpDts.length-1]):'';
+    const h2end=cmpDts.length?fmt(cmpDts[cmpDts.length-1]):'';
     compLabel='H1→H2 Δ%';
     compDesc=(h1start&&h2end)?'H1 ('+h1start+'→'+h1end+') vs H2 ('+h2start+'→'+h2end+')':'first half vs second half';
   }
@@ -964,7 +964,7 @@ function rMonthlyAvg(){
   const allKW=getAllKW();
   const brandData=getDataForType('brand');
   const genericData=getDataForType('generic');
-  const groups=groupByMonth(brandData.tipDts.length?brandData.dates:genericData.dates);
+  const groups=groupByMonth(brandData.dates.length?brandData.dates:genericData.dates);
   const months=Object.keys(groups).sort();
   const elB=document.getElementById('mavg-brands');
   const elG=document.getElementById('mavg-generic');
@@ -1022,7 +1022,7 @@ function detectBreakouts(){
   const{keywords,dates,kwData}=getAD();
   const breakouts=[];
   keywords.forEach(kw=>{
-    if(tipDts.length<8)return;
+    if(dates.length<8)return;
     const vals=dates.map(d=>kwData[kw][d]||0);
     const rec=vals.slice(-4).reduce((a,b)=>a+b,0)/4;
     const pri=vals.slice(-8,-4).reduce((a,b)=>a+b,0)/4;
