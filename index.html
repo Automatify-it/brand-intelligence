@@ -28,6 +28,7 @@ header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.2}}
 .btn{padding:6px 12px;border-radius:6px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;transition:all 0.18s;white-space:nowrap;}
 .bg{background:transparent;color:var(--muted2);border:1px solid var(--border);}.bg:hover{color:var(--text);border-color:rgba(255,255,255,0.2);}
+.btn-sheets:hover{border-color:rgba(15,157,88,0.5);color:#0f9d58;}
 .bt{background:var(--teal);color:#fff;}.bt:hover{background:#2e9090;transform:translateY(-1px);}
 .bgr{background:#1a3a1a;color:#50c878;border:1px solid rgba(80,200,120,0.3);}.bgr:hover{background:#1f4a1f;transform:translateY(-1px);}
 .tabs-bar{position:sticky;top:62px;z-index:99;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:stretch;overflow-x:auto;scrollbar-width:none;}
@@ -318,6 +319,13 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
   .kv{font-size:24px;}
   .kch{font-size:9px;}
 }
+@keyframes heartbeat{
+  0%,100%{transform:scale(1);}
+  14%{transform:scale(1.35);}
+  28%{transform:scale(1);}
+  42%{transform:scale(1.2);}
+  70%{transform:scale(1);}
+}
 </style>
 <!-- Yandex.Metrika counter --> <script type="text/javascript">     (function(m,e,t,r,i,k,a){         m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};         m[i].l=1*new Date();         for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}         k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)     })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=108172114', 'ym');      ym(108172114, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true}); </script> <noscript><div><img src="https://mc.yandex.ru/watch/108172114" style="position:absolute; left:-9999px;" alt="" /></div></noscript> <!-- /Yandex.Metrika counter -->
 </head>
@@ -401,6 +409,7 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
   <div class="hr">
     <div class="lp"><span class="ld" id="ld"></span><span id="lu">Loading...</span></div>
     <button class="btn bg" onclick="expCSV()">&#8595; CSV</button>
+    <button class="btn bg btn-sheets" onclick="expSheets()" title="Export monthly averages &amp; open Google Sheets"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;margin-right:3px"><path d="M19 3H5C3.9 3 3 3.9 3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" fill="#0f9d58"/><path d="M7 7h10v2H7zm0 4h10v2H7zm0 4h7v2H7z" fill="#fff"/></svg>Sheets</button>
     <button class="btn bg" onclick="expPDF()">&#128438; PDF</button>
     <button class="btn bg" onclick="openEM()">&#10000; Edit Keywords</button>
     <button class="btn bg" onclick="refData()">&#8635; Refresh</button>
@@ -886,11 +895,41 @@ function rHM(){
 function rCmp(){
   const{keywords,dates,kwData}=getAD(); const allKW=getAllKW();
   const el=document.getElementById('ctb'); if(!el)return;
-  const compLabel=per<=26?'Last 4wk vs Prior 4wk':per<=52?'Recent Half vs Prior Half':'H1 vs H2';
+  // Build precise period labels with actual date ranges
+  const{dates:cmpDts}=getAD();
+  const half=Math.max(1,Math.floor(cmpDts.length/2));
+  const w=Math.min(4,Math.floor(cmpDts.length/2));
+  const fmt=d=>new Date(d+'T00:00:00').toLocaleString('default',{month:'short',year:'2-digit'});
+  let compLabel, compDesc;
+  if(per<=26){
+    // Last 4 weeks vs prior 4 weeks
+    const r1=cmpDts.length>=4?fmt(dates[cmpDts.length-4]):'';
+    const r2=cmpDts.length>=1?fmt(dates[cmpDts.length-1]):'';
+    const p1=cmpDts.length>=8?fmt(dates[cmpDts.length-8]):'';
+    const p2=cmpDts.length>=5?fmt(dates[cmpDts.length-5]):'';
+    compLabel='WoW Δ%';
+    compDesc=(p1&&p2&&r1&&r2)?p1+'–'+p2+' vs '+r1+'–'+r2:'last 4wk vs prior 4wk';
+  } else if(per<=52){
+    // Recent half vs prior half
+    const h1start=cmpDts.length?fmt(cmpDts[0]):'';
+    const h1end=cmpDts.length>=half?fmt(dates[half-1]):'';
+    const h2start=cmpDts.length>half?fmt(cmpDts[half]):'';
+    const h2end=cmpDts.length?fmt(dates[cmpDts.length-1]):'';
+    compLabel='H1→H2 Δ%';
+    compDesc=(h1start&&h2end)?'H1 ('+h1start+'–'+h1end+') vs H2 ('+h2start+'–'+h2end+')':'first half vs second half';
+  } else {
+    // 5 years — H1 vs H2 of full period
+    const h1start=cmpDts.length?fmt(cmpDts[0]):'';
+    const h1end=cmpDts.length>=half?fmt(dates[half-1]):'';
+    const h2start=cmpDts.length>half?fmt(cmpDts[half]):'';
+    const h2end=cmpDts.length?fmt(dates[cmpDts.length-1]):'';
+    compLabel='H1→H2 Δ%';
+    compDesc=(h1start&&h2end)?'H1 ('+h1start+'→'+h1end+') vs H2 ('+h2start+'→'+h2end+')':'first half vs second half';
+  }
   const headEl=document.getElementById('cmpHead');
-  if(headEl)headEl.innerHTML='<th>Keyword</th><th>Avg</th><th>Peak</th><th>'+compLabel+' Δ%</th><th>Trend</th>';
+  if(headEl)headEl.innerHTML='<th>Keyword</th><th>Avg</th><th>Peak</th><th>'+compLabel+'</th><th>Trend</th>';
   const lbl=document.getElementById('cmpPL');
-  if(lbl)lbl.textContent=per<=26?'last 4wk vs prior 4wk':per<=52?'recent half vs prior half':'H1 vs H2';
+  if(lbl)lbl.textContent=compDesc;
   el.innerHTML=keywords.map(kw=>{
     const vals=dates.map(d=>kwData[kw][d]||0);
     const avg=Math.round(vals.reduce((a,b)=>a+b,0)/Math.max(vals.length,1));
@@ -925,7 +964,7 @@ function rMonthlyAvg(){
   const allKW=getAllKW();
   const brandData=getDataForType('brand');
   const genericData=getDataForType('generic');
-  const groups=groupByMonth(brandData.dates.length?brandData.dates:genericData.dates);
+  const groups=groupByMonth(brandData.tipDts.length?brandData.dates:genericData.dates);
   const months=Object.keys(groups).sort();
   const elB=document.getElementById('mavg-brands');
   const elG=document.getElementById('mavg-generic');
@@ -983,7 +1022,7 @@ function detectBreakouts(){
   const{keywords,dates,kwData}=getAD();
   const breakouts=[];
   keywords.forEach(kw=>{
-    if(dates.length<8)return;
+    if(tipDts.length<8)return;
     const vals=dates.map(d=>kwData[kw][d]||0);
     const rec=vals.slice(-4).reduce((a,b)=>a+b,0)/4;
     const pri=vals.slice(-8,-4).reduce((a,b)=>a+b,0)/4;
@@ -1035,10 +1074,30 @@ function hideWTip(){const t=document.getElementById('wtip');if(t)t.style.display
 const wTips={
   chart:()=>'<strong>Search Interest Over Time</strong>Weekly Google Trends index. 100 = peak within period. Relative — not absolute search volume.<br><br><code>Source: Google Trends (0–100)</code><div class="wt-period">'+getPeriodLabel()+' · '+getDateRange()+'</div>',
   heatmap:()=>'<strong>Heatmap</strong>Each cell = weekly Trends interest. Darker = higher. Toggle Weekly/Monthly above.<br><br><code>Monthly = avg of all weeks in that month</code><div class="wt-period">'+getPeriodLabel()+' · '+getDateRange()+'</div>',
-  compare:()=>'<strong>Period vs Prior</strong><b>Avg</b> = mean over full period. <b>Peak</b> = highest weekly value.<br><b>Δ%</b> = '+( per<=52?'recent half vs prior half':'H1 vs H2')+'<br><b>Arrow</b> = same direction as Δ% — always consistent.<div class="wt-period">'+getPeriodLabel()+' · '+getDateRange()+'</div>',
-  sov:()=>'<strong>Share of Voice</strong>Each brand as % of all brands combined.<br><br><code>SOV% = Brand Total / All Total × 100</code><br>Brands and Generic calculated separately.<div class="wt-period">'+getPeriodLabel()+' · '+getDateRange()+'</div>',
-  ranking:()=>'<strong>Ranking</strong>Brands sorted by average weekly interest. Bar = relative strength vs #1.<br><br><code>Score = mean of all weekly values</code><div class="wt-period">'+getPeriodLabel()+' · '+getDateRange()+'</div>',
-  breakout:()=>'<strong>Breakout Alerts</strong>Triggers when avg last 4 weeks exceeds avg prior 4 weeks by 20+ points.<br><br><code>Jump = avg(last 4wk) − avg(prior 4wk) ≥ 20</code><div class="wt-period">Rolling window · '+getDateRange()+'</div>',
+  compare:()=>{
+    const cmpD=getAD().dates;
+    if(!cmpD.length)return'<strong>Period vs Prior</strong>No data loaded.';
+    const h=Math.max(1,Math.floor(cmpD.length/2));
+    const w2=Math.min(4,Math.floor(cmpD.length/2));
+    const fm=x=>new Date(x+'T00:00:00').toLocaleString('default',{month:'short',year:'2-digit'});
+    let method,formula;
+    if(per<=26){
+      method='Last 4 weeks vs Prior 4 weeks';
+      formula='Comparing: avg('+fm(cmpD[cmpD.length-w2*2])+'–'+fm(cmpD[cmpD.length-w2-1])+') vs avg('+fm(cmpD[cmpD.length-w2])+'–'+fm(cmpD[cmpD.length-1])+')';
+    } else {
+      const h1=fm(cmpD[0])+'–'+fm(cmpD[h-1]);
+      const h2=fm(cmpD[h])+'–'+fm(cmpD[cmpD.length-1]);
+      method=per<=52?'First half vs Second half of period (H1 vs H2)':'H1 vs H2 over 5 years';
+      formula='H1: '+h1+' vs H2: '+h2;
+    }
+    return '<strong>Period vs Prior</strong>'+
+      '<b>Avg</b> = mean weekly interest over selected period.<br>'+
+      '<b>Peak</b> = highest single week.<br><br>'+
+      '<b>Δ% method:</b> <code>'+method+'</code><br>'+
+      '<b>Date range:</b> <code>'+formula+'</code><br><br>'+
+      'Arrow ↑↓→ always matches badge direction.'+
+      '<div class="wt-period">'+getPeriodLabel()+' · '+getDateRange()+'</div>';
+  },
   monthly:()=>'<strong>Monthly Averages</strong>Aggregates weekly data into calendar months. Shows both BRANDS and GENERIC trends separately.<br><br><code>Monthly avg = sum of weekly values / count of weeks</code><br>Use these numbers directly in your internal monthly dashboards.<div class="wt-period">'+getPeriodLabel()+' · '+getDateRange()+'</div>',
 };
 
@@ -1079,6 +1138,85 @@ function expPDF(){
 }
 
 // ── CSV ──
+function expSheets(){
+  const brandD=getDataForType('brand');
+  const genericD=getDataForType('generic');
+  const cfg=TC.find(t=>t.id===aid);
+  const date=new Date().toISOString().slice(0,10);
+  const NL=String.fromCharCode(10);
+
+  function monthlySection(label,keywords,dates,kwData){
+    if(!keywords.length)return'';
+    const groups=groupByMonth(dates);
+    const months=Object.keys(groups).sort();
+    const monthLabels=months.map(k=>{
+      const[y,m]=k.split('-');
+      return new Date(parseInt(y),parseInt(m)-1,1).toLocaleString('default',{month:'long',year:'numeric'});
+    });
+    const rows=[];
+    rows.push([label.toUpperCase()]);
+    rows.push(['Keyword',...monthLabels,'PERIOD AVG']);
+    keywords.forEach(kw=>{
+      const vals=months.map(mk=>{
+        const ds=groups[mk];
+        const v=ds.map(d=>kwData[kw][d]||0);
+        return Math.round(v.reduce((a,b)=>a+b,0)/Math.max(v.length,1));
+      });
+      const avg=Math.round(vals.reduce((a,b)=>a+b,0)/Math.max(vals.length,1));
+      rows.push([kw,...vals,avg]);
+    });
+    // ALL AVG row
+    const allAvgs=['ALL AVG',...months.map(mk=>{
+      const vals=keywords.map(kw=>{
+        const ds=groups[mk];
+        const v=ds.map(d=>kwData[kw][d]||0);
+        return Math.round(v.reduce((a,b)=>a+b,0)/Math.max(v.length,1));
+      });
+      return Math.round(vals.reduce((a,b)=>a+b,0)/Math.max(vals.length,1));
+    })];
+    const grandAvg=Math.round(keywords.flatMap(kw=>months.map(mk=>{
+      const ds=groups[mk];const v=ds.map(d=>kwData[kw][d]||0);
+      return Math.round(v.reduce((a,b)=>a+b,0)/Math.max(v.length,1));
+    })).reduce((a,b)=>a+b,0)/Math.max(keywords.length*months.length,1));
+    allAvgs.push(grandAvg);
+    rows.push(allAvgs);
+    return rows;
+  }
+
+  const brandRows=monthlySection('Brands Monthly Averages',brandD.keywords,brandD.dates,brandD.kwData);
+  const genericRows=monthlySection('Generic Monthly Averages',genericD.keywords,genericD.dates,genericD.kwData);
+
+  const allRows=[
+    ['Brand Intelligence — Google Trends Dashboard'],
+    ['Country: '+(cfg?cfg.name:''), 'Period: '+getPeriodLabel(), 'Exported: '+date],
+    [''],
+    ...brandRows,
+    [''],
+    ...genericRows,
+  ];
+
+  const csv=allRows.map(r=>Array.isArray(r)?r.map(v=>{
+    const s=String(v);
+    return s.includes(',')||s.includes('"')?'"'+s.replace(/"/g,'""')+'"':s;
+  }).join(','):String(r)).join(NL);
+
+  // Encode and open in Google Sheets import URL
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+
+  // Create temp link to download, then open Sheets
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='trends_'+(cfg?cfg.id:aid)+'_'+date+'.csv';
+  a.click();
+
+  // Open Google Sheets import in new tab after short delay
+  setTimeout(()=>{
+    window.open('https://sheets.new','_blank');
+    toast('📊 CSV downloaded! In the new Sheet: File → Import → Upload the CSV file.');
+  },800);
+}
+
 function expCSV(){
   const brandD=getDataForType('brand'); const genericD=getDataForType('generic');
   const cfg=TC.find(t=>t.id===aid); const date=new Date().toISOString().slice(0,10);
@@ -1186,6 +1324,6 @@ loadAll();
 
 </script>
 
-<div style="text-align:center;padding:16px 0 20px;font-size:10px;color:#2a3547;font-family:'DM Mono',monospace;letter-spacing:2px;user-select:none;">MADE WITH <span style="color:#cc1418;display:inline-block;animation:heartbeat 1.4s ease infinite">♥</span> BY MAXIM LORD</div>
+<div style="text-align:center;padding:16px 0 20px;font-size:11px;color:#3a4a5c;font-family:'DM Mono',monospace;letter-spacing:2px;user-select:none;">MADE WITH <span style="color:#cc1418;display:inline-block;font-size:14px;animation:heartbeat 1.2s cubic-bezier(.215,.61,.355,1) infinite;transform-origin:center;letter-spacing:0;margin:0 3px">♥</span> BY MAXIM LORD</div>
 </body>
 </html>
