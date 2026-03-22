@@ -924,15 +924,34 @@ function setHmGran(btn,gran){hmGran=gran;document.querySelectorAll('.hm-btn').fo
 function buildHMTable(keywords,dates,kwData,allKW){
   if(!keywords.length)return'<div style="color:var(--muted);font-size:11px;padding:8px">No data</div>';
   const useMonthly=hmGran==='monthly';
-  let cols, colLabels, getVal;
+  let cols, colLabels, colRanges, getVal;
   if(useMonthly){
     const groups=groupByMonth(dates);
     cols=Object.keys(groups).sort();
     colLabels=cols.map(k=>{const[y,m]=k.split('-');return new Date(parseInt(y),parseInt(m)-1,1).toLocaleString('default',{month:'short',year:'2-digit'});});
+    colRanges=colLabels.map(l=>'Monthly avg: '+l);
     getVal=(kw,col)=>{const ds=groups[col];const v=ds.map(d=>kwData[kw][d]||0);return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length):0;};
   }else{
     cols=dates;
-    colLabels=dates.map(d=>{const dt=new Date(d+'T00:00:00');return per>=260?dt.toLocaleString('default',{month:'short',year:'2-digit'}):dt.toLocaleString('default',{month:'short',day:'numeric'});});
+    // Build "Mon W1" labels — count weeks per month
+    const weekCount={};
+    colLabels=dates.map(d=>{
+      const dt=new Date(d+'T00:00:00');
+      if(per>=260)return dt.toLocaleString('default',{month:'short',year:'2-digit'});
+      const mk=dt.getFullYear()+'-'+dt.getMonth();
+      weekCount[mk]=(weekCount[mk]||0)+1;
+      return dt.toLocaleString('default',{month:'short'})+' W'+weekCount[mk];
+    });
+    // Build date ranges like "Jan 6 – 12, 2025"
+    colRanges=dates.map((d,i)=>{
+      const start=new Date(d+'T00:00:00');
+      const end=new Date(start); end.setDate(end.getDate()+6);
+      const sM=start.toLocaleString('default',{month:'short'});
+      const eM=end.toLocaleString('default',{month:'short'});
+      const sameMonth=start.getMonth()===end.getMonth();
+      if(sameMonth)return sM+' '+start.getDate()+' – '+end.getDate()+', '+start.getFullYear();
+      return sM+' '+start.getDate()+' – '+eM+' '+end.getDate()+', '+start.getFullYear();
+    });
     getVal=(kw,col)=>kwData[kw][col]||0;
   }
   const gridCols='80px repeat('+cols.length+',minmax(18px,1fr)) 40px';
@@ -947,21 +966,20 @@ function buildHMTable(keywords,dates,kwData,allKW){
     h+='<div style="display:flex;align-items:center;padding-right:4px;position:sticky;left:0;background:var(--surface);z-index:2"><span style="color:'+col+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:9px">'+kw+'</span></div>';
     vals.forEach((v,mi)=>{
       const a=(0.08+(v/100)*0.88).toFixed(2);
-      const lbl=useMonthly?'Monthly avg '+colLabels[mi]:'Week of '+new Date(cols[mi]+'T00:00:00').toLocaleString('default',{month:'long',day:'numeric',year:'numeric'});
-      h+='<div style="height:18px;border-radius:2px;background:'+col+';opacity:'+a+';cursor:pointer" title="'+kw+' · '+lbl+': '+v+'" onmouseenter="showHMTip(event,{kw:\''+kw.replace(/'/g,"'")+'\',val:\''+v+'\',date:\''+lbl+'\',type:\''+getKWT(kw)+'\',col:\''+col+'\'})" onmouseleave="hideHMTip()"></div>';
+      h+='<div style="height:18px;border-radius:2px;background:'+col+';opacity:'+a+';cursor:pointer" onmouseenter="showHMTip(event,{kw:\''+kw.replace(/'/g,"'")+'\',val:\''+v+'\',date:\''+colRanges[mi].replace(/'/g,"'")+'\',label:\''+colLabels[mi].replace(/'/g,"'")+'\',type:\''+getKWT(kw)+'\',col:\''+col+'\'})" onmouseleave="hideHMTip()"></div>';
     });
     const aA=(0.08+(kwAvg/100)*0.88).toFixed(2);
-    h+='<div style="height:18px;border-radius:2px;background:'+col+';opacity:'+aA+';display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff" title="'+kw+' avg: '+kwAvg+'">'+kwAvg+'</div>';
+    h+='<div style="height:18px;border-radius:2px;background:'+col+';opacity:'+aA+';display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff">'+kwAvg+'</div>';
   });
   // ALL AVG row
   h+='<div style="color:var(--teal);font-weight:700;font-size:9px;display:flex;align-items:center;position:sticky;left:0;background:var(--surface);z-index:2">ALL AVG</div>';
   cols.forEach((c,ci)=>{
     const cAvg=keywords.length?Math.round(keywords.reduce((s,kw)=>s+getVal(kw,c),0)/keywords.length):0;
-    h+='<div style="height:18px;border-radius:2px;background:var(--teal);opacity:'+(0.08+(cAvg/100)*0.5).toFixed(2)+';display:flex;align-items:center;justify-content:center;font-size:8px;color:#fff" title="All avg '+colLabels[ci]+': '+cAvg+'">'+cAvg+'</div>';
+    h+='<div style="height:18px;border-radius:2px;background:var(--teal);opacity:'+(0.08+(cAvg/100)*0.5).toFixed(2)+';display:flex;align-items:center;justify-content:center;font-size:8px;color:#fff">'+cAvg+'</div>';
   });
   const allV=keywords.flatMap(kw=>cols.map(c=>getVal(kw,c)));
   const oa=allV.length?Math.round(allV.reduce((a,b)=>a+b,0)/allV.length):0;
-  h+='<div style="height:18px;border-radius:2px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff" title="Overall: '+oa+'">'+oa+'</div>';
+  h+='<div style="height:18px;border-radius:2px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff">'+oa+'</div>';
   h+='</div>';
   return h;
 }
@@ -1131,13 +1149,14 @@ function detectBreakouts(){
 // ── HM Tooltip ──
 function showHMTip(e,d){
   let tip=document.getElementById('hmTip');
-  if(!tip){tip=document.createElement('div');tip.id='hmTip';tip.style.cssText='position:fixed;z-index:9999;background:#181e2c;border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:10px 14px;font-size:12px;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.5);min-width:160px;';document.body.appendChild(tip);}
+  if(!tip){tip=document.createElement('div');tip.id='hmTip';tip.style.cssText='position:fixed;z-index:9999;background:#181e2c;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 16px;font-size:12px;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.5);min-width:190px;max-width:260px;';document.body.appendChild(tip);}
   const bar=Math.round(parseInt(d.val)/100*80);
-  tip.innerHTML='<div style="display:flex;align-items:center;gap:7px;margin-bottom:8px"><span style="width:9px;height:9px;border-radius:50%;background:'+d.col+';display:inline-block"></span><strong style="color:#eef0f4">'+d.kw+'</strong><span style="font-size:9px;color:#4e5a70;background:#111620;padding:1px 6px;border-radius:4px">'+d.type+'</span></div>'+
-    '<div style="color:#7a8899;font-size:11px;margin-bottom:8px">'+d.date+'</div>'+
+  tip.innerHTML='<div style="display:flex;align-items:center;gap:7px;margin-bottom:6px"><span style="width:9px;height:9px;border-radius:50%;background:'+d.col+';display:inline-block"></span><strong style="color:#eef0f4">'+d.kw+'</strong><span style="font-size:9px;color:#4e5a70;background:#111620;padding:1px 6px;border-radius:4px">'+d.type+'</span></div>'+
+    (d.label?'<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><span style="color:var(--teal);font-size:11px;font-weight:600">'+d.label+'</span></div>':'')+
+    '<div style="color:#7a8899;font-size:10px;margin-bottom:8px">'+d.date+'</div>'+
     '<div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden"><div style="width:'+bar+'%;height:100%;background:'+d.col+';border-radius:3px"></div></div><span style="font-family:Bebas Neue,sans-serif;font-size:22px;color:#eef0f4">'+d.val+'</span><span style="font-size:10px;color:#4e5a70">/100</span></div>';
-  tip.style.left=Math.min(e.clientX+12,window.innerWidth-180)+'px';
-  tip.style.top=Math.min(e.clientY-20,window.innerHeight-120)+'px';
+  tip.style.left=Math.min(e.clientX+12,window.innerWidth-220)+'px';
+  tip.style.top=Math.min(e.clientY-20,window.innerHeight-140)+'px';
   tip.style.display='block';
 }
 function hideHMTip(){const t=document.getElementById('hmTip');if(t)t.style.display='none';}
