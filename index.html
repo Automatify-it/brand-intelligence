@@ -273,10 +273,12 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
   .hmc{grid-column:1;grid-row:auto;}
   .cpc{grid-column:1;grid-row:auto;}
 
-  /* Sidebar cards — Ranking scrollable */
+  /* Sidebar cards — scrollable lists */
   .sb{grid-column:1;grid-row:auto;flex-direction:column;}
   .sb .card{width:100%;}
   .rl{max-height:320px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+  #dl{max-height:140px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+  #compGap{max-height:320px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
   .mavg{grid-column:1;}
 
   .hmg{overflow-x:auto;}
@@ -291,9 +293,9 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
   .mg{grid-template-columns:1fr;}
 
   .dl{display:none;}
-  .gap-name{width:55px;font-size:10px;}
-  .gap-badge{font-size:8px;padding:1px 4px;}
-  .gap-val{font-size:9px;width:30px;}
+  .gap-name{font-size:11px;}
+  .gap-badge{font-size:8px;padding:1px 5px;}
+  .gap-val{font-size:16px;width:28px;}
 }
 
 /* ── SMALL MOBILE (≤480px) ── */
@@ -305,6 +307,8 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
   .exec-summary{font-size:10px;padding:10px 12px;}
   .hr .btn{padding:4px 7px;font-size:11px;}
   .rl{max-height:260px;}
+  #dl{max-height:120px;}
+  #compGap{max-height:260px;}
 }
 
 /* ── MONTHLY AVG TABLE ── */
@@ -345,12 +349,13 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
 .exec-summary .exec-warn{color:#e8a020;font-weight:600;}
 
 /* ── COMPETITIVE GAP ── */
-.gap-row{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:11px;}
-.gap-name{width:70px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;}
-.gap-bar-outer{flex:1;height:6px;background:rgba(255,255,255,0.04);border-radius:3px;overflow:hidden;position:relative;}
-.gap-bar-inner{height:100%;border-radius:3px;transition:width 0.6s cubic-bezier(0.4,0,0.2,1);}
-.gap-val{font-family:'DM Mono',monospace;font-size:10px;width:30px;text-align:right;color:var(--muted2);}
-.gap-delta{font-family:'DM Mono',monospace;font-size:9px;width:36px;text-align:right;padding:1px 4px;border-radius:3px;}
+.gap-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:var(--surface2);border:1px solid transparent;transition:all 0.15s;margin-bottom:5px;}
+.gap-row:hover{border-color:var(--border);}
+.gap-name{flex:1;font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gap-bar-wrap{width:44px;height:3px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden;}
+.gap-bar{height:100%;border-radius:2px;transition:width 0.6s cubic-bezier(0.4,0,0.2,1);}
+.gap-val{font-family:'Bebas Neue',sans-serif;font-size:18px;width:32px;text-align:right;}
+.gap-badge{font-size:9px;font-family:'DM Mono',monospace;font-weight:700;padding:2px 6px;border-radius:4px;white-space:nowrap;}
 
 /* ── CHART LEGEND ── */
 .chart-legend{display:flex;flex-wrap:wrap;gap:6px 12px;padding:6px 16px 12px;font-size:10px;}
@@ -927,7 +932,7 @@ function buildHMTable(keywords,dates,kwData,allKW){
     getVal=(kw,col)=>{const ds=groups[col];const v=ds.map(d=>kwData[kw][d]||0);return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length):0;};
   }else{
     cols=dates;
-    colLabels=dates.map(d=>{const dt=new Date(d+'T00:00:00');return per>=260?dt.toLocaleString('default',{month:'short',year:'2-digit'}):dt.toLocaleString('default',{month:'short'});});
+    colLabels=dates.map(d=>{const dt=new Date(d+'T00:00:00');return per>=260?dt.toLocaleString('default',{month:'short',year:'2-digit'}):dt.toLocaleString('default',{month:'short',day:'numeric'});});
     getVal=(kw,col)=>kwData[kw][col]||0;
   }
   const gridCols='80px repeat('+cols.length+',minmax(18px,1fr)) 40px';
@@ -942,7 +947,7 @@ function buildHMTable(keywords,dates,kwData,allKW){
     h+='<div style="display:flex;align-items:center;padding-right:4px;position:sticky;left:0;background:var(--surface);z-index:2"><span style="color:'+col+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:9px">'+kw+'</span></div>';
     vals.forEach((v,mi)=>{
       const a=(0.08+(v/100)*0.88).toFixed(2);
-      const lbl=useMonthly?'Monthly avg '+colLabels[mi]:new Date(cols[mi]+'T00:00:00').toLocaleString('default',{month:'long',year:'numeric'});
+      const lbl=useMonthly?'Monthly avg '+colLabels[mi]:'Week of '+new Date(cols[mi]+'T00:00:00').toLocaleString('default',{month:'long',day:'numeric',year:'numeric'});
       h+='<div style="height:18px;border-radius:2px;background:'+col+';opacity:'+a+';cursor:pointer" title="'+kw+' · '+lbl+': '+v+'" onmouseenter="showHMTip(event,{kw:\''+kw.replace(/'/g,"'")+'\',val:\''+v+'\',date:\''+lbl+'\',type:\''+getKWT(kw)+'\',col:\''+col+'\'})" onmouseleave="hideHMTip()"></div>';
     });
     const aA=(0.08+(kwAvg/100)*0.88).toFixed(2);
@@ -1588,8 +1593,10 @@ function rCompGap(){
     const isLeader=i===0;
     const badgeBg=isLeader?'rgba(58,172,172,0.15)':'rgba(204,20,24,0.12)';
     const badgeCol=isLeader?'var(--teal)':'#ff6b6b';
-    const badgeText=isLeader?'👑 LEADER':'-'+gap+' pts';
+    const badgeText=isLeader?'👑 LEADER':'-'+gap;
     return '<div class="gap-row">'+
+      '<span style="font-family:DM Mono,monospace;font-size:10px;color:var(--muted);width:14px">'+(i+1)+'</span>'+
+      '<span style="width:8px;height:8px;border-radius:50%;background:'+col+';flex-shrink:0"></span>'+
       '<span class="gap-name" style="color:'+col+'" title="'+item.kw+'">'+item.kw+'</span>'+
       '<div class="gap-bar-wrap"><div class="gap-bar" style="width:'+pct+'%;background:'+col+'"></div></div>'+
       '<span class="gap-val">'+item.avg+'</span>'+
