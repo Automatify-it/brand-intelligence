@@ -277,7 +277,7 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
   .sb{grid-column:1;grid-row:auto;flex-direction:column;}
   .sb .card{width:100%;}
   #rl{max-height:320px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
-  #dl{max-height:140px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+  #dl{max-height:200px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
   #compGap{max-height:320px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
   #alertsList{max-height:200px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
   .mavg{grid-column:1;}
@@ -293,7 +293,6 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
   .modal h2{font-size:18px;}
   .mg{grid-template-columns:1fr;}
 
-  .dl{display:none;}
   .gap-name{font-size:11px;}
   .gap-badge{font-size:8px;padding:1px 5px;}
   .gap-val{font-size:16px;width:28px;}
@@ -308,7 +307,7 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
   .exec-summary{font-size:10px;padding:10px 12px;}
   .hr .btn{padding:4px 7px;font-size:11px;}
   #rl{max-height:260px;}
-  #dl{max-height:120px;}
+  #dl{max-height:160px;}
   #compGap{max-height:260px;}
 }
 
@@ -761,9 +760,9 @@ function buildG(){
         '<span style="font-size:9px;color:var(--muted)">vs leader</span></div>'+
         '<div class="cb2" style="padding:10px 12px"><div id="compGap"></div></div>'+
       '</div>'+
-      '<div class="card" id="alertsCard">'+
+      '<div class="card" id="alertsCard" style="display:none">'+
         '<div class="ch"><span class="ct">🔥 Breakout Alerts<span class="wi" onmouseenter="showWTip(event,wTips.breakout())" onmouseleave="hideWTip()">i</span></span>'+
-        '<span style="font-size:9px;color:#e8a020">20+ pt jump</span></div>'+
+        '<span style="font-size:9px;color:#e8a020">20+ pt surge</span></div>'+
         '<div class="cb2" style="padding:12px"><div id="alertsList"></div></div>'+
       '</div>'+
       '<div class="card">'+
@@ -1133,13 +1132,12 @@ function detectBreakouts(){
   breakouts.sort((a,b)=>b.jump-a.jump);
   const card=document.getElementById('alertsCard'); const list=document.getElementById('alertsList');
   if(card&&list){
-    if(!breakouts.length){
-      list.innerHTML='<div style="display:flex;align-items:center;gap:8px;padding:10px 0;color:var(--muted);font-size:11px"><span style="font-size:18px;opacity:0.4">✓</span>No breakouts detected — all brands within normal range.</div>';
-    }
+    if(!breakouts.length){card.style.display='none';}
     else{
+      card.style.display='block';
       const allKW=getAllKW();
-      list.innerHTML=breakouts.map(b=>{const col=C[allKW.indexOf(b.kw)%C.length];
-        return '<div class="alert-row"><span style="font-size:16px">🔥</span><span class="abrand" style="color:'+col+'">'+b.kw+'</span><span class="aval">+'+b.jump+' pts</span><span style="font-size:10px;color:var(--muted)">'+b.pri+'→'+b.rec+'</span></div>';
+      list.innerHTML=breakouts.map(b=>{const col=C[allKW.indexOf(b.kw)%C.length];const type=getKWT(b.kw);const typeBg=type==='brand'?'rgba(58,172,172,0.12)':'rgba(232,160,32,0.12)';const typeCol=type==='brand'?'var(--teal)':'#e8a020';
+        return '<div class="alert-row"><span style="font-size:16px">🔥</span><span class="abrand" style="color:'+col+'">'+b.kw+'</span><span style="font-size:8px;padding:1px 5px;border-radius:4px;background:'+typeBg+';color:'+typeCol+';font-family:DM Mono,monospace;font-weight:600">'+type.toUpperCase()+'</span><span class="aval">+'+b.jump+' pts</span><span style="font-size:10px;color:var(--muted)">'+b.pri+'→'+b.rec+'</span></div>';
       }).join('');
     }
   }
@@ -1204,7 +1202,7 @@ const wTips={
   monthly:()=>'<strong>Monthly Averages</strong>Aggregates weekly data into calendar months. Shows both BRANDS and GENERIC trends separately.<br><br><code>Monthly avg = sum of weekly values / count of weeks</code><br>Use these numbers directly in your internal monthly dashboards.<div class="wt-period">'+getPeriodLabel()+' · '+getDateRange()+'</div>',
   sov:()=>'<strong>Share of Voice</strong>Each brand\'s search interest as a percentage of all brands combined.<br><br><code>SOV% = Brand Total / All Brands Total × 100</code><br>Toggle between BRANDS and GENERIC views.<div class="wt-period">'+getPeriodLabel()+' · '+getDateRange()+'</div>',
   ranking:()=>'<strong>Brand Ranking</strong>Brands sorted by average weekly search interest over the selected period. Click any brand to toggle it on/off in all charts.<br><br><code>Avg = sum of weekly values / number of weeks</code><div class="wt-period">'+getPeriodLabel()+' · '+getDateRange()+'</div>',
-  breakout:()=>'<strong>Breakout Alerts</strong>Brands with a 20+ point jump in search interest between the last 4 weeks vs the prior 4 weeks.<br><br><code>Jump = avg(last 4wk) − avg(prior 4wk)</code><br>A breakout signals a sudden surge in brand awareness — investigate why!<div class="wt-period">'+getPeriodLabel()+' · '+getDateRange()+'</div>',
+  breakout:()=>'<strong>Breakout Alerts</strong>Brands or search terms with a 20+ point surge in interest between the last 4 weeks vs the prior 4 weeks.<br><br><code>Surge = avg(last 4wk) − avg(prior 4wk)</code><br>A breakout signals a sudden spike in search demand — could be a campaign launch, competitor move, or seasonal shift.<div class="wt-period">'+getPeriodLabel()+' · '+getDateRange()+'</div>',
   gap:()=>'<strong>Competitive Gap</strong>Shows how each brand compares to the market leader. Bar length = percentage of the leader\'s average score.<br><br><code>Gap = Leader Avg − Brand Avg</code><div class="wt-period">'+getPeriodLabel()+' · '+getDateRange()+'</div>',
 };
 
