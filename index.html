@@ -111,7 +111,7 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
 .ndt{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;color:var(--muted2);}
 .ndd{font-size:13px;color:var(--muted);max-width:400px;line-height:1.7;}
 #donutChart{max-height:140px;}
-.dl{margin-top:10px;display:flex;flex-wrap:wrap;gap:5px;}
+#dl{margin-top:10px;display:flex;flex-direction:column;gap:3px;}
 .dli{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted2);}
 .mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(5px);z-index:300;place-items:center;}
 .mo.open{display:grid;}
@@ -276,8 +276,10 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
   /* Sidebar cards — scrollable lists */
   .sb{grid-column:1;grid-row:auto;flex-direction:column;}
   .sb .card{width:100%;}
+  .sb .sov-card{overflow:visible;}
+  .sb .sov-card .cb2{overflow:visible;}
   #rl{max-height:320px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
-  #dl{max-height:200px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+  #dl{max-height:240px;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin;}
   #compGap{max-height:320px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
   #alertsList{max-height:200px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
   .mavg{grid-column:1;}
