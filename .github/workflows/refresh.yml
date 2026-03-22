@@ -3,12 +3,12 @@ name: Weekly Trends Refresh
 on:
   schedule:
     - cron: "0 7 * * 1"   # Every Monday 7:00 AM UTC
-  workflow_dispatch:        # Also allow manual trigger from GitHub UI
+  workflow_dispatch:        # Manual trigger from GitHub UI
 
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
 
     steps:
       - name: Checkout repository
@@ -26,11 +26,11 @@ jobs:
       - name: Write credentials.json from secret
         run: echo '${{ secrets.GOOGLE_CREDENTIALS_JSON }}' > credentials.json
 
-      - name: Inject Sheet ID into script
+      - name: Inject SerpAPI key into script
         run: |
-          sed -i 's/YOUR_GOOGLE_SHEET_ID_HERE/${{ secrets.GOOGLE_SHEET_ID }}/' fetcher_to_sheets.py
+          sed -i "s/SERPAPI_KEY = None/SERPAPI_KEY = \"${{ secrets.SERPAPI_KEY }}\"/" fetcher_to_sheets.py
 
-      - name: Run fetcher
+      - name: Run fetcher (smart skip — only re-fetches stale tabs)
         run: python fetcher_to_sheets.py
         env:
           PYTHONUNBUFFERED: "1"
@@ -38,3 +38,7 @@ jobs:
       - name: Done
         if: success()
         run: echo "✅ Trends refreshed at $(date -u)"
+
+      - name: Notify on failure
+        if: failure()
+        run: echo "❌ Refresh failed at $(date -u) — check logs above"

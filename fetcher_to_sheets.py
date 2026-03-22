@@ -15,6 +15,7 @@ RUN:
     python fetcher_to_sheets.py
 """
 
+import os
 import time
 import json
 import requests
@@ -33,14 +34,25 @@ CREDENTIALS_FILE = "credentials.json"
 
 # SerpAPI key (free tier = 100 searches/month)
 # Get yours free at: https://serpapi.com/users/sign_up
-# Leave as None to skip SerpAPI and use pytrends only
-SERPAPI_KEY = None  # e.g. "abc123yourkeyhere"
+#
+# ⚠️  NEVER hardcode your key here if this repo is public!
+#     Set it as an environment variable or GitHub Secret instead:
+#       export SERPAPI_KEY="your_key_here"
+#     Or in GitHub Actions: Settings → Secrets → SERPAPI_KEY
+#
+SERPAPI_KEY = os.environ.get("SERPAPI_KEY", None)
 
 # Timeframe: "today 12-m" | "today 6-m" | "today 3-m"
 TIMEFRAME = "today 12-m"
 
+# Set to True to skip pytrends and use SerpAPI directly (recommended when pytrends keeps getting 429)
+SKIP_PYTRENDS = True
+
 # Delay between API calls (seconds) — don't go below 2.0
-API_DELAY = 2.0
+API_DELAY = 2.5
+
+# Delay between brand and generic fetches within a tab
+TAB_DELAY = 10
 
 # ═══════════════════════════════════════════════════════════
 # COUNTRY TABS
@@ -221,16 +233,39 @@ def fetch_serpapi(keywords, geo, timeframe):
             kw_data = {kw: [] for kw in kw_list}
 
             for point in timeline:
-                dates.append(point["date"])
-                for val in point.get("values", []):
-                    q = val.get("query")
-                    v = val.get("extracted_value", 0)
-                    if q in kw_data:
-                        kw_data[q].append(v)
+                # SerpAPI returns week ranges like "Mar 16 – 22, 2025"
+                # Extract just the start date
+                raw_date = point["date"]
+                try:
+                    # Try direct parse first
+                    parsed_date = pd.to_datetime(raw_date)
+                except Exception:
+                    try:
+                        # Handle "Mar 16 – 22, 2025" → take "Mar 16, 2025"
+                        import re
+                        # Remove the " – 22" part (en-dash range)
+                        cleaned = re.sub(r'\s[–\-]\s*\d+', '', raw_date)
+                        parsed_date = pd.to_datetime(cleaned)
+                    except Exception:
+                        try:
+                            # Last resort: extract first date pattern
+                            import re
+                            m = re.search(r'([A-Za-z]+ \d+,?\s*\d{4})', raw_date)
+                            parsed_date = pd.to_datetime(m.group(1)) if m else None
+                        except Exception:
+                            parsed_date = None
+
+                if parsed_date is not None:
+                    dates.append(parsed_date)
+                    for val in point.get("values", []):
+                        q = val.get("query")
+                        v = val.get("extracted_value", 0)
+                        if q in kw_data:
+                            kw_data[q].append(v)
 
             for kw in kw_list:
                 if kw in kw_data and len(kw_data[kw]) == len(dates):
-                    s = pd.Series(kw_data[kw], index=pd.to_datetime(dates), name=kw)
+                    s = pd.Series(kw_data[kw], index=pd.DatetimeIndex(dates), name=kw)
                     if kw not in all_series:
                         all_series[kw] = s
 
@@ -252,22 +287,27 @@ def fetch_serpapi(keywords, geo, timeframe):
 # ═══════════════════════════════════════════════════════════
 
 def fetch_with_fallback(keywords, geo, region, timeframe):
-    """Try pytrends first, fall back to SerpAPI if it fails."""
-    print(f"    Trying pytrends...")
-    df = fetch_pytrends(keywords, geo, region, timeframe)
+    """Try pytrends first (unless SKIP_PYTRENDS=True), fall back to SerpAPI."""
 
-    if df is not None and not df.empty:
-        print(f"    ✓ pytrends succeeded")
-        return df, "pytrends"
+    if not SKIP_PYTRENDS:
+        print(f"    Trying pytrends...")
+        df = fetch_pytrends(keywords, geo, region, timeframe)
+        if df is not None and not df.empty:
+            print(f"    ✓ pytrends succeeded")
+            return df, "pytrends"
+        print(f"    pytrends failed (429?) — trying SerpAPI...")
+    else:
+        print(f"    Skipping pytrends — using SerpAPI directly...")
 
     if SERPAPI_KEY:
-        print(f"    pytrends failed — trying SerpAPI...")
         df = fetch_serpapi(keywords, geo, timeframe)
         if df is not None and not df.empty:
             print(f"    ✓ SerpAPI succeeded")
             return df, "serpapi"
+        print(f"    ✗ SerpAPI also failed")
+    else:
+        print(f"    ✗ No SerpAPI key configured — set SERPAPI_KEY in the script")
 
-    print(f"    ✗ Both sources failed")
     return None, "failed"
 
 
@@ -278,7 +318,7 @@ def fetch_with_fallback(keywords, geo, region, timeframe):
 #          Region, MonthYear, Year, Source, FetchedAt
 # ═══════════════════════════════════════════════════════════
 
-def write_to_sheet(ws, keywords, df, kw_type, geo, region, source):
+def write_to_sheet(keywords, df, kw_type, geo, region, source):
     """Write data rows. kw_type = 'brand' or 'generic'"""
     fetched_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
 
@@ -320,68 +360,73 @@ def write_to_sheet(ws, keywords, df, kw_type, geo, region, source):
 # ═══════════════════════════════════════════════════════════
 
 def process_tab(spreadsheet, tab_name, geo, region, brands, generics):
-    print(f"\n{'─'*55}")
+    print(f"\n{chr(9472)*55}")
     print(f"  Tab: {tab_name}  ({geo}/{region or 'All'})")
-    print(f"{'─'*55}")
+    print(f"{chr(9472)*55}")
+
+    # If no keywords configured — clear the Sheet tab and return
+    if not brands and not generics:
+        print(f"  No keywords configured — clearing Sheet tab if it exists")
+        try:
+            ws = spreadsheet.worksheet(tab_name)
+            ws.clear()
+            print(f"  Cleared '{tab_name}' in Google Sheets")
+        except Exception:
+            print(f"  Tab '{tab_name}' does not exist yet — nothing to clear")
+        return "CLEARED"
 
     all_rows    = []
     header_done = False
 
-    # ── Fetch brands ──
+    # Fetch brands
     print(f"\n  Brands ({len(brands)}):")
     if not brands:
-        print("  ⏭ No brands configured for this tab — skipping")
+        print("  No brands configured — skipping")
         brand_df, brand_source = None, "skipped"
     else:
         brand_df, brand_source = fetch_with_fallback(brands, geo, region, TIMEFRAME)
 
     if brand_df is not None:
-        rows = write_to_sheet(None, brands, brand_df, "brand", geo, region, brand_source)
-        if not header_done:
-            all_rows.extend(rows)          # include header
-            header_done = True
-        else:
-            all_rows.extend(rows[1:])      # skip duplicate header
-        print(f"  ✓ {len(rows)-1} brand data rows")
+        rows = write_to_sheet(brands, brand_df, "brand", geo, region, brand_source)
+        all_rows.extend(rows)
+        header_done = True
+        print(f"  {len(rows)-1} brand data rows")
     else:
-        print(f"  ✗ No brand data fetched")
+        if brands:
+            print(f"  No brand data fetched")
 
-    # Pause between brand and generic fetches
-    time.sleep(3)
+    print(f"  Pausing {TAB_DELAY}s before generic trends...")
+    time.sleep(TAB_DELAY)
 
-    # ── Fetch generic trends ──
+    # Fetch generic trends
     print(f"\n  Generic trends ({len(generics)}):")
     if not generics:
-        print("  ⏭ No generic trends configured for this tab — skipping")
+        print("  No generic trends configured — skipping")
         gen_df, gen_source = None, "skipped"
     else:
         gen_df, gen_source = fetch_with_fallback(generics, geo, region, TIMEFRAME)
 
     if gen_df is not None:
-        rows = write_to_sheet(None, generics, gen_df, "generic", geo, region, gen_source)
+        rows = write_to_sheet(generics, gen_df, "generic", geo, region, gen_source)
         if not header_done:
             all_rows.extend(rows)
-            header_done = True
         else:
             all_rows.extend(rows[1:])
-        print(f"  ✓ {len(rows)-1} generic data rows")
+        print(f"  {len(rows)-1} generic data rows")
     else:
-        print(f"  ✗ No generic data fetched")
+        if generics:
+            print(f"  No generic data fetched")
 
-    # ── Write to sheet ──
+    # Write to sheet
     if all_rows:
         ws = get_or_create_tab(spreadsheet, tab_name)
         ws.update(all_rows, "A1")
-        print(f"\n  ✅ Written {len(all_rows)-1} total rows to '{tab_name}'")
+        print(f"\n  Written {len(all_rows)-1} total rows to '{tab_name}'")
         return "OK"
     else:
-        print(f"\n  ✗ Nothing to write for {tab_name}")
+        print(f"\n  Nothing to write for {tab_name}")
         return "NO DATA"
 
-
-# ═══════════════════════════════════════════════════════════
-# METADATA TAB
-# ═══════════════════════════════════════════════════════════
 
 def write_metadata(spreadsheet, summary):
     try:
@@ -407,15 +452,29 @@ def write_metadata(spreadsheet, summary):
 # MAIN
 # ═══════════════════════════════════════════════════════════
 
+def tab_already_has_data(spreadsheet, tab_name):
+    """Returns True if the tab exists and has more than 5 rows of data."""
+    try:
+        ws = spreadsheet.worksheet(tab_name)
+        all_vals = ws.get_all_values()
+        rows_with_data = [r for r in all_vals if any(c.strip() for c in r)]
+        return len(rows_with_data) > 5
+    except Exception:
+        return False
+
+
 def main():
+    import sys
+    force_all = "--force" in sys.argv
+
     print("\n" + "═"*55)
     print("  Brand Intelligence — Trends Fetcher")
     print(f"  Tabs      : {len(TABS)}")
     print(f"  Timeframe : {TIMEFRAME}")
     print(f"  SerpAPI   : {'enabled' if SERPAPI_KEY else 'disabled (pytrends only)'}")
+    print(f"  Mode      : {'FORCE ALL (re-fetch everything)' if force_all else 'Smart (skip tabs with existing data)'}")
     print("═"*55)
 
-    # Connect to Sheets
     print("\nConnecting to Google Sheets...")
     try:
         spreadsheet = connect_sheets()
@@ -431,17 +490,36 @@ def main():
     summary = []
 
     for tab_name, geo, region, brands, generics in TABS:
+
+        # Skip empty tabs — just clear them
+        if not brands and not generics:
+            try:
+                ws = spreadsheet.worksheet(tab_name)
+                ws.clear()
+                print(f"  ✅ {tab_name} — no keywords, cleared Sheet tab")
+            except Exception:
+                print(f"  ✅ {tab_name} — no keywords, tab doesn't exist yet")
+            summary.append((tab_name, geo, region, brands, generics, "CLEARED"))
+            continue
+
+        # Skip tabs that already have data (unless --force)
+        if not force_all and tab_already_has_data(spreadsheet, tab_name):
+            print(f"  ⏭  {tab_name} — already has data, skipping (use --force to re-fetch)")
+            summary.append((tab_name, geo, region, brands, generics, "SKIPPED"))
+            continue
+
         try:
             status = process_tab(spreadsheet, tab_name, geo, region, brands, generics)
         except Exception as e:
             print(f"  ✗ Unexpected error on {tab_name}: {e}")
+            import traceback
+            traceback.print_exc()
             status = f"ERROR: {e}"
 
         summary.append((tab_name, geo, region, brands, generics, status))
 
-        # Pause between tabs to avoid rate limits
-        print(f"\n  Waiting 5s before next tab...")
-        time.sleep(5)
+        print(f"\n  Waiting {TAB_DELAY}s before next tab...")
+        time.sleep(TAB_DELAY)
 
     write_metadata(spreadsheet, summary)
 
@@ -449,11 +527,10 @@ def main():
     print("  FINAL SUMMARY")
     print("═"*55)
     for tab_name, geo, region, brands, generics, status in summary:
-        icon = "✅" if status == "OK" else "⚠ "
+        icon = "✅" if status in ("OK", "SKIPPED", "CLEARED") else "⚠ "
         print(f"  {icon}  {tab_name:15} {status}")
 
-    print("\n  Done! Open Looker Studio to build your dashboard.")
-    print(f"  Sheet: https://docs.google.com/spreadsheets/d/{SHEET_ID}\n")
+    print(f"\n  Sheet: https://docs.google.com/spreadsheets/d/{SHEET_ID}\n")
 
 
 if __name__ == "__main__":

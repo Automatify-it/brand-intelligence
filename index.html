@@ -183,9 +183,11 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
 
 /* ── PDF EXPORT ── */
 @media print{
-  #ls,header .hr,#tb .tab-add,.cb,.hmTip,.toast{display:none!important;}
+  #ls,header .hr,#tb .tab-add,.cb,.hmTip,.toast,#pwModal{display:none!important;}
   body{background:#fff!important;color:#000!important;}
   .card{border:1px solid #ddd!important;background:#fff!important;break-inside:avoid;}
+  .exec-summary{background:#f7f7f7!important;border:1px solid #ddd!important;color:#333!important;}
+  .exec-summary strong{color:#000!important;}
   main{grid-template-columns:1fr 1fr 1fr!important;}
   .sidebar{grid-column:auto!important;grid-row:auto!important;}
 }
@@ -206,6 +208,8 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
   .sb{grid-column:1/4;grid-row:auto;flex-direction:row;flex-wrap:wrap;gap:12px;}
   .sb .card{flex:1;min-width:200px;}
   .sov-card{flex:2;}
+  .exec-summary{grid-column:1/4;}
+  .mavg{grid-column:1/4;}
 }
 
 /* ── MOBILE (≤768px) ── */
@@ -216,31 +220,36 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
   .dtm{font-size:14px;}
   .dts{font-size:9px;}
   .hr{gap:6px;flex-wrap:wrap;}
-  .hr .live-pill{font-size:9px;padding:4px 8px;}
+  .hr .lp{font-size:9px;padding:4px 8px;}
   .hr .btn{padding:5px 10px;font-size:11px;}
+  .pw-badge,.pw-badge-locked{font-size:9px;padding:2px 8px;}
 
-  .tabs-bar{top:0;position:relative;}
-  .ti{min-width:80px;padding:0 10px;min-height:48px;}
+  .tabs-bar{top:0;position:relative;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;}
+  .ti{min-width:80px;padding:0 10px;min-height:48px;scroll-snap-align:start;}
   .tf{font-size:14px;}
   .tn{font-size:10px;}
   .tab-refresh{display:none;}
 
   .cb{padding:8px 14px;gap:10px;position:relative;}
   .cg select{font-size:11px;padding:5px 8px;}
-  .qt{max-width:100%;gap:4px;}
-  .qtag{font-size:10px;padding:2px 7px;}
-  .ttog{font-size:10px;padding:2px 8px;}
+  .qt{max-width:100%;gap:4px;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;padding-bottom:4px;}
+  .qtag{font-size:10px;padding:2px 7px;flex-shrink:0;}
+  .ttog{font-size:10px;padding:2px 8px;flex-shrink:0;}
 
   main{grid-template-columns:1fr;padding:10px;gap:10px;}
+  .exec-summary{grid-column:1;font-size:11px;padding:12px 14px;line-height:1.7;}
   .kr{grid-column:1;grid-template-columns:repeat(2,1fr);gap:8px;}
   .kpi{padding:12px 14px;}
   .kv{font-size:28px;}
   .mcc{grid-column:1;grid-row:auto;}
   .cw{height:220px;padding:10px;}
+  .chart-legend{padding:4px 10px;gap:4px 8px;font-size:9px;}
+  .chart-legend-dot{width:6px;height:6px;}
   .hmc{grid-column:1;grid-row:auto;}
   .cpc{grid-column:1;grid-row:auto;}
   .sb{grid-column:1;grid-row:auto;flex-direction:column;}
   .sb .card{width:100%;}
+  .mavg{grid-column:1;}
 
   .hmg{overflow-x:auto;}
   .hml span{font-size:8px;}
@@ -249,18 +258,24 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
 
   .cpt th,.cpt td{padding:5px 5px;font-size:10px;}
 
-  .modal{padding:20px;width:95vw;}
+  .modal,.pw-modal{padding:20px;width:95vw;}
   .modal h2{font-size:18px;}
   .mg{grid-template-columns:1fr;}
 
   .dl{display:none;}
+  .gap-name{width:60px;font-size:10px;}
+  .gap-badge{font-size:8px;padding:1px 4px;}
 }
 
 /* ── SMALL MOBILE (≤480px) ── */
 @media(max-width:480px){
   .kr{grid-template-columns:1fr 1fr;}
   .kpi-change{position:static;display:inline-block;margin-top:4px;}
-  .hr .live-pill{display:none;}
+  .hr .lp{display:none;}
+  .kv{font-size:24px;}
+  .kch{font-size:9px;}
+  .exec-summary{font-size:10px;padding:10px 12px;}
+  .exec-summary .exec-label{font-size:8px;}
 }
 
 /* ── MONTHLY AVG TABLE ── */
@@ -274,51 +289,46 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
 
 /* ── KPI flat badge ── */
 .kch.fl{background:rgba(122,136,153,.15);color:#7a8899;}
-/* ── Widget tooltip ── */
-.wi{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;border:1px solid var(--muted);color:var(--muted);font-size:9px;cursor:help;transition:all .15s;margin-left:6px;font-family:'DM Mono',monospace;flex-shrink:0;}
-.wi:hover{border-color:var(--teal);color:var(--teal);}
-.wtip{position:fixed;z-index:9999;background:#0d1520;border:1px solid rgba(58,172,172,.25);border-radius:10px;padding:14px 16px;font-size:11px;max-width:280px;pointer-events:none;box-shadow:0 12px 32px rgba(0,0,0,.6);line-height:1.75;color:#c8d0dc;display:none;}
-.wtip strong{color:#eef0f4;display:block;margin-bottom:6px;font-size:12px;}
-.wtip code{background:rgba(255,255,255,.06);padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;font-size:10px;color:#e8a020;}
-.wt-period{display:inline-block;margin-top:8px;font-size:10px;color:var(--teal);background:rgba(58,172,172,.08);border:1px solid rgba(58,172,172,.2);padding:2px 8px;border-radius:10px;}
 /* ── SOV info ── */
 .sov-info{cursor:help;font-size:10px;color:var(--teal);border:1px solid rgba(58,172,172,.3);border-radius:10px;padding:1px 7px;}
-/* ── Mobile responsive overrides ── */
-@media(max-width:1200px){
-  main{grid-template-columns:1fr 1fr 1fr;}
-  .kr{grid-column:1/4;grid-row:auto;grid-template-columns:repeat(2,1fr);}
-  
-  .mcc{grid-column:1/4;grid-row:auto;}
-  .sb{grid-column:1/4;grid-row:auto;flex-direction:row;flex-wrap:wrap;}
-  .sb .card{flex:1;min-width:200px;}
-  .hmc{grid-column:1/3;grid-row:auto;}
-  .cpc{grid-column:3;grid-row:auto;}
-}
-@media(max-width:768px){
-  header{padding:0 12px;height:52px;}
-  .dashboard-title-main{font-size:14px;}
-  .dashboard-title-sub{font-size:9px;}
-  .live-pill{display:none;}
-  .btn{padding:5px 10px;font-size:11px;}
-  .tabs-bar{top:52px;}
-  .ti{min-width:68px;padding:0 8px;min-height:46px;}
-  .tab-refresh{display:none;}
-  .cb{padding:8px 12px;gap:8px;}
-  main{padding:10px 12px;grid-template-columns:1fr;}
-  .kr{grid-column:1;grid-template-columns:repeat(2,1fr);gap:8px;}
-  .kpi{padding:12px;}
-  .kv{font-size:28px;}
-  .mcc,.sb,.hmc,.cpc,.mavg{grid-column:1;grid-row:auto;}
-  .cw{height:200px;}
-  .sb{flex-direction:column;}
-  .modal{width:95vw;padding:16px;}
-  .pg{grid-template-columns:1fr;}
-}
-@media(max-width:480px){
-  .kr{grid-template-columns:1fr 1fr;}
-  .kv{font-size:24px;}
-  .kch{font-size:9px;}
-}
+
+/* ── PASSWORD GATE ── */
+.pw-modal{background:var(--surface);border:1px solid rgba(58,172,172,0.2);border-radius:16px;padding:32px;width:380px;max-width:90vw;animation:mIn 0.2s ease-out;text-align:center;}
+.pw-modal h2{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;margin-bottom:6px;}
+.pw-modal .pw-sub{font-size:12px;color:var(--muted2);margin-bottom:20px;line-height:1.6;}
+.pw-input{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:8px;font-family:'DM Mono',monospace;font-size:13px;outline:none;text-align:center;letter-spacing:2px;transition:border-color 0.2s;}
+.pw-input:focus{border-color:var(--teal);}
+.pw-input.shake{animation:shake 0.4s ease;}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.pw-err{font-size:11px;color:var(--danger);margin-top:8px;min-height:18px;}
+.pw-hint{font-size:10px;color:var(--muted);margin-top:14px;}
+.pw-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(58,172,172,0.1);border:1px solid rgba(58,172,172,0.3);color:var(--teal);padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;font-family:'DM Mono',monospace;cursor:default;white-space:nowrap;}
+.pw-badge-locked{background:rgba(78,90,112,0.15);border:1px solid var(--border);color:var(--muted2);cursor:pointer;transition:all 0.15s;}
+.pw-badge-locked:hover{border-color:rgba(58,172,172,0.3);color:var(--teal);}
+/* ── EXECUTIVE SUMMARY ── */
+.exec-summary{grid-column:1/-1;background:linear-gradient(135deg,rgba(58,172,172,0.06),rgba(204,20,24,0.04));border:1px solid rgba(58,172,172,0.15);border-radius:12px;padding:16px 20px;font-size:12px;line-height:1.8;color:var(--muted2);position:relative;overflow:hidden;}
+.exec-summary::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--teal),var(--accent));}
+.exec-summary .exec-label{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--teal);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+.exec-summary .exec-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite;}
+.exec-summary strong{color:var(--text);}
+.exec-summary .exec-highlight{color:var(--teal);font-weight:600;}
+.exec-summary .exec-danger{color:#ff6b6b;font-weight:600;}
+.exec-summary .exec-warn{color:#e8a020;font-weight:600;}
+
+/* ── COMPETITIVE GAP ── */
+.gap-row{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:11px;}
+.gap-name{width:70px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;}
+.gap-bar-outer{flex:1;height:6px;background:rgba(255,255,255,0.04);border-radius:3px;overflow:hidden;position:relative;}
+.gap-bar-inner{height:100%;border-radius:3px;transition:width 0.6s cubic-bezier(0.4,0,0.2,1);}
+.gap-val{font-family:'DM Mono',monospace;font-size:10px;width:30px;text-align:right;color:var(--muted2);}
+.gap-delta{font-family:'DM Mono',monospace;font-size:9px;width:36px;text-align:right;padding:1px 4px;border-radius:3px;}
+
+/* ── CHART LEGEND ── */
+.chart-legend{display:flex;flex-wrap:wrap;gap:6px 12px;padding:6px 16px 12px;font-size:10px;}
+.chart-legend-item{display:flex;align-items:center;gap:4px;cursor:pointer;opacity:0.85;transition:opacity 0.15s;}
+.chart-legend-item:hover{opacity:1;}
+.chart-legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.chart-legend-label{color:var(--muted2);white-space:nowrap;}
 @keyframes heartbeat{
   0%,100%{transform:scale(1);}
   14%{transform:scale(1.35);}
@@ -338,6 +348,21 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
   <div id="ldebug" style="font-size:10px;color:#4e5a70;font-family:monospace;margin-top:8px;max-width:400px;text-align:center"></div>
 </div>
 
+<div class="mo" id="pwModal">
+  <div class="pw-modal">
+    <div style="font-size:32px;margin-bottom:12px">🔐</div>
+    <h2>Editor Access</h2>
+    <p class="pw-sub">Enter the editor password to modify keywords and tabs.<br>View-only access doesn't require a password.</p>
+    <input type="password" class="pw-input" id="pwInput" placeholder="••••••••" autocomplete="off">
+    <div class="pw-err" id="pwErr"></div>
+    <div style="margin-top:16px;display:flex;gap:10px;justify-content:center">
+      <button class="btn bg" onclick="closePW()">Cancel</button>
+      <button class="btn bt" onclick="submitPW()">&#128275; Unlock</button>
+    </div>
+    <div class="pw-hint">Ask your team lead or CMO for the password</div>
+  </div>
+</div>
+
 <div class="mo" id="editModal">
   <div class="modal">
     <h2>Edit Keywords <span id="etl" style="color:var(--teal);font-size:16px"></span></h2>
@@ -348,7 +373,7 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
       <button class="akb" onclick="addKwRow('brand')">&#65291; Add Brand</button>
     </div>
     <div class="msec">
-      <div class="mst">&#128200; Generic Trends <div class="ml"></div> <small style="color:var(--muted);font-size:10px;font-family:'DM Mono',monospace">max 5</small></div>
+      <div class="mst">&#128200; Generic Trends <div class="ml"></div> <small style="color:var(--muted);font-size:10px;font-family:'DM Mono',monospace">max 10</small></div>
       <div class="kwl" id="egl"></div>
       <button class="akb" onclick="addKwRow('generic')">&#65291; Add Trend</button>
     </div>
@@ -408,10 +433,11 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
   </div>
   <div class="hr">
     <div class="lp"><span class="ld" id="ld"></span><span id="lu">Loading...</span></div>
+    <span id="roleBadge" class="pw-badge pw-badge-locked" onclick="openPW()" title="Click to unlock editor mode">&#128274; VIEWER</span>
     <button class="btn bg" onclick="expCSV()">&#8595; CSV</button>
     <button class="btn bg btn-sheets" onclick="expSheets()" title="Export monthly averages &amp; open Google Sheets"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;margin-right:3px"><path d="M19 3H5C3.9 3 3 3.9 3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" fill="#0f9d58"/><path d="M7 7h10v2H7zm0 4h10v2H7zm0 4h7v2H7z" fill="#fff"/></svg>Sheets</button>
     <button class="btn bg" onclick="expPDF()">&#128438; PDF</button>
-    <button class="btn bg" onclick="openEM()">&#10000; Edit Keywords</button>
+    <button class="btn bg" onclick="guardedOpenEM()">&#10000; Edit Keywords</button>
     <button class="btn bg" onclick="refData()">&#8635; Refresh</button>
   </div>
 </header>
@@ -633,7 +659,7 @@ function renderAll(){
     // Restore toggle button states
     document.querySelectorAll('.sov-tab').forEach((b,i)=>{b.classList.toggle('active',(sovType==='brand'&&i===0)||(sovType==='generic'&&i===1));});
     document.querySelectorAll('.hm-btn').forEach((b,i)=>{b.classList.toggle('active',(hmGran==='weekly'&&i===0)||(hmGran==='monthly'&&i===1));});
-    [rKPI,rMC,rRank,rDonut,rHM,rCmp,rMonthlyAvg,detectBreakouts].forEach(fn=>{
+    [rExecSummary,rKPI,rMC,rChartLegend,rRank,rDonut,rCompGap,rHM,rCmp,rMonthlyAvg,detectBreakouts].forEach(fn=>{
       try{fn();}catch(e){console.error(fn.name+':',e.message);}
     });
   }));
@@ -643,6 +669,9 @@ function buildG(){
   const cfg=TC.find(t=>t.id===aid);
   const pl=per>=260?'5yr':per<=13?'3mo':per<=26?'6mo':'12mo';
   document.getElementById('mg').innerHTML=
+
+    // Executive Summary - full width
+    '<div class="exec-summary fi" id="execSummary" style="grid-column:1/-1"></div>'+
 
     // Row 1: KPIs cols 1-4
     '<div class="kr fi" id="kr"></div>'+
@@ -654,6 +683,7 @@ function buildG(){
         '<span style="font-size:10px;color:var(--teal);font-family:monospace">'+(cfg?cfg.name:'')+' · '+pl+'</span>'+
       '</div>'+
       '<div class="cw"><canvas id="mc"></canvas></div>'+
+      '<div class="chart-legend" id="chartLegend"></div>'+
     '</div>'+
 
     // Row 3: Heatmap cols 1-2
@@ -675,7 +705,7 @@ function buildG(){
       '<div style="padding:0"><table class="cpt"><thead><tr id="cmpHead"></tr></thead><tbody id="ctb"></tbody></table></div>'+
     '</div>'+
 
-    // Col 5, rows 1-4: Sidebar (SOV + Alerts + Ranking)
+    // Col 5, rows 1-4: Sidebar (SOV + Competitive Gap + Alerts + Ranking)
     '<div class="sb fi" style="animation-delay:.08s">'+
       '<div class="card sov-card">'+
         '<div class="ch">'+
@@ -690,6 +720,11 @@ function buildG(){
           '<canvas id="donutChart" style="max-height:150px"></canvas>'+
           '<div id="dl" style="margin-top:6px"></div>'+
         '</div>'+
+      '</div>'+
+      '<div class="card">'+
+        '<div class="ch"><span class="ct">Competitive Gap<span class="wi" onmouseenter="showWTip(event,wTips.gap())" onmouseleave="hideWTip()">i</span></span>'+
+        '<span style="font-size:9px;color:var(--muted)">vs leader</span></div>'+
+        '<div class="cb2" style="padding:10px 12px"><div id="compGap"></div></div>'+
       '</div>'+
       '<div class="card" id="alertsCard" style="display:none">'+
         '<div class="ch"><span class="ct">🔥 Breakout Alerts<span class="wi" onmouseenter="showWTip(event,wTips.breakout())" onmouseleave="hideWTip()">i</span></span>'+
@@ -715,7 +750,18 @@ function buildG(){
       '</div>'+
     '</div>';
 }
-function showND(t,d){document.getElementById('mg').innerHTML='<div class="nds"><div class="ndi">📭</div><div class="ndt">'+t+'</div><div class="ndd">'+d+'</div></div>';}
+function showND(t,d){
+  const cfg=TC.find(x=>x.id===aid);
+  const isEmpty=cfg&&(!cfg.brands||!cfg.brands.length)&&(!cfg.generics||!cfg.generics.length);
+  const emptyMsg=isEmpty?
+    '<div class="nds"><div class="ndi">🏗️</div><div class="ndt">'+cfg.flag+' '+cfg.name+' — Not Configured Yet</div>'+
+    '<div class="ndd">This market tab has no keywords set up yet.<br>'+
+    (isEditor?'Click <b>Edit Keywords</b> above to add brands and generic trends, then run the fetcher.':
+    'Ask your team lead to add brands and trends for this market.')+
+    '</div>'+(isEditor?'<button class="btn bt" style="margin-top:12px" onclick="guardedOpenEM()">✐ Configure '+cfg.name+'</button>':'')+'</div>':
+    '<div class="nds"><div class="ndi">📭</div><div class="ndt">'+t+'</div><div class="ndd">'+d+'</div></div>';
+  document.getElementById('mg').innerHTML=emptyMsg;
+}
 
 // ── Tabs ──
 function renderTabs(){
@@ -732,9 +778,9 @@ function renderTabs(){
       +'<span class="tn">'+t.name+'</span>'
       +(rt?'<span class="tab-refresh">'+rt+'</span>':'')
       +'</div>';
-  }).join('')+'<div class="tab-add" onclick="openATM()" title="Add tab">＋</div>';
+  }).join('')+'<div class="tab-add" onclick="guardedOpenATM()" title="Add tab">＋</div>';
 }
-function swT(id){aid=id;sT='brand';sovType='brand';renderAll();}
+function swT(id){aid=id;sovType='brand';renderAll();updateLU();}
 
 // ── Query tags ──
 function renderQueryTags(){
@@ -748,8 +794,8 @@ function renderQueryTags(){
       return '<div class="qtag '+(aq.has(kw)?'':'inactive')+'" style="border-color:'+col+'22;color:'+col+';background:'+col+'10" onclick="togKW(\''+s+'\')"><span class="dot" style="background:'+col+'"></span>'+kw+'<span class="rm">×</span></div>';
     }).join('');
 }
-function setST(t){sT=t;renderQueryTags();rMC();rRank();rDonut();rHM();rCmp();}
-function togKW(kw){const aq=aKW[aid];if(!aq)return;if(aq.has(kw)){if(aq.size>1)aq.delete(kw);}else aq.add(kw);renderQueryTags();rKPI();rMC();rRank();rDonut();rHM();rCmp();}
+function setST(t){sT=t;renderQueryTags();rExecSummary();rKPI();rMC();rChartLegend();rRank();rDonut();rCompGap();rHM();rCmp();}
+function togKW(kw){const aq=aKW[aid];if(!aq)return;if(aq.has(kw)){if(aq.size>1)aq.delete(kw);}else aq.add(kw);renderQueryTags();rExecSummary();rKPI();rMC();rChartLegend();rRank();rDonut();rCompGap();rHM();rCmp();}
 
 // ── KPI ──
 function rKPI(){
@@ -761,13 +807,14 @@ function rKPI(){
     const rec=w>0?v.slice(-w).reduce((a,b)=>a+b,0)/w:avg;
     const pri=w>0&&v.length>=w*2?v.slice(-(w*2),-w).reduce((a,b)=>a+b,0)/w:avg;
     const diff=rec-pri; const pct=pri>0?Math.round(diff/pri*100):0;
-    return{kw,avg,pct,isUp:diff>0.5,isFlat:Math.abs(diff)<=0.5};
+    const isNew=pri===0&&rec>0;
+    return{kw,avg,pct,isUp:diff>0.5,isFlat:Math.abs(diff)<=0.5,isNew};
   }).sort((a,b)=>b.avg-a.avg).slice(0,4);
   const el=document.getElementById('kr'); if(!el)return;
   el.innerHTML=avgs.map((item,i)=>{
     const col=C[allKW.indexOf(item.kw)%C.length];
-    const bc=item.isFlat?'fl':item.isUp?'up':'dn';
-    const bt=item.isFlat?'flat':(item.isUp?'+':'')+item.pct+'%';
+    const bc=item.isNew?'up':item.isFlat?'fl':item.isUp?'up':'dn';
+    const bt=item.isNew?'NEW':item.isFlat?'flat':(item.isUp?'+':'')+item.pct+'%';
     return '<div class="kpi" style="--kc:'+col+'" title="Avg: '+item.avg+'/100 · '+bt+' (last 4wk vs prior 4wk)">'+
       '<div class="kl">'+(i===0?'🥇 Leader':'Rank #'+(i+1))+'</div>'+
       '<div class="kv">'+item.avg+'</div>'+
@@ -822,7 +869,7 @@ function rDonut(){
   const leg=document.getElementById('dl');
   if(!sovKWs.length){if(cD)cD.destroy();if(leg)leg.innerHTML='<div style="color:var(--muted);font-size:11px;text-align:center;padding:8px">No '+sovType+' data</div>';return;}
   const tot=sovKWs.map(kw=>dates.reduce((s,d)=>s+(kd[kw][d]||0),0));
-  const sum=tot.reduce((a,b)=>a+b,1);
+  const sum=tot.reduce((a,b)=>a+b,0)||1;
   const cols=sovKWs.map(kw=>C[allKW.indexOf(kw)%C.length]);
   if(cD)cD.destroy();
   cD=new Chart(cv.getContext('2d'),{type:'doughnut',data:{labels:sovKWs,datasets:[{data:tot,backgroundColor:cols,borderColor:'#111620',borderWidth:3}]},
@@ -835,7 +882,7 @@ function rDonut(){
       '<span><strong style="color:'+col+'">'+pct+'%</strong> <span style="color:var(--muted);font-size:9px">avg '+avg+'</span></span></div>';
   }).join('');
 }
-function sovClick(btn){sovType=btn.dataset.t;document.querySelectorAll('.sov-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');try{rDonut();}catch(e){}}
+function sovClick(btn){sovType=btn.dataset.t;document.querySelectorAll('.sov-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');try{rDonut();rCompGap();}catch(e){}}
 
 // ── Heatmap ──
 function setHmGran(btn,gran){hmGran=gran;document.querySelectorAll('.hm-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');rHM();}
@@ -942,14 +989,15 @@ function rCmp(){
     const h1=vals.slice(0,half).reduce((a,b)=>a+b,0)/half;
     const h2=vals.slice(-half).reduce((a,b)=>a+b,0)/half;
     const compC=per<=52?recW:h2; const compP=per<=52?priW:h1;
-    const diff=compC-compP; const pct=compP>0?Math.round(diff/compP*100):0;
+    const diff=compC-compP; const pct=compP>0?Math.round(diff/compP*100):(compC>0?999:0);
+    const isNew=compP===0&&compC>0;
     const isUp=diff>0.5; const isFlat=Math.abs(diff)<=0.5;
     // Arrow uses SAME diff as badge — always consistent
-    const arrow=isFlat?'→':isUp?'↑':'↓';
-    const arC=isFlat?'#7a8899':isUp?'#3aacac':'#ff6b6b';
-    const bg=isFlat?'rgba(122,136,153,.15)':isUp?'rgba(58,172,172,.14)':'rgba(204,20,24,.12)';
-    const fc=isFlat?'#7a8899':isUp?'#3aacac':'#ff6b6b';
-    const ps=isFlat?'flat':(isUp?'+':'')+pct+'%';
+    const arrow=isNew?'★':isFlat?'→':isUp?'↑':'↓';
+    const arC=isNew?'#e8a020':isFlat?'#7a8899':isUp?'#3aacac':'#ff6b6b';
+    const bg=isNew?'rgba(232,160,32,.15)':isFlat?'rgba(122,136,153,.15)':isUp?'rgba(58,172,172,.14)':'rgba(204,20,24,.12)';
+    const fc=isNew?'#e8a020':isFlat?'#7a8899':isUp?'#3aacac':'#ff6b6b';
+    const ps=isNew?'NEW':isFlat?'flat':(isUp?'+':'')+pct+'%';
     return '<tr><td><span style="display:flex;align-items:center;gap:5px"><span style="width:7px;height:7px;border-radius:50%;background:'+col+';display:inline-block;flex-shrink:0"></span>'+
       '<span style="font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90px" title="'+kw+'">'+kw+'</span></span></td>'+
       '<td style="font-family:monospace;font-size:11px">'+avg+'</td>'+
@@ -1099,6 +1147,10 @@ const wTips={
       '<div class="wt-period">'+getPeriodLabel()+' · '+getDateRange()+'</div>';
   },
   monthly:()=>'<strong>Monthly Averages</strong>Aggregates weekly data into calendar months. Shows both BRANDS and GENERIC trends separately.<br><br><code>Monthly avg = sum of weekly values / count of weeks</code><br>Use these numbers directly in your internal monthly dashboards.<div class="wt-period">'+getPeriodLabel()+' · '+getDateRange()+'</div>',
+  sov:()=>'<strong>Share of Voice</strong>Each brand\'s search interest as a percentage of all brands combined.<br><br><code>SOV% = Brand Total / All Brands Total × 100</code><br>Toggle between BRANDS and GENERIC views.<div class="wt-period">'+getPeriodLabel()+' · '+getDateRange()+'</div>',
+  ranking:()=>'<strong>Brand Ranking</strong>Brands sorted by average weekly search interest over the selected period. Click any brand to toggle it on/off in all charts.<br><br><code>Avg = sum of weekly values / number of weeks</code><div class="wt-period">'+getPeriodLabel()+' · '+getDateRange()+'</div>',
+  breakout:()=>'<strong>Breakout Alerts</strong>Brands with a 20+ point jump in search interest between the last 4 weeks vs the prior 4 weeks.<br><br><code>Jump = avg(last 4wk) − avg(prior 4wk)</code><br>A breakout signals a sudden surge in brand awareness — investigate why!<div class="wt-period">'+getPeriodLabel()+' · '+getDateRange()+'</div>',
+  gap:()=>'<strong>Competitive Gap</strong>Shows how each brand compares to the market leader. Bar length = percentage of the leader\'s average score.<br><br><code>Gap = Leader Avg − Brand Avg</code><div class="wt-period">'+getPeriodLabel()+' · '+getDateRange()+'</div>',
 };
 
 function showSOVTip(e){
@@ -1117,20 +1169,49 @@ function hideSOVTip(){const t=document.getElementById('sovTip');if(t)t.style.dis
 function expPDF(){
   const cfg=TC.find(t=>t.id===aid); const date=new Date().toISOString().slice(0,10);
   const{keywords,dates,kwData}=getAD(); const allKW=getAllKW();
-  const avgs=keywords.map(kw=>{const v=dates.map(d=>kwData[kw][d]||0);return{kw,avg:Math.round(v.reduce((a,b)=>a+b,0)/Math.max(v.length,1))};}).sort((a,b)=>b.avg-a.avg);
-  const kpiHTML=avgs.slice(0,4).map((item,i)=>{const col=C[allKW.indexOf(item.kw)%C.length];return'<div style="background:#111620;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px;border-top:3px solid '+col+'"><div style="font-size:9px;text-transform:uppercase;color:#4e5a70;margin-bottom:6px">'+(i===0?'Leader':'Rank #'+(i+1))+'</div><div style="font-size:30px;font-weight:bold;color:'+col+'">'+item.avg+'</div><div style="font-size:11px;color:'+col+'">'+item.kw+'</div></div>';}).join('');
-  const rankHTML=avgs.map(item=>{const col=C[allKW.indexOf(item.kw)%C.length];return'<tr><td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+col+';margin-right:6px"></span>'+item.kw+'</td><td>'+item.avg+'</td></tr>';}).join('');
+  const avgs=keywords.map(kw=>{
+    const v=dates.map(d=>kwData[kw][d]||0);
+    const avg=Math.round(v.reduce((a,b)=>a+b,0)/Math.max(v.length,1));
+    const w=Math.min(4,Math.floor(v.length/2));
+    const rec=w>0?v.slice(-w).reduce((a,b)=>a+b,0)/w:avg;
+    const pri=w>0&&v.length>=w*2?v.slice(-(w*2),-w).reduce((a,b)=>a+b,0)/w:avg;
+    const diff=rec-pri; const pct=pri>0?Math.round(diff/pri*100):0;
+    return{kw,avg,diff:Math.round(diff),pct,type:getKWT(kw)};
+  }).sort((a,b)=>b.avg-a.avg);
+  const kpiHTML=avgs.slice(0,4).map((item,i)=>{const col=C[allKW.indexOf(item.kw)%C.length];return'<div style="background:#111620;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px;border-top:3px solid '+col+'"><div style="font-size:9px;text-transform:uppercase;color:#4e5a70;margin-bottom:6px">'+(i===0?'Leader':'Rank #'+(i+1))+'</div><div style="font-size:30px;font-weight:bold;color:'+col+'">'+item.avg+'</div><div style="font-size:11px;color:'+col+'">'+item.kw+'</div><div style="font-size:10px;color:'+(item.diff>0?'#3aacac':'#ff6b6b')+';margin-top:4px">'+(item.diff>0?'+':'')+item.pct+'%</div></div>';}).join('');
+  const rankHTML=avgs.map(item=>{const col=C[allKW.indexOf(item.kw)%C.length];const leader=avgs[0];const gap=leader.avg-item.avg;return'<tr><td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+col+';margin-right:6px"></span>'+item.kw+'</td><td>'+item.avg+'</td><td style="color:'+(gap===0?'#3aacac':'#ff6b6b')+'">'+(gap===0?'👑 Leader':'-'+gap+' pts')+'</td></tr>';}).join('');
   const bkts=detectBreakouts();
-  const alertsHTML=bkts.length?bkts.map(b=>'<tr><td>🔥 '+b.kw+'</td><td style="color:#e8a020">+'+b.jump+' pts</td><td>'+b.pri+'→'+b.rec+'</td></tr>').join(''):'<tr><td colspan="3" style="color:#888">No breakouts</td></tr>';
+  const alertsHTML=bkts.length?bkts.map(b=>'<tr><td>🔥 '+b.kw+'</td><td style="color:#e8a020">+'+b.jump+' pts</td><td>'+b.pri+'→'+b.rec+'</td></tr>').join(''):'<tr><td colspan="3" style="color:#888">No breakouts detected</td></tr>';
+  // Executive summary for PDF
+  const brands=avgs.filter(r=>r.type==='brand');
+  const leader=brands[0];
+  const risers=avgs.filter(r=>r.diff>=10).sort((a,b)=>b.diff-a.diff).slice(0,3);
+  const fallers=avgs.filter(r=>r.diff<=-10).sort((a,b)=>a.diff-b.diff).slice(0,3);
+  let execText='';
+  if(leader){
+    execText+=leader.kw+' leads '+(cfg?cfg.name:'this market')+' with avg '+leader.avg+'/100';
+    if(brands.length>=2)execText+='. Gap to #2 ('+brands[1].kw+'): '+(leader.avg-brands[1].avg)+' pts';
+    execText+='. ';
+  }
+  if(risers.length)execText+='Rising: '+risers.map(r=>r.kw+' (+'+r.diff+')').join(', ')+'. ';
+  if(fallers.length)execText+='Declining: '+fallers.map(r=>r.kw+' ('+r.diff+')').join(', ')+'. ';
+  // SOV data for PDF
+  const sovRows=(tD[aid]||[]).filter(r=>r.type==='brand');
+  const sovKWs=[...new Set(sovRows.map(r=>r.keyword))];
+  const sovTot=sovKWs.map(kw=>sovRows.filter(r=>r.keyword===kw).reduce((s,r)=>s+parseInt(r.interest||0),0));
+  const sovSum=sovTot.reduce((a,b)=>a+b,0)||1;
+  const sovHTML=sovKWs.length?sovKWs.map((kw,i)=>{const col=C[allKW.indexOf(kw)%C.length];const pct=Math.round(sovTot[i]/sovSum*100);return'<tr><td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+col+';margin-right:6px"></span>'+kw+'</td><td style="color:'+col+';font-weight:bold">'+pct+'%</td></tr>';}).join(''):'<tr><td colspan="2" style="color:#888">No SOV data</td></tr>';
   const notes=localStorage.getItem('bi_notes_'+aid)||'';
   const html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Brand Intelligence — '+(cfg?cfg.name:'')+' — '+date+'</title>'+
-    '<style>body{margin:0;padding:24px;background:#0b0e15;color:#eef0f4;font-family:Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}h1{font-size:20px;margin-bottom:4px}h2{font-size:12px;color:#3aacac;font-weight:normal;margin-bottom:20px}.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}.card{background:#111620;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:16px}.card h3{font-size:10px;text-transform:uppercase;color:#7a8899;margin-bottom:10px}table{width:100%;border-collapse:collapse;font-size:12px}th{font-size:9px;text-transform:uppercase;color:#4e5a70;text-align:left;padding:5px 7px;border-bottom:1px solid rgba(255,255,255,.07)}td{padding:5px 7px;border-bottom:1px solid rgba(255,255,255,.03)}.footer{margin-top:16px;font-size:10px;color:#4e5a70;text-align:center}</style></head><body>'+
-    '<h1>Brand Intelligence — '+(cfg?cfg.name:'')+'</h1><h2>Google Trends Dashboard — '+date+' · Last '+getPeriodLabel()+'</h2>'+
+    '<style>body{margin:0;padding:24px;background:#0b0e15;color:#eef0f4;font-family:Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}h1{font-size:20px;margin-bottom:4px}h2{font-size:12px;color:#3aacac;font-weight:normal;margin-bottom:20px}.exec{background:linear-gradient(135deg,rgba(58,172,172,0.08),rgba(204,20,24,0.04));border:1px solid rgba(58,172,172,0.2);border-radius:10px;padding:14px 18px;margin-bottom:16px;font-size:12px;line-height:1.8;color:#c8d0dc}.exec strong{color:#eef0f4}.exec-label{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:#3aacac;margin-bottom:6px}.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px}.card{background:#111620;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:16px}.card h3{font-size:10px;text-transform:uppercase;color:#7a8899;margin-bottom:10px}table{width:100%;border-collapse:collapse;font-size:12px}th{font-size:9px;text-transform:uppercase;color:#4e5a70;text-align:left;padding:5px 7px;border-bottom:1px solid rgba(255,255,255,.07)}td{padding:5px 7px;border-bottom:1px solid rgba(255,255,255,.03)}.footer{margin-top:16px;font-size:10px;color:#4e5a70;text-align:center}</style></head><body>'+
+    '<h1>Brand Intelligence — '+(cfg?cfg.name:'')+'</h1><h2>Google Trends Dashboard — '+date+' · '+getPeriodLabel()+'</h2>'+
+    '<div class="exec"><div class="exec-label">EXECUTIVE SUMMARY</div>'+execText+'</div>'+
     '<div class="kpi-grid">'+kpiHTML+'</div>'+
-    '<div class="grid2"><div class="card"><h3>Brand Ranking</h3><table><thead><tr><th>Brand</th><th>Avg</th></tr></thead><tbody>'+rankHTML+'</tbody></table></div>'+
+    '<div class="grid3"><div class="card"><h3>Brand Ranking & Gap</h3><table><thead><tr><th>Brand</th><th>Avg</th><th>Gap</th></tr></thead><tbody>'+rankHTML+'</tbody></table></div>'+
+    '<div class="card"><h3>Share of Voice</h3><table><thead><tr><th>Brand</th><th>SOV%</th></tr></thead><tbody>'+sovHTML+'</tbody></table></div>'+
     '<div class="card"><h3>Breakout Alerts</h3><table><thead><tr><th>Brand</th><th>Jump</th><th>Score</th></tr></thead><tbody>'+alertsHTML+'</tbody></table></div></div>'+
     (notes?'<div class="card" style="margin-bottom:16px"><h3>Notes</h3><p style="font-size:12px;line-height:1.7">'+notes.split('\n').join('<br>')+'</p></div>':'')+
-    '<div class="footer">GOOGLE TRENDS DASHBOARD — SEO TEAM · '+new Date().toLocaleString()+'</div>'+
+    '<div class="footer">BRAND INTELLIGENCE — GOOGLE TRENDS DASHBOARD · '+new Date().toLocaleString()+'</div>'+
     '<script>window.onload=function(){window.print()}<\/script></body></html>';
   const w=window.open('','_blank');
   if(w){w.document.write(html);w.document.close();toast('PDF ready — save from print dialog');}
@@ -1260,9 +1341,18 @@ function expCSV(){
 }
 
 // ── Controls ──
-function onCC(){per=parseInt(document.getElementById('ps').value);rKPI();rMC();rRank();rDonut();rHM();rCmp();rMonthlyAvg();}
+function onCC(){
+  per=parseInt(document.getElementById('ps').value);
+  // Check if 5yr data is actually available
+  const rows=tD[aid]||[];
+  const allDates=[...new Set(rows.map(r=>r.date))].sort();
+  if(per>=260&&allDates.length<60){
+    toast('⚠ Only '+allDates.length+' weeks of data available. Run fetcher with 5yr timeframe for full history.');
+  }
+  rExecSummary();rKPI();rMC();rChartLegend();rRank();rDonut();rCompGap();rHM();rCmp();rMonthlyAvg();
+}
 async function refData(){toast('Refreshing...');tD={};aKW={};await loadAll();toast('Refreshed!');}
-function updateLU(){const rows=tD[aid]||[];const dot=document.getElementById('ld');const lbl=document.getElementById('lu');if(dot)dot.classList.toggle('red',!rows.length);if(lbl)lbl.textContent=rows[0]?.fetchedat?'Updated '+rows[0].fetchedat:rows.length?'Live':'No data';}
+function updateLU(){const rows=tD[aid]||[];const dot=document.getElementById('ld');const lbl=document.getElementById('lu');const rt=(window._trt||{})[aid]||'';if(dot)dot.classList.toggle('red',!rows.length);if(lbl)lbl.textContent=rows[0]?.fetchedat?'Updated '+rows[0].fetchedat:rt?'Loaded '+rt:rows.length?'Live':'No data';}
 
 // ── Edit Keywords ──
 function openEM(){
@@ -1274,7 +1364,7 @@ function openEM(){
   setTimeout(loadNotes,50);
 }
 function kRH(val,col){return'<div class="kwr"><span class="kwd" style="background:'+col+'"></span><input class="kwi" value="'+val.replace(/"/g,'&quot;')+'" placeholder="Keyword"><button class="kwr2" onclick="removeKW(this)">×</button></div>';}
-function addKwRow(type){const lId=type==='brand'?'ebl':'egl';const list=document.getElementById(lId);const max=type==='brand'?12:5;if(list.children.length>=max){toast('Max '+max+' keywords');return;}const col=type==='brand'?C[list.children.length%C.length]:'#e8a020';const d=document.createElement('div');d.innerHTML=kRH('',col);list.appendChild(d.firstElementChild);list.lastElementChild.querySelector('input').focus();}
+function addKwRow(type){const lId=type==='brand'?'ebl':'egl';const list=document.getElementById(lId);const max=type==='brand'?12:10;if(list.children.length>=max){toast('Max '+max+' keywords');return;}const col=type==='brand'?C[list.children.length%C.length]:'#e8a020';const d=document.createElement('div');d.innerHTML=kRH('',col);list.appendChild(d.firstElementChild);list.lastElementChild.querySelector('input').focus();}
 function removeKW(btn){btn.closest('.kwr').remove();}
 function closeEM(){document.getElementById('editModal').classList.remove('open');}
 function saveKW(){
@@ -1319,6 +1409,168 @@ function toast(msg){const ex=document.querySelector('.toast');if(ex)ex.remove();
 
 document.getElementById('editModal').addEventListener('click',e=>{if(e.target.id==='editModal')closeEM();});
 document.getElementById('addTabModal').addEventListener('click',e=>{if(e.target.id==='addTabModal')closeATM();});
+document.getElementById('pwModal').addEventListener('click',e=>{if(e.target.id==='pwModal')closePW();});
+document.getElementById('pwInput').addEventListener('keydown',e=>{if(e.key==='Enter')submitPW();});
+
+// ── Password / Role-Based Access ──
+// Change this password to share with CMO / Head of SEO
+const EDITOR_PW='medier2025';
+let isEditor=localStorage.getItem('bi_editor')==='1';
+let _pwCallback=null;
+
+function openPW(cb){
+  _pwCallback=cb||null;
+  document.getElementById('pwInput').value='';
+  document.getElementById('pwErr').textContent='';
+  document.getElementById('pwModal').classList.add('open');
+  setTimeout(()=>document.getElementById('pwInput').focus(),100);
+}
+function closePW(){document.getElementById('pwModal').classList.remove('open');_pwCallback=null;}
+function submitPW(){
+  const val=document.getElementById('pwInput').value;
+  if(val===EDITOR_PW){
+    isEditor=true;
+    localStorage.setItem('bi_editor','1');
+    updateRoleBadge();
+    closePW();
+    toast('🔓 Editor mode unlocked!');
+    if(_pwCallback){const cb=_pwCallback;_pwCallback=null;cb();}
+  } else {
+    document.getElementById('pwErr').textContent='Incorrect password';
+    const inp=document.getElementById('pwInput');
+    inp.value='';
+    inp.classList.add('shake');
+    setTimeout(()=>{inp.classList.remove('shake');inp.focus();},400);
+  }
+}
+function updateRoleBadge(){
+  const el=document.getElementById('roleBadge');
+  if(!el)return;
+  if(isEditor){
+    el.className='pw-badge';
+    el.innerHTML='&#128275; EDITOR';
+    el.onclick=()=>{if(confirm('Lock editor mode?')){isEditor=false;localStorage.removeItem('bi_editor');updateRoleBadge();toast('🔒 Locked — viewer mode');}};
+    el.title='Click to lock editor mode';
+  } else {
+    el.className='pw-badge pw-badge-locked';
+    el.innerHTML='&#128274; VIEWER';
+    el.onclick=()=>openPW();
+    el.title='Click to unlock editor mode';
+  }
+}
+
+function guardedOpenEM(){
+  if(isEditor){openEM();return;}
+  openPW(()=>openEM());
+}
+function guardedOpenATM(){
+  if(isEditor){openATM();return;}
+  openPW(()=>openATM());
+}
+
+// ── Executive Summary (auto-generated) ──
+function rExecSummary(){
+  const el=document.getElementById('execSummary'); if(!el)return;
+  const{keywords,dates,kwData}=getAD();
+  if(!keywords.length||!dates.length){el.style.display='none';return;}
+  el.style.display='block';
+  const cfg=TC.find(t=>t.id===aid);
+  const country=cfg?cfg.name:'this market';
+
+  // Calculate rankings
+  const ranked=keywords.map(kw=>{
+    const v=dates.map(d=>kwData[kw][d]||0);
+    const avg=Math.round(v.reduce((a,b)=>a+b,0)/Math.max(v.length,1));
+    const w=Math.min(4,Math.floor(v.length/2));
+    const rec=w>0?v.slice(-w).reduce((a,b)=>a+b,0)/w:avg;
+    const pri=w>0&&v.length>=w*2?v.slice(-(w*2),-w).reduce((a,b)=>a+b,0)/w:avg;
+    const diff=rec-pri;
+    const pct=pri>0?Math.round(diff/pri*100):0;
+    return{kw,avg,diff:Math.round(diff),pct,type:getKWT(kw)};
+  }).sort((a,b)=>b.avg-a.avg);
+
+  const brands=ranked.filter(r=>r.type==='brand');
+  const generics=ranked.filter(r=>r.type==='generic');
+  const leader=brands[0];
+  const risers=ranked.filter(r=>r.diff>=10).sort((a,b)=>b.diff-a.diff);
+  const fallers=ranked.filter(r=>r.diff<=-10).sort((a,b)=>a.diff-b.diff);
+
+  let summary='';
+
+  if(leader){
+    summary+='<strong class="exec-highlight">'+leader.kw+'</strong> leads '+country+' with an avg score of <strong>'+leader.avg+'</strong>/100';
+    if(leader.pct!==0)summary+=' (<span class="'+(leader.diff>0?'exec-highlight':'exec-danger')+'">'+(leader.diff>0?'+':'')+leader.pct+'%</span> trend)';
+    summary+='. ';
+    if(brands.length>=2){
+      const gap=leader.avg-brands[1].avg;
+      summary+='Nearest rival <strong>'+brands[1].kw+'</strong> trails by <strong>'+gap+' pts</strong>. ';
+    }
+  }
+
+  if(risers.length){
+    const top=risers.slice(0,2);
+    summary+='<span class="exec-highlight">Rising:</span> '+top.map(r=>'<strong>'+r.kw+'</strong> (+'+r.diff+' pts)').join(', ')+'. ';
+  }
+  if(fallers.length){
+    const top=fallers.slice(0,2);
+    summary+='<span class="exec-danger">Declining:</span> '+top.map(r=>'<strong>'+r.kw+'</strong> ('+r.diff+' pts)').join(', ')+'. ';
+  }
+
+  if(generics.length){
+    const topG=generics[0];
+    summary+='Top generic trend: <strong class="exec-warn">'+topG.kw+'</strong> ('+topG.avg+' avg). ';
+  }
+
+  el.innerHTML='<div class="exec-label"><span class="exec-dot"></span>EXECUTIVE SUMMARY — '+country.toUpperCase()+' · '+getPeriodLabel().toUpperCase()+'</div>'+summary;
+}
+
+// ── Chart Legend (clickable, synced with keyword toggling) ──
+function rChartLegend(){
+  const el=document.getElementById('chartLegend'); if(!el)return;
+  const{keywords}=getAD(); const allKW=getAllKW(); const aq=aKW[aid]||new Set();
+  el.innerHTML=keywords.map(kw=>{
+    const col=C[allKW.indexOf(kw)%C.length];
+    const active=aq.has(kw);
+    const s=kw.replace(/'/g,"\\'");
+    return '<div class="chart-legend-item '+(active?'':'inactive')+'" onclick="togKW(\''+s+'\');rChartLegend();" title="'+kw+' · Click to toggle">'+
+      '<span class="chart-legend-dot" style="background:'+col+'"></span>'+
+      '<span style="color:'+(active?col:'var(--muted)')+'">'+kw+'</span></div>';
+  }).join('');
+}
+
+// ── Competitive Gap (how far each brand is from the leader) ──
+function rCompGap(){
+  const el=document.getElementById('compGap'); if(!el)return;
+  const brandData=getDataForType('brand');
+  const{keywords,dates,kwData}=brandData;
+  if(!keywords.length){el.innerHTML='<div style="color:var(--muted);font-size:11px;text-align:center;padding:8px">No brand data</div>';return;}
+  const allKW=getAllKW();
+  const aq=aKW[aid]||new Set();
+  const ranked=keywords.filter(kw=>aq.has(kw)).map(kw=>{
+    const v=dates.map(d=>kwData[kw][d]||0);
+    return{kw,avg:Math.round(v.reduce((a,b)=>a+b,0)/Math.max(v.length,1))};
+  }).sort((a,b)=>b.avg-a.avg);
+  if(!ranked.length){el.innerHTML='<div style="color:var(--muted);font-size:11px;text-align:center;padding:8px">No data</div>';return;}
+  const leader=ranked[0];
+  el.innerHTML=ranked.map((item,i)=>{
+    const col=C[allKW.indexOf(item.kw)%C.length];
+    const gap=leader.avg-item.avg;
+    const pct=leader.avg>0?Math.round(item.avg/leader.avg*100):0;
+    const isLeader=i===0;
+    const badgeBg=isLeader?'rgba(58,172,172,0.15)':'rgba(204,20,24,0.12)';
+    const badgeCol=isLeader?'var(--teal)':'#ff6b6b';
+    const badgeText=isLeader?'👑 LEADER':'-'+gap+' pts';
+    return '<div class="gap-row">'+
+      '<span class="gap-name" style="color:'+col+'" title="'+item.kw+'">'+item.kw+'</span>'+
+      '<div class="gap-bar-wrap"><div class="gap-bar" style="width:'+pct+'%;background:'+col+'"></div></div>'+
+      '<span class="gap-val">'+item.avg+'</span>'+
+      '<span class="gap-badge" style="background:'+badgeBg+';color:'+badgeCol+'">'+badgeText+'</span>'+
+    '</div>';
+  }).join('');
+}
+
+// Initialize role badge on load
+updateRoleBadge();
 
 loadAll();
 
