@@ -625,7 +625,7 @@ async function loadAll(){
     setL(Math.round((i/TC.length)*85)+10,'Loading '+TC[i].flag+' '+TC[i].name+'...');
     await fetchT(TC[i].id);
   }
-  setL(100,'Ready!'); setTimeout(hideL,400); renderAll(); updateLU();
+  setL(100,'Ready!'); setTimeout(hideL,400); scanAllBreakouts(); renderAll(); updateLU();
 }
 function setL(p,t){document.getElementById('lb').style.width=p+'%';document.getElementById('lt').textContent=t;}
 function hideL(){const e=document.getElementById('ls');e.style.transition='opacity 0.4s';e.style.opacity='0';setTimeout(()=>e.style.display='none',400);}
@@ -1118,6 +1118,33 @@ function hexToRgb(hex){
 }
 
 // ── Breakout alerts ──
+// Scan a specific tab's data for breakouts (does NOT depend on aid)
+function scanBreakoutsForTab(tabId){
+  const rows=tD[tabId]||[];
+  if(!rows.length)return 0;
+  const allDates=[...new Set(rows.map(r=>r.date))].sort();
+  const dates=allDates.slice(-52); // last 12 months
+  if(dates.length<8)return 0;
+  const kws=[...new Set(rows.map(r=>r.keyword))];
+  let count=0;
+  kws.forEach(kw=>{
+    const vals=dates.map(d=>{const r=rows.find(x=>x.keyword===kw&&x.date===d);return r?parseInt(r.interest)||0:0;});
+    const rec=vals.slice(-4).reduce((a,b)=>a+b,0)/4;
+    const pri=vals.slice(-8,-4).reduce((a,b)=>a+b,0)/4;
+    if(rec-pri>=20)count++;
+  });
+  return count;
+}
+
+// Run breakout scan on ALL tabs (call after loadAll)
+function scanAllBreakouts(){
+  if(!window._tabBreakouts)window._tabBreakouts={};
+  TC.forEach(t=>{
+    window._tabBreakouts[t.id]=scanBreakoutsForTab(t.id);
+  });
+  renderTabs(); // refresh tab badges
+}
+
 function detectBreakouts(){
   const{keywords,dates,kwData}=getAD();
   const breakouts=[];
