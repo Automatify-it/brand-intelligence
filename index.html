@@ -82,7 +82,7 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
 .mcc{grid-column:1/5;grid-row:2;}
 .cw{padding:16px;height:270px;position:relative;}
 .sb{grid-column:5;grid-row:1/5;display:flex;flex-direction:column;gap:14px;}
-.rl{display:flex;flex-direction:column;gap:5px;}
+#rl{display:flex;flex-direction:column;gap:5px;}
 .ri{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:var(--surface2);border:1px solid transparent;transition:all 0.15s;cursor:pointer;}
 .ri:hover{border-color:var(--border);transform:translateX(2px);}
 .rn{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);width:14px;}
@@ -276,9 +276,10 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
   /* Sidebar cards — scrollable lists */
   .sb{grid-column:1;grid-row:auto;flex-direction:column;}
   .sb .card{width:100%;}
-  .rl{max-height:320px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+  #rl{max-height:320px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
   #dl{max-height:140px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
   #compGap{max-height:320px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+  #alertsList{max-height:200px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
   .mavg{grid-column:1;}
 
   .hmg{overflow-x:auto;}
@@ -306,7 +307,7 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
   .kl{font-size:7px;}
   .exec-summary{font-size:10px;padding:10px 12px;}
   .hr .btn{padding:4px 7px;font-size:11px;}
-  .rl{max-height:260px;}
+  #rl{max-height:260px;}
   #dl{max-height:120px;}
   #compGap{max-height:260px;}
 }
@@ -760,7 +761,7 @@ function buildG(){
         '<span style="font-size:9px;color:var(--muted)">vs leader</span></div>'+
         '<div class="cb2" style="padding:10px 12px"><div id="compGap"></div></div>'+
       '</div>'+
-      '<div class="card" id="alertsCard" style="display:none">'+
+      '<div class="card" id="alertsCard">'+
         '<div class="ch"><span class="ct">🔥 Breakout Alerts<span class="wi" onmouseenter="showWTip(event,wTips.breakout())" onmouseleave="hideWTip()">i</span></span>'+
         '<span style="font-size:9px;color:#e8a020">20+ pt jump</span></div>'+
         '<div class="cb2" style="padding:12px"><div id="alertsList"></div></div>'+
@@ -1132,9 +1133,10 @@ function detectBreakouts(){
   breakouts.sort((a,b)=>b.jump-a.jump);
   const card=document.getElementById('alertsCard'); const list=document.getElementById('alertsList');
   if(card&&list){
-    if(!breakouts.length){card.style.display='none';}
+    if(!breakouts.length){
+      list.innerHTML='<div style="display:flex;align-items:center;gap:8px;padding:10px 0;color:var(--muted);font-size:11px"><span style="font-size:18px;opacity:0.4">✓</span>No breakouts detected — all brands within normal range.</div>';
+    }
     else{
-      card.style.display='block';
       const allKW=getAllKW();
       list.innerHTML=breakouts.map(b=>{const col=C[allKW.indexOf(b.kw)%C.length];
         return '<div class="alert-row"><span style="font-size:16px">🔥</span><span class="abrand" style="color:'+col+'">'+b.kw+'</span><span class="aval">+'+b.jump+' pts</span><span style="font-size:10px;color:var(--muted)">'+b.pri+'→'+b.rec+'</span></div>';
