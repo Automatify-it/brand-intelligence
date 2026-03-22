@@ -214,39 +214,64 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
 
 /* ── MOBILE (≤768px) ── */
 @media(max-width:768px){
-  header{padding:0 14px;height:auto;min-height:56px;flex-wrap:wrap;gap:8px;padding-top:10px;padding-bottom:10px;}
-  .logo-area svg{width:80px;}
+  /* Header: compact 2-row layout */
+  header{padding:8px 12px;height:auto;min-height:auto;flex-wrap:wrap;gap:6px;}
+  .la{gap:10px;}
+  .la svg{width:80px;}
   .hd{display:none;}
-  .dtm{font-size:14px;}
-  .dts{font-size:9px;}
-  .hr{gap:6px;flex-wrap:wrap;}
-  .hr .lp{font-size:9px;padding:4px 8px;}
-  .hr .btn{padding:5px 10px;font-size:11px;}
-  .pw-badge,.pw-badge-locked{font-size:9px;padding:2px 8px;}
+  .dtm{font-size:13px;letter-spacing:1.5px;}
+  .dts{font-size:8px;letter-spacing:1px;}
+  .hr{gap:5px;flex-wrap:wrap;justify-content:flex-end;}
+  .hr .lp{display:none;}
+  .hr .pw-badge,.hr .pw-badge-locked{font-size:8px;padding:2px 7px;order:-1;}
+  /* Icon-only buttons on mobile */
+  .hr .btn{padding:5px 8px;font-size:12px;}
+  .hr .btn-text{display:none;}
+  .hr .btn svg{margin:0;}
 
+  /* Tabs */
   .tabs-bar{top:0;position:relative;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;}
-  .ti{min-width:80px;padding:0 10px;min-height:48px;scroll-snap-align:start;}
+  .ti{min-width:72px;padding:0 8px;min-height:46px;scroll-snap-align:start;}
   .tf{font-size:14px;}
-  .tn{font-size:10px;}
+  .tn{font-size:9px;}
   .tab-refresh{display:none;}
+  .tab-fire{font-size:9px;top:4px;left:4px;}
 
-  .cb{padding:8px 14px;gap:10px;position:relative;}
+  /* Control bar: stack vertically, hide verbose labels */
+  .cb{padding:8px 12px;gap:8px;flex-direction:row;flex-wrap:wrap;}
+  .cg{flex:0 0 auto;}
   .cg select{font-size:11px;padding:5px 8px;}
+  .cb .cg:last-child{flex:1 1 100%;margin-left:0;}
+  .cl{font-size:8px;letter-spacing:1.2px;}
   .qt{max-width:100%;gap:4px;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;padding-bottom:4px;}
   .qtag{font-size:10px;padding:2px 7px;flex-shrink:0;}
   .ttog{font-size:10px;padding:2px 8px;flex-shrink:0;}
 
+  /* Main grid: single column */
   main{grid-template-columns:1fr;padding:10px;gap:10px;}
   .exec-summary{grid-column:1;font-size:11px;padding:12px 14px;line-height:1.7;}
+  .exec-summary .exec-label{font-size:8px;letter-spacing:1.5px;}
+
+  /* KPI cards: fix badge overlap */
   .kr{grid-column:1;grid-template-columns:repeat(2,1fr);gap:8px;}
-  .kpi{padding:12px 14px;}
-  .kv{font-size:28px;}
+  .kpi{padding:12px 12px 10px;}
+  .kl{font-size:8px;max-width:calc(100% - 52px);}
+  .kv{font-size:26px;}
+  .kb{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .kch{font-size:9px;padding:2px 5px;top:10px;right:8px;}
+
+  /* Chart + legend */
   .mcc{grid-column:1;grid-row:auto;}
-  .cw{height:220px;padding:10px;}
-  .chart-legend{padding:4px 10px;gap:4px 8px;font-size:9px;}
+  .cw{height:200px;padding:8px;}
+  .chart-legend{padding:4px 10px;gap:4px 8px;font-size:9px;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;}
+  .chart-legend-item{flex-shrink:0;}
   .chart-legend-dot{width:6px;height:6px;}
+
+  /* Heatmap + Compare */
   .hmc{grid-column:1;grid-row:auto;}
   .cpc{grid-column:1;grid-row:auto;}
+
+  /* Sidebar cards */
   .sb{grid-column:1;grid-row:auto;flex-direction:column;}
   .sb .card{width:100%;}
   .mavg{grid-column:1;}
@@ -256,26 +281,26 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
   .hmmo{font-size:8px;}
   .hmc2{height:14px;}
 
-  .cpt th,.cpt td{padding:5px 5px;font-size:10px;}
+  .cpt th,.cpt td{padding:4px 5px;font-size:10px;}
 
-  .modal,.pw-modal{padding:20px;width:95vw;}
+  .modal,.pw-modal{padding:18px;width:95vw;}
   .modal h2{font-size:18px;}
   .mg{grid-template-columns:1fr;}
 
   .dl{display:none;}
-  .gap-name{width:60px;font-size:10px;}
+  .gap-name{width:55px;font-size:10px;}
   .gap-badge{font-size:8px;padding:1px 4px;}
+  .gap-val{font-size:9px;width:30px;}
 }
 
 /* ── SMALL MOBILE (≤480px) ── */
 @media(max-width:480px){
   .kr{grid-template-columns:1fr 1fr;}
-  .kpi-change{position:static;display:inline-block;margin-top:4px;}
-  .hr .lp{display:none;}
-  .kv{font-size:24px;}
-  .kch{font-size:9px;}
+  .kv{font-size:22px;}
+  .kch{font-size:8px;padding:1px 4px;top:8px;right:6px;}
+  .kl{font-size:7px;}
   .exec-summary{font-size:10px;padding:10px 12px;}
-  .exec-summary .exec-label{font-size:8px;}
+  .hr .btn{padding:4px 7px;font-size:11px;}
 }
 
 /* ── MONTHLY AVG TABLE ── */
@@ -434,11 +459,11 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
   <div class="hr">
     <div class="lp"><span class="ld" id="ld"></span><span id="lu">Loading...</span></div>
     <span id="roleBadge" class="pw-badge pw-badge-locked" onclick="openPW()" title="Click to unlock editor mode">&#128274; VIEWER</span>
-    <button class="btn bg" onclick="expCSV()">&#8595; CSV</button>
-    <button class="btn bg btn-sheets" onclick="expSheets()" title="Export monthly averages &amp; open Google Sheets"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;margin-right:3px"><path d="M19 3H5C3.9 3 3 3.9 3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" fill="#0f9d58"/><path d="M7 7h10v2H7zm0 4h10v2H7zm0 4h7v2H7z" fill="#fff"/></svg>Sheets</button>
-    <button class="btn bg" onclick="expPDF()">&#128438; PDF</button>
-    <button class="btn bg" onclick="guardedOpenEM()">&#10000; Edit Keywords</button>
-    <button class="btn bg" onclick="refData()">&#8635; Refresh</button>
+    <button class="btn bg" onclick="expCSV()" title="Export CSV">&#8595; <span class="btn-text">CSV</span></button>
+    <button class="btn bg btn-sheets" onclick="expSheets()" title="Export to Google Sheets"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" style="vertical-align:middle"><path d="M19 3H5C3.9 3 3 3.9 3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" fill="#0f9d58"/><path d="M7 7h10v2H7zm0 4h10v2H7zm0 4h7v2H7z" fill="#fff"/></svg><span class="btn-text"> Sheets</span></button>
+    <button class="btn bg" onclick="expPDF()" title="Export PDF">&#128438; <span class="btn-text">PDF</span></button>
+    <button class="btn bg" onclick="guardedOpenEM()" title="Edit Keywords">&#10000; <span class="btn-text">Edit</span></button>
+    <button class="btn bg" onclick="refData()" title="Refresh data">&#8635; <span class="btn-text">Refresh</span></button>
   </div>
 </header>
 
@@ -461,7 +486,7 @@ main{position:relative;z-index:1;padding:18px 32px;display:grid;grid-template-co
     </select>
   </div>
 
-  <div class="cg" style="margin-left:auto"><div class="cl">Toggle BRANDS / GENERIC</div><div class="qt" id="qt"></div></div>
+  <div class="cg" style="margin-left:auto"><div class="cl">Filter</div><div class="qt" id="qt"></div></div>
 </div>
 
 <main id="mg">
